@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { awareimLinks } from '@/content/awareim';
+import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -61,11 +61,30 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
           className="absolute right-0 z-50 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] card p-2 shadow-lift"
           role="menu"
         >
-          <p className="px-3 py-2 text-xs text-slate2">
-            Opens the separate Members&rsquo; Admin system in a new tab. You will need to
-            sign in there — it uses its own login.
+          {/* Sign in first, then the list. The login itself lives on the
+              AwareIM server — this portal never asks for those credentials. */}
+          <a
+            href={AWAREIM_BASE}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => { setOpen(false); onNavigate?.(); }}
+            className="tap w-full justify-center gap-2 rounded-lg bg-sky px-4 py-3 font-semibold
+                       text-white transition-colors hover:bg-skyDark"
+            role="menuitem"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            Sign in to Members&rsquo; Admin
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+          <p className="px-3 py-2.5 text-xs text-slate2">
+            A separate system with its own username and password — you sign in on its own
+            page, and this portal never asks for those details. The list below is its menu,
+            in its own words, so you know what is in there and where to find it.
           </p>
-          <ul className="mt-1">
+          <ul className="mt-1 max-h-[60vh] overflow-y-auto border-t border-skyLine pt-1">
             {awareimLinks.map((l) => (
               <li key={l.label}>
                 <a
@@ -76,9 +95,10 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
                   className="flex items-start gap-2 rounded-lg px-3 py-2.5 hover:bg-skyTint transition-colors"
                   role="menuitem"
                 >
-                  <span className="flex-1">
+                  <span className="min-w-0 flex-1">
                     <span className="block font-medium text-navy">{l.label}</span>
                     <span className="block text-xs text-slate2">{l.hint}</span>
+                    <span className="mt-0.5 block text-xs text-sky">{l.where}</span>
                   </span>
                   <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="mt-1.5 shrink-0 text-slate2">
                     <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />

@@ -1,5 +1,5 @@
 import { PageHeader, Section, ActionTile, icons, Callout, ToMigrate } from '@/components/ui';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 
 export const metadata = { title: 'Flying' };
@@ -17,8 +17,8 @@ export default function FlyingPage() {
 
       <Section title="Book and check">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionTile href={AWAREIM_BASE} external label="Daily Flying Planner" hint="Book onto a flying day" icon={icons.plane} />
-          <ActionTile href={AWAREIM_BASE} external label="Flights Today" hint="What is happening now" icon={icons.calendar} />
+          <ActionTile href={aim('flyingPlanner')} external label="Daily Flying Planner" hint="Book onto a flying day" icon={icons.plane} />
+          <ActionTile href={aim('flightsToday')} external label="Flights Today" hint="What is happening now" icon={icons.calendar} />
           <ActionTile href="/flying/roster" label="Duty Roster" hint="Instructors and duties" icon={icons.people} />
           <ActionTile href="/flying/weather" label="Weather" hint="Forecasts, station, webcam" icon={icons.cloud} />
         </div>
@@ -33,7 +33,7 @@ export default function FlyingPage() {
               in Members&rsquo; Admin.
             </p>
             <p>
-              <a href={AWAREIM_BASE} target="_blank" rel="noopener noreferrer" className="link">
+              <a href={aim('rebrief')} target="_blank" rel="noopener noreferrer" className="link">
                 Record your airspace re-brief
               </a>{' '}
               (opens Members&rsquo; Admin in a new tab)

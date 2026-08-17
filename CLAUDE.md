@@ -29,9 +29,45 @@ AwareIM is Mo Bent's proprietary software, administered by him, holding personne
 data in its own authenticated database. **This portal links to it and does nothing else.**
 
 - No API calls, no scraping, no shared session, no shared database, no data sync — in either direction.
-- Every link opens in a new tab and lands on the AwareIM login page.
-- All AwareIM URLs live in **one file**: `src/content/awareim.ts`. If the URL changes, that is the only edit.
+- **This portal never asks for an AwareIM username or password.** Members sign in on Mo's own
+  page. A sign-in box here would have to post credentials from our origin into his session-based
+  login — it would break the first time he changed anything, and it would teach members that
+  typing their club password into a page that is not his is normal. Do not add one.
+- Every link opens in a new tab.
+- All AwareIM URLs live in **one file**: `src/content/awareim.ts`. If anything changes, that is the only edit.
 - If someone asks you to "integrate" or "pull data from" AwareIM, stop and check with the committee first. That decision has not been made.
+
+#### Deep links — what was tried, and what is actually true
+
+AwareIM accepts a `firstCommand` parameter that runs a named process after logon. The old
+site used it once, on `airspace/LOAsIntro.asp`:
+
+```
+logonOp.aw?domain=DLGC&firstCommand=startProcess(%27AS_Rebrief%27)
+```
+
+Two things were established by inspecting a signed-in session in August 2026, so nobody has
+to repeat the exercise:
+
+1. **It does not skip the login.** Opening that URL in a new tab shows the logon form even
+   when another tab is signed in — AwareIM starts a fresh session per `logonOp.aw` hit. The
+   benefit is "sign in and land on the right screen", not "jump straight there".
+2. **The names visible in the running app are not process names.** The whole member view is
+   produced by one process, `WhiteBoardCreate_Member`; `Flying_Planner`, `Flights_Today`,
+   `Duties_and_Volunteers`, `Todays_TLs`, `My_Teams` and `Weather` are panels inside its
+   perspective. Setting the app's own hash route to a named panel does not switch to it.
+
+So individual screens cannot be deep-linked without the real process names. **Ask Mo Bent for
+them**, put them in the `process` fields of the `TARGETS` table in `src/content/awareim.ts`,
+and every button starts landing on its own screen. Until then each falls back to the logon
+page, which is what happens today.
+
+**Never guess a process name.** A wrong one produces an error inside Mo's system, which is
+worse than landing on the logon page.
+
+The `label` and `where` values in that table are AwareIM's **own** wording, read from its
+menu. Do not improve them — a member should read the same words here and there, or the
+signpost fails. If Mo rearranges his menu, update `where` to match.
 
 ---
 

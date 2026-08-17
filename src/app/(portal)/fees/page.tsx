@@ -1,6 +1,6 @@
 import { PageHeader, Callout } from '@/components/ui';
 import { feeGroups, feeNotes, feesMeta, partYearScale } from '@/content/site';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 
 export const metadata = { title: 'Fees and Charges' };
 
@@ -22,7 +22,7 @@ export default function FeesPage() {
         <Callout tone="info" title="Paying">
           <p>
             Your flying account balance, statements and payments are in Members&rsquo; Admin.{' '}
-            <a href={AWAREIM_BASE} target="_blank" rel="noopener noreferrer" className="link">
+            <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="link">
               Open Members&rsquo; Admin
             </a>{' '}
             (new tab)

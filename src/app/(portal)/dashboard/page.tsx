@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ActionTile, Section, Badge, icons, Callout } from '@/components/ui';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 import { news } from '@/content/news';
 import { documents, isOverdue } from '@/content/documents';
 import { calendar } from '@/content/site';
@@ -70,7 +70,7 @@ export default function Dashboard() {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ActionTile
-            href={AWAREIM_BASE}
+            href={aim('flyingPlanner')}
             external
             label="Daily Flying Planner"
             hint="Book onto a flying day"
@@ -78,10 +78,10 @@ export default function Dashboard() {
           />
           <ActionTile href="/flying/roster" label="Duty Roster" hint="Who is on duty when" icon={icons.calendar} />
           <ActionTile
-            href={AWAREIM_BASE}
+            href={aim('account')}
             external
             label="My Flying Account"
-            hint="Balance and statements"
+            hint="My Account, in Members’ Admin"
             icon={icons.wallet}
           />
           <ActionTile href="/flying/weather" label="Weather" hint="Forecasts and webcam" icon={icons.cloud} />

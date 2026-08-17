@@ -1,5 +1,5 @@
 import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 
 export const metadata = { title: 'Training' };
@@ -51,8 +51,8 @@ export default function TrainingPage() {
 
       <Section title="Your record">
         <div className="grid gap-4 sm:grid-cols-2">
-          <ActionTile href={AWAREIM_BASE} external label="My Progress / SPL Record" hint="Your training record" icon={icons.graduation} />
-          <ActionTile href={AWAREIM_BASE} external label="My Log Book" hint="Your recorded flights" icon={icons.book} />
+          <ActionTile href={aim('splReport')} external label="My SPL Rolling Report" hint="Your licence currency, in Members’ Admin" icon={icons.graduation} />
+          <ActionTile href={aim('logbook')} external label="My Log Book" hint="Your recorded flights" icon={icons.book} />
         </div>
       </Section>
 

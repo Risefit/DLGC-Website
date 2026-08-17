@@ -1,5 +1,5 @@
 import { PageHeader, Section, Callout, ToMigrate, ActionTile, icons } from '@/components/ui';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 
 export const metadata = { title: 'Duty Roster' };
@@ -18,14 +18,14 @@ export default function RosterPage() {
       <Section title="Your duties">
         <div className="grid gap-4 sm:grid-cols-2">
           <ActionTile
-            href={AWAREIM_BASE}
+            href={aim('duties')}
             external
             label="Duties and Volunteers"
             hint="What you have signed up for, and sign up for more"
             icon={icons.people}
           />
           <ActionTile
-            href={AWAREIM_BASE}
+            href={aim('flyingPlanner')}
             external
             label="Daily Flying Planner"
             hint="Put your name down for a flying day"

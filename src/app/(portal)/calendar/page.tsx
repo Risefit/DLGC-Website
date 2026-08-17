@@ -1,6 +1,6 @@
 import { PageHeader, Callout, Badge } from '@/components/ui';
 import { calendar, calendarNote } from '@/content/site';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 
 export const metadata = { title: 'Calendar' };
 
@@ -33,7 +33,7 @@ export default function CalendarPage() {
         <Callout tone="warn" title="This is a summary, not the master">
           <p>{calendarNote}</p>
           <p>
-            <a href={AWAREIM_BASE} target="_blank" rel="noopener noreferrer" className="link">
+            <a href={aim('events')} target="_blank" rel="noopener noreferrer" className="link">
               Open the Events Planner in Members&rsquo; Admin
             </a>{' '}
             (new tab)

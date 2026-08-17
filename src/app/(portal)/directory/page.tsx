@@ -1,6 +1,6 @@
 import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui';
 import { contacts, roles } from '@/content/site';
-import { AWAREIM_BASE } from '@/content/awareim';
+import { aim } from '@/content/awareim';
 
 export const metadata = { title: 'Directory' };
 
@@ -66,7 +66,7 @@ export default function DirectoryPage() {
       >
         <div className="grid gap-4 lg:grid-cols-2">
           <ActionTile
-            href={AWAREIM_BASE}
+            href={aim('directory')}
             external
             label="Member Directory"
             hint="Phone numbers and email addresses"
