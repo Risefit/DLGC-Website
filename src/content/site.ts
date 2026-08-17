@@ -12,8 +12,19 @@ export const club = {
   facebookPage: 'https://www.facebook.com/camphillglidingclub/',
   bga: 'https://www.gliding.co.uk/',
   bgaLadder: 'https://bgaladder.net/',
-  webcam: 'https://www.dlgc.org.uk/members/met_page.asp',
-  weatherStation: 'https://www.dlgc.org.uk/members/met_page.asp',
+  /**
+   * The live met station page. `met_page.asp` was wrong — that is the old site's
+   * index of weather links, not the station itself.
+   */
+  weatherStation: 'https://dlgc.org.uk/members/metstation.html',
+  /**
+   * SECURITY: the old site's direct webcam URL embeds a shared username and
+   * password in clear text over unencrypted HTTP. That must not be committed to
+   * this repository, which is why this points at the met station page instead.
+   * Once the club rotates the camera credential and puts it behind HTTPS, point
+   * this at the real stream.
+   */
+  webcam: 'https://dlgc.org.uk/members/metstation.html',
 };
 
 export const contacts = {
@@ -72,8 +83,8 @@ export const weatherGroups: { group: string; links: WeatherLink[] }[] = [
   {
     group: 'Observations & webcams',
     links: [
-      { name: 'Camphill Weather Station', source: 'DLGC', href: 'https://www.dlgc.org.uk/members/met_page.asp', note: 'Current observations plus wind average speeds history for the past 24 hours.' },
-      { name: 'Camphill Webcam', source: 'DLGC', href: 'https://www.dlgc.org.uk/members/met_page.asp', note: 'View looking north across the front of the hangar.' },
+      { name: 'Camphill Weather Station', source: 'DLGC', href: 'https://dlgc.org.uk/members/metstation.html', note: 'Current observations plus wind average speeds history for the past 24 hours.' },
+      { name: 'Camphill Webcam', source: 'DLGC', href: 'https://dlgc.org.uk/members/metstation.html', note: 'View looking north across the front of the hangar. Reached via the met station page while the camera credentials are rotated.' },
       { name: 'Cloud Cover', source: 'Sat24.com', href: 'https://en.sat24.com/', note: 'Cloud image video, last 90 minutes. Select visible (UK & Ireland) or infra red (Europe).' },
       { name: 'Rainfall', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Precipitation of any kind and intensity on a map over the last several hours.' },
       { name: 'Thunderstorms', source: 'Blitzortung.org', href: 'https://www.blitzortung.org/', note: 'Instantaneous location of lightning strikes, up to 2 hours old.' },

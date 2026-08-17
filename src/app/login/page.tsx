@@ -139,7 +139,12 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-white/80">
-          <a href={club.publicSite} className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
+          <a
+            href={club.publicSite}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-white/40 underline-offset-2 hover:decoration-white"
+          >
             Club public website
           </a>
           {' · '}

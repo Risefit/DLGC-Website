@@ -1,6 +1,6 @@
 import { PageHeader, Callout } from '@/components/ui';
 import DocumentLibrary from '@/components/DocumentLibrary';
-import type { Tier } from '@/content/documents';
+import { servedFromOldSite, type Tier } from '@/content/documents';
 
 export const metadata = { title: 'Documents' };
 
@@ -21,6 +21,22 @@ export default async function DocumentsPage({
         title="Club Documents"
         lead="Every manual, rule, policy, briefing and notice the club holds. This replaces the old Links Library, Manuals and Find It pages — search rather than hunt."
       />
+
+      {servedFromOldSite && (
+        <div className="mb-6">
+          <Callout tone="warn" title="Documents still open on the old site">
+            <p>
+              The files themselves have not moved yet, so opening a document takes you to the old
+              members&rsquo; site and it will ask for the members&rsquo; username and password —
+              the same one you have always used. Everything else here is the new portal.
+            </p>
+            <p>
+              Once the club decides where to host the ~1.4&nbsp;GB archive, the documents will be
+              served directly and that extra login disappears.
+            </p>
+          </Callout>
+        </div>
+      )}
 
       <div className="mb-6">
         <Callout tone="info" title="How this is organised">

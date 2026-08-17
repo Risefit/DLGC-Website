@@ -9,7 +9,12 @@
  * If AwareIM's URL ever changes, this file is the only place to edit.
  */
 
-export const AWAREIM_BASE = 'https://free-flight.info:8443/AwareIM/logonOp.aw';
+/**
+ * The `?domain=DLGC` parameter is REQUIRED. Without it AwareIM presents a login
+ * form that rejects valid club credentials, because it does not know which
+ * customer domain to authenticate against. Do not remove it.
+ */
+export const AWAREIM_BASE = 'https://free-flight.info:8443/AwareIM/logonOp.aw?domain=DLGC';
 
 export type AwareLink = {
   label: string;

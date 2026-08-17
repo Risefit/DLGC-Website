@@ -287,10 +287,40 @@ export const archiveCollections = [
  * the imported copies, which point at local files.
  */
 const curatedKept = curated.filter(
-  (d) => d.href.startsWith('/') || d.format === 'Link' || d.format === 'Page'
+  (d) =>
+    // internal portal pages
+    d.href.startsWith('/') ||
+    // genuine external links, but NOT vague pointers back at the old site's
+    // index pages — those were placeholders and the imported manifest has the
+    // real files
+    (d.format === 'Link' && !d.href.includes('dlgc.org.uk'))
 );
 
-export const documents: Doc[] = [...curatedKept, ...importedDocuments];
+/**
+ * WHERE THE FILES ARE SERVED FROM.
+ *
+ * The imported manifest stores every document as `/legacy/members/...`. Until the
+ * ~1.4 GB of files is hosted somewhere (see README), those paths would 404 — so
+ * they are rewritten to the old site, which is still up and still authenticated.
+ * Members already have those credentials, so every link works today.
+ *
+ * TO SWITCH TO SELF-HOSTED FILES: set LEGACY_BASE to '' after running
+ * `node scripts/import-mirror.mjs` (files land in /public/legacy), or to your
+ * storage URL, e.g. 'https://xxx.supabase.co/storage/v1/object/public/legacy'.
+ * That single line is the only change needed.
+ */
+export const LEGACY_BASE = 'https://www.dlgc.org.uk';
+
+/** True while documents are still served from the old members' site. */
+export const servedFromOldSite = LEGACY_BASE.includes('dlgc.org.uk');
+
+const rebased: Doc[] = importedDocuments.map((d) =>
+  d.href.startsWith('/legacy/')
+    ? { ...d, href: LEGACY_BASE + d.href.slice('/legacy'.length) }
+    : d
+);
+
+export const documents: Doc[] = [...curatedKept, ...rebased];
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
