@@ -371,21 +371,31 @@ function buildCollections(source: Doc[]): Collection[] {
 /** Every collection, across all tiers. */
 export const collections: Collection[] = buildCollections(documents);
 
-/** Collections whose documents are wholly or mostly historic. */
-export const archiveCollections: Collection[] = buildCollections(
-  documents.filter((d) => d.tier === 'archive')
+/**
+ * Collections shown on the Archive page: a run qualifies once it has at least
+ * COLLECTION_MIN historic documents in it.
+ *
+ * Note these are the FULL collections, not just their archive-tier members —
+ * a member looking for "Committee Meeting Minutes" wants the whole run,
+ * including this year's. This also keeps the count on the box identical to the
+ * number of rows on the page behind it; deriving them differently meant the box
+ * said 6 and the page listed 18.
+ */
+export const archiveCollections: Collection[] = collections.filter(
+  (c) => c.docs.filter((d) => d.tier === 'archive').length >= COLLECTION_MIN
 );
 
 export function getCollection(slug: string): Collection | undefined {
   return collections.find((c) => c.slug === slug);
 }
 
-/** Documents in a tier that are NOT part of a collection — shown as normal rows. */
+/**
+ * Documents in a tier that are NOT reachable through a collection shown on the
+ * Archive page — these get listed individually so nothing is hidden.
+ */
 export function looseDocs(tier: Doc['tier']): Doc[] {
-  const inCollection = new Set(
-    buildCollections(documents.filter((d) => d.tier === tier)).flatMap((c) => c.docs.map((d) => d.id))
-  );
-  return documents.filter((d) => d.tier === tier && !inCollection.has(d.id));
+  const shown = new Set(archiveCollections.flatMap((c) => c.docs.map((d) => d.id)));
+  return documents.filter((d) => d.tier === tier && !shown.has(d.id));
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────

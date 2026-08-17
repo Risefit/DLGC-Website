@@ -33,7 +33,13 @@ export default async function ArchivePage({
 
   const loose = searchDocs(looseDocs('archive'), q);
   const totalArchived = documents.filter((d) => d.tier === 'archive').length;
-  const inCollections = archiveCollections.reduce((n, c) => n + c.count, 0);
+  // Count only the ARCHIVED documents reachable via a collection. Summing
+  // c.count would include each collection's current-tier members and produce
+  // a number larger than the archive itself.
+  const archivedInCollections = archiveCollections.reduce(
+    (n, c) => n + c.docs.filter((d) => d.tier === 'archive').length,
+    0
+  );
 
   return (
     <>
@@ -51,9 +57,10 @@ export default async function ArchivePage({
             first. Documents that don&rsquo;t belong to a run are listed individually below.
           </p>
           <p>
-            {inCollections} of the {totalArchived} archived documents sit in{' '}
-            {archiveCollections.length} collections, which is why this page is short and the old
-            Links Library was not.
+            {archivedInCollections} of the {totalArchived} archived documents are reachable
+            through {archiveCollections.length} collections, which is why this page is short and
+            the old Links Library was not. Collections show the whole run, including this
+            season&rsquo;s, so the count on a box always matches the page behind it.
           </p>
         </Callout>
       </div>
