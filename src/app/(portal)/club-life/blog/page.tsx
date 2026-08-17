@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { PageHeader, Callout, ToMigrate } from '@/components/ui';
+import { PageHeader, Callout, ToMigrate, Section } from '@/components/ui';
+import SubmitForm from '@/components/SubmitForm';
+import { contacts } from '@/content/site';
 
 export const metadata = { title: 'Flying Blog' };
 
@@ -67,6 +69,20 @@ export default function BlogPage() {
           </article>
         ))}
       </div>
+
+      <Section
+        title="Write one"
+        description="The blog only keeps going if members send things in. Two paragraphs is plenty."
+      >
+        <SubmitForm
+          kind="blog"
+          heading="Send a flying story"
+          intro="Tell other members what the flying was like. The website editor reads everything and publishes it — nothing goes up automatically."
+          bodyLabel="Your story"
+          bodyPlaceholder="What the day was like, who flew, what the conditions did, anything that made it worth being there…"
+          editorEmail={contacts.office.email}
+        />
+      </Section>
 
       <div className="mt-8">
         <ToMigrate what="The full Flying Blog archive (home and away), including the soaring week write-ups from 2013 to 2024." />

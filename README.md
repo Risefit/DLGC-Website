@@ -130,6 +130,29 @@ old Links Library, which still listed withdrawn insurance advice and Covid-19 gu
 
 ---
 
+## Member submissions and the webcam
+
+Three server-side environment variables switch on optional features. All are **server-only**
+— do not prefix any of them `NEXT_PUBLIC_`, or their secrets would be shipped to the browser.
+
+| Variable | Enables | Where to get it |
+|---|---|---|
+| `SUPABASE_URL` | Blog and photo submissions | Same value as `NEXT_PUBLIC_SUPABASE_URL` |
+| `SUPABASE_SERVICE_ROLE_KEY` | ditto | Supabase → Settings → API → `service_role` |
+| `WEBCAM_SNAPSHOT_URL` | Live webcam on the Weather page | The camera's snapshot URL, credentials included |
+
+Submissions also need, in Supabase:
+
+- a table `submissions` with columns `kind`, `name`, `email`, `title`, `body`,
+  `image_path`, `status` (default `'pending'`), `created_at`
+- a private storage bucket named `submissions`
+
+The editor reviews pending items in the Supabase dashboard's Table Editor. Every feature
+degrades honestly when its variable is missing: the form tells the member to email the
+editor, and the webcam offers the met station page.
+
+---
+
 ## Project structure
 
 ```

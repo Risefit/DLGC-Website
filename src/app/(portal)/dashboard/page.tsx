@@ -4,6 +4,7 @@ import { AWAREIM_BASE } from '@/content/awareim';
 import { news } from '@/content/news';
 import { documents, isOverdue } from '@/content/documents';
 import { calendar } from '@/content/site';
+import { safetySpot, safetySpotIntro, charities } from '@/content/community';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -166,6 +167,55 @@ export default function Dashboard() {
                 <li key={e.what} className="px-5 py-3.5">
                   <p className="text-sm font-medium text-navy">{e.when}</p>
                   <p className="text-sm text-slate2">{e.what}</p>
+                </li>
+              ))}
+            </ul>
+          </Section>
+
+          {/* PRESERVED FROM THE OLD SITE: the right-hand Safety Spot panel, in full. */}
+          <Section title="The Safety Spot" description={safetySpotIntro}>
+            <ul className="card divide-y divide-skyLine overflow-hidden">
+              {safetySpot.map((l) => (
+                <li key={l.label}>
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block px-5 py-3.5 hover:bg-skyTint transition-colors ${
+                      l.strong ? 'border-l-4 border-bad' : ''
+                    }`}
+                  >
+                    <span className={`block font-medium ${l.strong ? 'text-bad' : 'text-navy'}`}>
+                      {l.label}
+                    </span>
+                    {l.sub && <span className="mt-0.5 block text-xs text-slate2">{l.sub}</span>}
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <Link href="/safety" className="link mt-3 inline-block text-sm">
+              Loads of other safety material
+            </Link>
+          </Section>
+
+          <Section
+            title="Charities we support"
+            description="Causes with a real connection to Camphill."
+          >
+            <ul className="card divide-y divide-skyLine overflow-hidden">
+              {charities.map((c) => (
+                <li key={c.name}>
+                  <a
+                    href={c.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-5 py-3.5 hover:bg-skyTint transition-colors"
+                  >
+                    <span className="block font-medium text-navy">{c.name}</span>
+                    <span className="mt-0.5 block text-xs text-slate2">{c.why}</span>
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
                 </li>
               ))}
             </ul>

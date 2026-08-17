@@ -18,6 +18,13 @@ export const club = {
    */
   weatherStation: 'https://dlgc.org.uk/members/metstation.html',
   /**
+   * The club's Davis weather station, via WeatherLink's public embeddable page
+   * — the same feed metstation.html frames. No credentials, so it can be shown
+   * inside the portal instead of bouncing members to the old site.
+   */
+  weatherStationEmbed:
+    'https://www.weatherlink.com/embeddablePage/show/8afbe67f6cb640b488cf7d1c06487900/wide',
+  /**
    * SECURITY: the old site's direct webcam URL embeds a shared username and
    * password in clear text over unencrypted HTTP. That must not be committed to
    * this repository, which is why this points at the met station page instead.

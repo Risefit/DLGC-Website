@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PageHeader, Section, Callout, Badge } from '@/components/ui';
 import { archiveCollections, looseDocs, searchDocs, documents } from '@/content/documents';
+import { archivedNews, currentNewsYear } from '@/content/news';
 
 export const metadata = { title: 'Archive' };
 
@@ -103,6 +104,28 @@ export default async function ArchivePage({
           <p className="text-sm text-slate2">No collections match that search.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* News is a collection too — it just lives in news.ts rather than
+                the document manifest, so it is added by hand here. */}
+            {archivedNews.length > 0 && (
+              <Link
+                href="/archive/news"
+                className="card flex flex-col p-5 hover:shadow-lift hover:border-sky transition-all"
+              >
+                <span className="flex items-start justify-between gap-2">
+                  <span className="text-lg font-semibold text-navy">News and Notices</span>
+                  <Badge tone="archive">before {currentNewsYear}</Badge>
+                </span>
+                <span className="mt-2 flex-1 text-sm text-slate2">
+                  {archivedNews.length} notices, with the photographs and documents each one linked to
+                </span>
+                <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
+                  Browse the collection
+                  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M5 3l5 5-5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </Link>
+            )}
             {cols.map((c) => (
               <Link
                 key={c.slug}

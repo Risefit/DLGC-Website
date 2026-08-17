@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import { previewOpen } from '@/lib/auth';
 import { contacts, club } from '@/content/site';
+import SocialButtons from '@/components/SocialButtons';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +34,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             Emergency Procedures
           </Link>
 
-          <div className="grid gap-8 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 text-sm sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <h2 className="mb-2 text-base">Contact the club</h2>
               <p className="text-slate2">
@@ -77,6 +78,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                 <li><Link href="/directory" className="link">Who&rsquo;s who</Link></li>
               </ul>
             </div>
+
+            <SocialButtons />
 
             <div>
               <h2 className="mb-2 text-base">Elsewhere</h2>

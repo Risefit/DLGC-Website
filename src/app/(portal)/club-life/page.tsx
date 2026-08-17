@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PageHeader, Section, ActionTile, icons, ToMigrate } from '@/components/ui';
+import { PageHeader, Section, ActionTile, icons } from '@/components/ui';
 import { news } from '@/content/news';
 import { club } from '@/content/site';
 
@@ -62,11 +62,20 @@ export default function ClubLifePage() {
       </Section>
 
       <Section title="Photographs">
-        <ToMigrate what="All photo galleries from the old site — first solos, aerial shots, vintage rallies, club events and new winch drivers. Several hundred images across many gallery pages." />
-        <p className="mt-3 text-sm text-slate2">
-          Once imported these will live in{' '}
-          <Link href="/archive" className="link">the Archive</Link>, browsable by year and event.
-        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ActionTile
+            href="/gallery"
+            label="Photo Gallery"
+            hint="888 photographs across 54 albums"
+            icon={icons.archive}
+          />
+          <ActionTile
+            href="/gallery#send-us-your-best"
+            label="Send us a photograph"
+            hint="Your best shots, for the gallery"
+            icon={icons.people}
+          />
+        </div>
       </Section>
     </>
   );

@@ -12,6 +12,7 @@ const NAV = [
   { href: '/safety', label: 'Safety' },
   { href: '/documents', label: 'Documents' },
   { href: '/club-life', label: 'Club Life' },
+  { href: '/gallery', label: 'Gallery' },
   { href: '/archive', label: 'Archive' },
   { href: '/directory', label: 'Directory' },
 ];

@@ -40,6 +40,13 @@ data in its own authenticated database. **This portal links to it and does nothi
 ### Add a news item
 Edit `src/content/news.ts`. Add to the **top** of the `news` array.
 
+The year split is automatic: the News page shows everything from 1 January of the newest
+item's year, and older items appear on `/archive/news`. Nothing to move by hand.
+
+Use `links` for anything the notice points at — a first-solo photograph, minutes, a notice.
+Give each a **descriptive label**; the old site wrote every one as "this link", which told a
+member nothing (WCAG 2.4.4). They render as bold buttons under the story.
+
 Keep the house style — it is the best thing the old site had, and it is deliberate:
 - Always include `displayDate` written as the club writes it ("Thursday 13th August 2026")
 - Always include `from` when someone contributed it ("From Dave Salmon")
@@ -64,6 +71,26 @@ Club history is not recoverable once deleted; storage is free.
 
 ### Change fees, calendar, weather links, roles
 All in `src/content/site.ts`.
+
+### Change social channels, the Safety Spot, or the charities
+All in `src/content/community.ts`.
+- **Social:** set a channel's `href` to go live. `href: null` renders a greyed-out
+  placeholder rather than a dead link — that is how Instagram, TikTok and X currently show.
+- **Safety Spot:** the panel from the old site's home page, kept in full. `strong: true`
+  gives an entry the red left border (Safe Start and Crash/Emergency have it).
+- **Charities:** name, link and one line on why the club supports it.
+
+### Member submissions (flying blog stories, gallery photos)
+Members submit via forms on `/club-life/blog` and `/gallery`. **Nothing publishes
+automatically** — everything lands in the Supabase `submissions` table with status
+`pending`, and the editor reviews it in the Supabase dashboard (Table Editor).
+
+That gate is deliberate. The club's news voice is the best thing about the old site, and
+an open publish button would lose it.
+
+Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
+email the editor instead — it never fails silently.
 
 ### Change colours, spacing, type
 `tailwind.config.ts` holds every design token. Do not introduce new colours ad hoc.
@@ -154,7 +181,11 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 ## Still to do
 
 - [ ] Import the mirrored files from the old site (`scripts/import-mirror.mjs` — see README)
-- [ ] Safety Officer to verify the wording on `/safety/emergency` before go-live
+- [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
+      from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone
+      numbers in the source have irregular digit counts. They are reproduced exactly as
+      published and flagged "number needs checking" rather than guessed at. This is the one
+      page where being wrong could matter.
 - [ ] Set `NEXT_PUBLIC_PREVIEW_OPEN=false` in Vercel once member accounts exist
 - [ ] **Transfer Supabase / Vercel / GitHub to club-owned accounts before handover** (see above)
 - [ ] Convert duty rotas from quarterly PDFs into a real roster view

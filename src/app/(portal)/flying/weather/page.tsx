@@ -20,26 +20,27 @@ export default function WeatherPage() {
       />
 
       <div className="mb-8 grid gap-4 lg:grid-cols-2">
-        <a
-          href={club.weatherStation}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card flex items-center gap-4 p-6 hover:shadow-lift hover:border-sky transition-all"
-        >
-          <span aria-hidden="true" className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-skyTint text-sky">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <path d="M6 17a4 4 0 010-8 5.5 5.5 0 0110.6-1.3A3.8 3.8 0 0119 17H6z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span>
-            <span className="block text-xl font-semibold text-navy">Camphill Weather Station</span>
-            <span className="block text-sm text-slate2">
-              Current observations plus wind average speeds for the past 24 hours
-            </span>
-          </span>
-        </a>
+        <div className="card overflow-hidden lg:col-span-2">
+          <iframe
+            src={club.weatherStationEmbed}
+            title="Camphill weather station — live observations"
+            className="block h-[420px] w-full border-0"
+            loading="lazy"
+          />
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-skyLine px-5 py-3">
+            <span className="font-medium text-navy">Camphill Weather Station — live</span>
+            <a
+              href={club.weatherStation}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link text-sm"
+            >
+              Open the full station page
+            </a>
+          </div>
+        </div>
 
-        <Webcam fallbackHref={club.webcam} />
+<Webcam fallbackHref={club.webcam} />
       </div>
 
       <div className="mb-8">
