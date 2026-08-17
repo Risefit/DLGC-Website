@@ -1,5 +1,6 @@
 import { PageHeader, Section, Callout } from '@/components/ui';
 import { weatherGroups, club } from '@/content/site';
+import Webcam from '@/components/Webcam';
 
 export const metadata = { title: 'Weather' };
 
@@ -38,23 +39,7 @@ export default function WeatherPage() {
           </span>
         </a>
 
-        <a
-          href={club.webcam}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card flex items-center gap-4 p-6 hover:shadow-lift hover:border-sky transition-all"
-        >
-          <span aria-hidden="true" className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-skyTint text-sky">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
-              <path d="M16 10l6-3v10l-6-3z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span>
-            <span className="block text-xl font-semibold text-navy">Camphill Webcam</span>
-            <span className="block text-sm text-slate2">View looking north across the front of the hangar</span>
-          </span>
-        </a>
+        <Webcam fallbackHref={club.webcam} />
       </div>
 
       <div className="mb-8">

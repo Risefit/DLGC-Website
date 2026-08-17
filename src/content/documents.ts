@@ -78,6 +78,12 @@ export type Doc = {
   format?: 'PDF' | 'Page' | 'Link' | 'Video';
   /** File size in bytes — shown to warn members on mobile data before a big download. */
   bytes?: number;
+  /**
+   * Groups documents belonging to a run (AGM minutes, newsletters, …). Any
+   * series with more than two documents becomes a collection on the Archive
+   * page with its own browsable listing, instead of 56 rows in a flat list.
+   */
+  series?: string;
 };
 
 const OLD = 'https://www.dlgc.org.uk/members';
@@ -263,17 +269,6 @@ const curated: Doc[] = [
   { id: 'ar-other-gc', title: 'Incident Reports at Another Gliding Club', category: 'Safety', tier: 'archive', audience: ['All members'], href: `${OLD}/safety_page.asp`, note: 'An excellent example of learning from mistakes.', format: 'PDF' },
 ];
 
-/** Bulk collections that live as their own browsable sets rather than single rows. */
-export const archiveCollections = [
-  { id: 'agm', title: 'AGM Documents', note: 'Minutes, annual club reports, annual accounts and scrutineer’s statements.', span: '2003 – 2026', count: '20+ years', href: `${OLD}/AGM/` },
-  { id: 'committee', title: 'Committee Meeting Minutes', note: 'Every published set of committee minutes, including recognitions of member contributions.', span: '2003 – 2026', count: '200+ documents', href: `${OLD}/minutes/comminutes.asp` },
-  { id: 'instructors', title: 'Instructors Meeting Minutes', note: 'Minutes of instructor meetings.', span: '2005 – 2026', count: 'Full series', href: `${OLD}/instrct-mtgs/` },
-  { id: 'newsletters', title: 'Camphill Newsletters', note: 'The club newsletter, complete run.', span: '2004 – present', count: 'Full series', href: `${OLD}/newsletters/` },
-  { id: 'galleries', title: 'Photo Galleries', note: 'First solos, aerial shots, vintage rallies, club events, new winch drivers.', span: 'Historic – present', count: 'Many hundreds of images', href: `${OLD}/galleries/` },
-  { id: 'blog-archive', title: 'Flying Blog — earlier entries', note: 'Reports of flying days written by members. Preserved in full, including the soaring week write-ups.', span: '2013 – 2024', count: 'Full archive', href: `${OLD}/flyblog.asp` },
-  { id: 'trophies', title: 'Trophy Winners', note: 'Historic record of club trophy winners.', span: 'Historic', count: 'Full record', href: `${OLD}/` },
-  { id: 'icl', title: 'Inter-Club League results', note: 'Past seasons of the Inter-Club League.', span: 'Historic', count: 'Full record', href: `${OLD}/i-clb-lg-2026.asp` },
-];
 
 // ── the full library ───────────────────────────────────────────────────────
 /**
@@ -321,6 +316,77 @@ const rebased: Doc[] = importedDocuments.map((d) =>
 );
 
 export const documents: Doc[] = [...curatedKept, ...rebased];
+
+/**
+ * Collections are DERIVED, not hand-listed — so adding documents to a series
+ * grows its collection automatically and nothing has to be maintained twice.
+ * Threshold is 3: two documents of a kind stay as ordinary rows.
+ */
+export const COLLECTION_MIN = 3;
+
+export type Collection = {
+  slug: string;
+  title: string;
+  docs: Doc[];
+  count: number;
+  span: string;
+  totalBytes: number;
+};
+
+export function collectionSlug(series: string): string {
+  return series.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function buildCollections(source: Doc[]): Collection[] {
+  const bySeries = new Map<string, Doc[]>();
+  for (const d of source) {
+    if (!d.series) continue;
+    if (!bySeries.has(d.series)) bySeries.set(d.series, []);
+    bySeries.get(d.series)!.push(d);
+  }
+  const out: Collection[] = [];
+  for (const [series, list] of bySeries) {
+    if (list.length < COLLECTION_MIN) continue;
+    const years = list.map((d) => Number(d.version)).filter((y) => Number.isFinite(y) && y > 1900);
+    const span = years.length
+      ? (Math.min(...years) === Math.max(...years)
+          ? `${Math.min(...years)}`
+          : `${Math.min(...years)} – ${Math.max(...years)}`)
+      : '';
+    out.push({
+      slug: collectionSlug(series),
+      title: series,
+      // newest first, then alphabetical — the order a member expects
+      docs: [...list].sort(
+        (a, b) => Number(b.version ?? 0) - Number(a.version ?? 0) || a.title.localeCompare(b.title)
+      ),
+      count: list.length,
+      span,
+      totalBytes: list.reduce((n, d) => n + ((d as { bytes?: number }).bytes ?? 0), 0),
+    });
+  }
+  return out.sort((a, b) => b.count - a.count);
+}
+
+/** Every collection, across all tiers. */
+export const collections: Collection[] = buildCollections(documents);
+
+/** Collections whose documents are wholly or mostly historic. */
+export const archiveCollections: Collection[] = buildCollections(
+  documents.filter((d) => d.tier === 'archive')
+);
+
+export function getCollection(slug: string): Collection | undefined {
+  return collections.find((c) => c.slug === slug);
+}
+
+/** Documents in a tier that are NOT part of a collection — shown as normal rows. */
+export function looseDocs(tier: Doc['tier']): Doc[] {
+  const inCollection = new Set(
+    buildCollections(documents.filter((d) => d.tier === tier)).flatMap((c) => c.docs.map((d) => d.id))
+  );
+  return documents.filter((d) => d.tier === tier && !inCollection.has(d.id));
+}
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
