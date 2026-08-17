@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* 18px base — this membership skews older. Do not reduce. */
+    font-size: 18px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cloud text-ink antialiased;
+  }
+
+  /* Visible focus everywhere. WCAG 2.4.7 — the old site had none. */
+  *:focus-visible {
+    outline: 3px solid #1F6FA8;
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    @apply text-navy font-semibold tracking-tight;
+    text-wrap: balance;
+  }
+
+  /* Never let a long URL or table force horizontal scroll. WCAG 1.4.10 */
+  img, table { max-width: 100%; }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-skyLine rounded-card shadow-card;
+  }
+
+  .link {
+    @apply text-sky underline decoration-skyLine decoration-2 underline-offset-2
+           hover:text-skyDark hover:decoration-sky transition-colors;
+  }
+
+  /* Minimum 44x44 touch target (WCAG 2.5.8) — in practice much larger. */
+  .tap {
+    @apply min-h-[44px] inline-flex items-center;
+  }
+
+  .prose-club {
+    @apply max-w-prose2 leading-relaxed;
+  }
+  .prose-club p { @apply mb-4; }
+  .prose-club a { @apply link; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+}
