@@ -32,6 +32,10 @@
 @layer components {
   .card {
     @apply bg-white border border-skyLine rounded-card shadow-card;
+    /* Document titles come from the old site's filenames and include tokens
+       like "DLGC SportDvlpmntPlanApril2013.revD2013" with no break opportunity.
+       Without this they push the page sideways on a phone. */
+    overflow-wrap: break-word;
   }
 
   .link {
@@ -46,6 +50,9 @@
 
   .prose-club {
     @apply max-w-prose2 leading-relaxed;
+    /* Old notices quote bare URLs inline. Without this one line they push the
+       whole page sideways on a phone, which rule 2 of CLAUDE.md forbids. */
+    overflow-wrap: anywhere;
   }
   .prose-club p { @apply mb-4; }
   .prose-club a { @apply link; }

@@ -172,55 +172,6 @@ export default function Dashboard() {
             </ul>
           </Section>
 
-          {/* PRESERVED FROM THE OLD SITE: the right-hand Safety Spot panel, in full. */}
-          <Section title="The Safety Spot" description={safetySpotIntro}>
-            <ul className="card divide-y divide-skyLine overflow-hidden">
-              {safetySpot.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block px-5 py-3.5 hover:bg-skyTint transition-colors ${
-                      l.strong ? 'border-l-4 border-bad' : ''
-                    }`}
-                  >
-                    <span className={`block font-medium ${l.strong ? 'text-bad' : 'text-navy'}`}>
-                      {l.label}
-                    </span>
-                    {l.sub && <span className="mt-0.5 block text-xs text-slate2">{l.sub}</span>}
-                    <span className="sr-only">(opens in a new tab)</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <Link href="/safety" className="link mt-3 inline-block text-sm">
-              Loads of other safety material
-            </Link>
-          </Section>
-
-          <Section
-            title="Charities we support"
-            description="Causes with a real connection to Camphill."
-          >
-            <ul className="card divide-y divide-skyLine overflow-hidden">
-              {charities.map((c) => (
-                <li key={c.name}>
-                  <a
-                    href={c.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block px-5 py-3.5 hover:bg-skyTint transition-colors"
-                  >
-                    <span className="block font-medium text-navy">{c.name}</span>
-                    <span className="mt-0.5 block text-xs text-slate2">{c.why}</span>
-                    <span className="sr-only">(opens in a new tab)</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </Section>
-
           {overdue.length > 0 && (
             <Section title="Housekeeping" description="Visible to all members deliberately — it keeps the library honest.">
               <Callout tone="warn">
@@ -235,29 +186,88 @@ export default function Dashboard() {
             </Section>
           )}
 
-          <Section title="Looking for something?">
-            <div className="card p-5">
-              <p className="mb-3 text-sm text-slate2">
-                Search every manual, policy, set of minutes and notice the club holds — including
-                the full archive.
-              </p>
-              <Link
-                href="/documents"
-                className="tap gap-2 rounded-lg bg-sky px-5 py-3 font-medium text-white hover:bg-skyDark transition-colors"
-              >
-                <span aria-hidden="true">{icons.search}</span>
-                Search documents
-              </Link>
-              <p className="mt-3 text-xs text-slate2">
-                Knew the old site well?{' '}
-                <Link href="/find-it" className="link">The old A–Z still works</Link>.
-              </p>
-            </div>
-          </Section>
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-slate2">
+      {/* ── Safety Spot: full width, red-edged, unmistakably its own thing ── */}
+      <section aria-labelledby="safety-spot-h" className="mt-10">
+        <div className="overflow-hidden rounded-card border-2 border-bad/60 bg-badTint/40 shadow-card">
+          <div className="border-b-2 border-bad/40 bg-bad/10 px-6 py-4">
+            <h2 id="safety-spot-h" className="text-2xl text-bad">The Safety Spot</h2>
+            <p className="mt-1 text-sm text-ink/80">{safetySpotIntro}</p>
+          </div>
+          <ul className="grid gap-px bg-bad/15 sm:grid-cols-2 lg:grid-cols-3">
+            {safetySpot.map((l) => (
+              <li key={l.label} className="bg-white">
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-full flex-col px-5 py-4 hover:bg-badTint transition-colors"
+                >
+                  <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>
+                    {l.label}
+                  </span>
+                  {l.sub && <span className="mt-1 text-sm text-slate2">{l.sub}</span>}
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="border-t-2 border-bad/40 bg-bad/5 px-6 py-3">
+            <Link href="/safety" className="link font-medium">
+              Loads of other safety material
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Two balanced columns beneath the Safety Spot ─────────────────── */}
+      <div className="mt-10 grid gap-6 lg:grid-cols-2">
+        <Section title="Looking for something?">
+          <div className="card p-5">
+            <p className="mb-3 text-sm text-slate2">
+              Search every manual, policy, set of minutes and notice the club holds — including
+              the full archive.
+            </p>
+            <Link
+              href="/documents"
+              className="tap gap-2 rounded-lg bg-sky px-5 py-3 font-medium text-white hover:bg-skyDark transition-colors"
+            >
+              <span aria-hidden="true">{icons.search}</span>
+              Search documents
+            </Link>
+            <p className="mt-3 text-xs text-slate2">
+              Knew the old site well?{' '}
+              <Link href="/find-it" className="link">The old A–Z still works</Link>.
+            </p>
+          </div>
+        </Section>
+
+        <Section
+          title="Charities we support"
+          description="Causes with a real connection to Camphill."
+        >
+          <ul className="card divide-y divide-skyLine overflow-hidden">
+            {charities.map((c) => (
+              <li key={c.name}>
+                <a
+                  href={c.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-5 py-4 hover:bg-skyTint transition-colors"
+                >
+                  <span className="block font-semibold text-navy">{c.name}</span>
+                  <span className="mt-0.5 block text-sm text-slate2">{c.why}</span>
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      </div>
+
+      <p className="mt-8 text-xs text-slate2">
         <Badge tone="live">Live</Badge> changes within a season ·{' '}
         <Badge tone="reference">Reference</Badge> current, consult when needed ·{' '}
         <Badge tone="archive">Archive</Badge> historic, kept forever

@@ -1,6 +1,7 @@
 import { PageHeader, Callout } from '@/components/ui';
 import { contacts } from '@/content/site';
 import { procedures, hospitals, emergencyContacts, RED_BOX } from '@/content/emergency';
+import ProcedureAccordion from '@/components/ProcedureAccordion';
 
 export const metadata = { title: 'Emergency Procedures' };
 
@@ -62,73 +63,13 @@ export default function EmergencyPage() {
         </Callout>
       </div>
 
-      {/* Which situation? */}
-      <nav aria-label="Choose the situation" className="mb-10">
-        <h2 className="mb-3 text-2xl">Which situation?</h2>
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {procedures.map((p) => (
-            <li key={p.slug}>
-              <a
-                href={`#${p.slug}`}
-                className="card flex h-full items-center gap-3 p-5 hover:border-sky hover:shadow-lift transition-all"
-              >
-                <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-badTint text-bad">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3l9.5 17H2.5L12 3z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                    <path d="M12 9v5M12 17.2v.1" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                  </svg>
-                </span>
-                <span className="font-semibold text-navy">{p.when}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {procedures.map((p) => (
-        <section key={p.slug} id={p.slug} className="mb-10 scroll-mt-24">
-          <h2 className="mb-1 text-2xl">{p.title}</h2>
-          <p className="mb-4 text-sm text-slate2">
-            {p.revised && `Revised ${p.revised}. `}
-            <a href={p.source} target="_blank" rel="noopener noreferrer" className="link">
-              Original procedure on the old site
-            </a>
-          </p>
-
-          {p.intro && <p className="prose-club mb-4">{p.intro}</p>}
-
-          <ol className="card divide-y divide-skyLine overflow-hidden">
-            {p.steps.map((s, i) => (
-              <li key={i} className={`flex gap-4 px-5 py-4 ${s.emphasis ? 'bg-badTint' : ''}`}>
-                <span
-                  aria-hidden="true"
-                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-semibold ${
-                    s.emphasis ? 'bg-bad text-white' : 'bg-skyTint text-navy'
-                  }`}
-                >
-                  {i + 1}
-                </span>
-                <span>
-                  <span className={`block ${s.emphasis ? 'font-semibold text-bad' : 'text-ink'}`}>
-                    {s.text}
-                  </span>
-                  {s.detail && <span className="mt-0.5 block text-sm text-slate2">{s.detail}</span>}
-                </span>
-              </li>
-            ))}
-          </ol>
-
-          {p.after && (
-            <div className="mt-4 space-y-3">
-              {p.after.map((a, i) => (
-                <p key={i} className="rounded-card border-l-4 border-warn bg-warnTint px-5 py-3 text-sm">
-                  {a}
-                </p>
-              ))}
-            </div>
-          )}
-        </section>
-      ))}
+      <section aria-labelledby="situations-h" className="mb-10">
+        <h2 id="situations-h" className="mb-1 text-2xl">Which situation?</h2>
+        <p className="mb-4 text-sm text-slate2">
+          Open one procedure at a time, so it is always clear where it starts and ends.
+        </p>
+        <ProcedureAccordion procedures={procedures} />
+      </section>
 
       <section className="mb-10">
         <h2 className="mb-3 text-2xl">Hospitals</h2>

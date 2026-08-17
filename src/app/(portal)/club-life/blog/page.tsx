@@ -39,6 +39,22 @@ export default function BlogPage() {
         lead="Members' reports of flying days at Camphill. Any length is welcome — most contributors write the story of the day in 200 words or so."
       />
 
+      <div className="mb-8 rounded-card border-2 border-sky bg-skyTint px-5 py-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
+        <p className="font-medium text-navy">
+          Flown something worth telling people about?
+        </p>
+        <a
+          href="#write-one"
+          className="tap mt-3 gap-2 rounded-lg bg-sky px-5 py-3 font-semibold text-white
+                     hover:bg-skyDark transition-colors sm:mt-0 sm:shrink-0"
+        >
+          Write a story
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 4v14m0 0l-5-5m5 5l5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      </div>
+
       <div className="mb-8 grid gap-4 lg:grid-cols-2">
         <Callout tone="info" title="Write one">
           <p>
@@ -70,6 +86,7 @@ export default function BlogPage() {
         ))}
       </div>
 
+      <div id="write-one" className="scroll-mt-24" />
       <Section
         title="Write one"
         description="The blog only keeps going if members send things in. Two paragraphs is plenty."

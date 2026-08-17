@@ -41,7 +41,13 @@ data in its own authenticated database. **This portal links to it and does nothi
 Edit `src/content/news.ts`. Add to the **top** of the `news` array.
 
 The year split is automatic: the News page shows everything from 1 January of the newest
-item's year, and older items appear on `/archive/news`. Nothing to move by hand.
+item's year, and older items get a page per year under `/archive/news`. Nothing to move
+by hand — it is derived from the date.
+
+`src/content/news.ts` was generated once by `tools/parse-news.mjs` from the wget mirror of
+the old `default.asp`, which held all 673 notices back to 2016 in one column. **Hand edits
+are fine and expected from here on** — the generator is kept for reference and would
+overwrite them if re-run.
 
 Use `links` for anything the notice points at — a first-solo photograph, minutes, a notice.
 Give each a **descriptive label**; the old site wrote every one as "this link", which told a
@@ -106,7 +112,9 @@ These come from the audit of the old site. Each one fixes a specific, observed f
 1. **No hover-only behaviour.** The old site's navigation used hover tooltips and was
    undecipherable on a phone. Menus open on click.
 2. **Never a horizontal scrollbar.** The old site was fixed-width ~1300px. Test at 390px wide.
-   Wide tables scroll inside their own container, not the page.
+   Wide tables scroll inside their own container, not the page. `.card` and `.prose-club` in
+   `globals.css` carry `overflow-wrap` rules because old document filenames and inline URLs
+   have no break opportunity — do not remove them.
 3. **Link text must describe its destination.** No "click here", no "this link". The old
    Safety page used "this link" about twenty times.
 4. **Never rely on colour alone.** The flying card system is White/Red/Yellow/Green — always
