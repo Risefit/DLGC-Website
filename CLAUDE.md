@@ -114,6 +114,57 @@ Club history is not recoverable once deleted; storage is free.
 ### Change fees, calendar, weather links, roles
 All in `src/content/site.ts`.
 
+**Weather links must stay location-specific.** `weatherGroups` holds the club's own curated
+deep links — Bretton Youth Hostel rather than "Met Office", Abney rather than "Meteoblue".
+An earlier version replaced several with homepages, which is why forecasts opened on the
+wrong part of the country. Verified against the live sites in August 2026; MetCheck had
+retired its per-crag link and Netweather its lightning page, and both were dealt with rather
+than left to rot. A forecast for the wrong area is worse than no link.
+
+### Add or change a Club Life page
+`src/content/club-life.ts`. One entry per page — Vintage Rally, Silver Seekers, Junior
+Gliding, BGA Ladder, Blake Robertshaw, Inter-Club League, Trophies, Newsletters. Each has
+prose sections and link grids, and renders at `/club-life/<slug>` automatically.
+
+These were rebuilt from the old site's own pages. **Keep the writing.** The reason the first
+version of this portal was wrong is that it replaced them with a document search, which
+loses the member who explains what the Ladder is for. Prose first, links beside it.
+
+### Flying cards
+`src/content/flying-cards.ts` — White, Red, Yellow, Green and Blue, transcribed from the
+club's summary card and the Blue card PDF. **SAFETY-CRITICAL, and the CFI owns it.** Do not
+reword to read better. The printed card a member carries is what counts.
+
+### Manuals
+`src/content/manuals.ts`, ported from `manuals_webpage.asp`, in the club's own three groups.
+Keep the flight-manual caveat — it is the club's wording and it matters.
+
+### Buy and Sell
+`src/content/adverts.ts`. Approved adverts go in the `adverts` array; the six-month expiry
+is derived from `placed`, so a stale advert flags itself. New adverts arrive as
+`kind: 'advert'` in the Supabase `submissions` table.
+
+Publish an advertiser's phone number ONLY if they put it in the "to publish" fields
+themselves, and take it out when the advert expires (CLAUDE rule 6).
+
+### Safety Lessons Log
+`src/content/safety-log.ts` — 422 entries from 2003, generated once by
+`tools/parse-safety-log.mjs` from both volumes on the old site. The page shows five years at
+a time with a Show more button and a search box that covers the whole log.
+
+### Safety occurrence reports
+`src/components/SafetyReportForm.tsx` on `/safety`. Reports go to the Safety Officer, never
+the website editor, and are never published from the form.
+
+**Anonymous means anonymous.** Choosing it removes the name and email fields, and the API
+stores nulls. Do not add IP logging, fingerprinting or anything else that could identify a
+reporter — the club's reporting culture, and therefore the Safety Lessons Log, depends on
+that being true in practice.
+
+To email reports on as well as storing them, set `SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY`
+and `MAIL_FROM` in Vercel. Without them the report is still stored, and the member is still
+told it arrived — it never fails silently.
+
 ### Change social channels, the Safety Spot, or the charities
 All in `src/content/community.ts`.
 - **Social:** set a channel's `href` to go live. `href: null` renders a greyed-out
@@ -234,5 +285,9 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] **Transfer Supabase / Vercel / GitHub to club-owned accounts before handover** (see above)
 - [ ] Convert duty rotas from quarterly PDFs into a real roster view
 - [ ] Photo galleries — import and lay out
+- [ ] Run `supabase/migrations/002_submission_details.sql` in the Supabase SQL editor —
+      adverts and safety reports need the `details` column
+- [ ] Decide whether safety reports should also arrive by email (see Safety occurrence
+      reports above) and set the three variables if so
 - [ ] Restart the Flying Blog (last entry November 2024)
 - [ ] Decide who owns each document category and set real `reviewDue` dates

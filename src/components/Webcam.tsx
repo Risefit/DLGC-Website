@@ -14,9 +14,13 @@ import { useEffect, useState } from 'react';
 export default function Webcam({
   refreshSeconds = 30,
   fallbackHref,
+  /** Height of the picture area. Set to match a neighbouring panel so the two
+   *  line up on the same row instead of one hanging below the other. */
+  mediaClassName = '',
 }: {
   refreshSeconds?: number;
   fallbackHref: string;
+  mediaClassName?: string;
 }) {
   const [stamp, setStamp] = useState(0);
   const [failed, setFailed] = useState(false);
@@ -31,7 +35,7 @@ export default function Webcam({
 
   if (failed) {
     return (
-      <div className="card p-6">
+      <div className="card flex flex-col justify-center p-6">
         <h3 className="text-lg">Camphill Webcam</h3>
         <p className="mt-2 text-sm text-slate2">
           The camera isn&rsquo;t reachable from the portal yet. It still works on the old site.
@@ -50,14 +54,14 @@ export default function Webcam({
   }
 
   return (
-    <figure className="card overflow-hidden">
-      <div className="relative bg-ink/5">
+    <figure className="card flex flex-col overflow-hidden">
+      <div className={`relative flex-1 bg-ink/5 ${mediaClassName}`}>
         {stamp > 0 && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={`/api/webcam?t=${stamp}`}
             alt="Live view from the Camphill webcam, looking north across the front of the hangar"
-            className="block w-full"
+            className="block h-full w-full object-cover"
             onError={() => setFailed(true)}
             onLoad={() =>
               setUpdated(

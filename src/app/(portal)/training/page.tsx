@@ -1,17 +1,10 @@
 import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
+import { flyingCards, flyingCardSummary, redCardTheoryTest } from '@/content/flying-cards';
+import FlyingCardPanel from '@/components/FlyingCardPanel';
 
 export const metadata = { title: 'Training' };
-
-/** The flying card system governs what you may fly and in what conditions.
- *  WCAG 1.4.1: never rely on the colour alone — always pair it with text. */
-const CARDS = [
-  { colour: 'White', swatch: 'bg-white border-2 border-skyLine', text: 'text-navy', meaning: 'Pre-solo and early solo. Tightest limits, closest supervision.' },
-  { colour: 'Red', swatch: 'bg-bad', text: 'text-white', meaning: 'Consolidating solo flying under defined conditions.' },
-  { colour: 'Yellow', swatch: 'bg-[#E0A800]', text: 'text-ink', meaning: 'Wider privileges as experience builds.' },
-  { colour: 'Green', swatch: 'bg-good', text: 'text-white', meaning: 'Most experienced club pilots, widest privileges.' },
-];
 
 export default function TrainingPage() {
   const flight = documents.filter((d) => d.category === 'Flight Training');
@@ -57,30 +50,46 @@ export default function TrainingPage() {
       </Section>
 
       <Section
-        title="Flying cards"
-        description="Your card colour determines what you may fly and in what conditions. Always check the current summary — the rules change."
+        title="The flying card system"
+        description="Your card colour decides what you may fly and in what conditions. Open a card to see what it takes to hold it, and what it lets you do."
       >
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {CARDS.map((c) => (
-            <div key={c.colour} className="card overflow-hidden">
-              <div className={`${c.swatch} ${c.text} px-4 py-3 font-semibold`}>{c.colour} Card</div>
-              <p className="p-4 text-sm text-slate2">{c.meaning}</p>
-            </div>
-          ))}
+        <FlyingCardPanel cards={flyingCards} />
+
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          <a
+            href={flyingCardSummary.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+          >
+            <span className="font-semibold text-navy">All four cards on one page</span>
+            <span className="mt-1 text-sm text-slate2">
+              The club&rsquo;s summary card — White, Red, Yellow and Green side by side, as the CFI
+              publishes it. This is the authoritative version.
+            </span>
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+          <a
+            href={redCardTheoryTest.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+          >
+            <span className="font-semibold text-navy">Red Card Theory Test</span>
+            <span className="mt-1 text-sm text-slate2">
+              One of the requirements to move to the Yellow card. Talk to any instructor when you
+              are ready to sit it.
+            </span>
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
         </div>
+
         <div className="mt-4">
           <Callout tone="info">
             <p>
-              The summaries above are a plain-English orientation only. The authoritative document is{' '}
-              <a
-                href={documents.find((d) => d.id === 'flying-cards')?.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link"
-              >
-                Flying Cards — all colours explained
-              </a>
-              , maintained by the CFI. Where the two differ, the CFI&rsquo;s document wins.
+              The wording above is transcribed from the club&rsquo;s own cards. The CFI owns this
+              system and the printed card you carry is what counts — where the two differ, the card
+              wins. Tell the CFI if you spot a difference.
             </p>
           </Callout>
         </div>

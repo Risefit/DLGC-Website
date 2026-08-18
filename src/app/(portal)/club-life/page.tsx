@@ -1,72 +1,69 @@
 import Link from 'next/link';
 import { PageHeader, Section, ActionTile, icons } from '@/components/ui';
 import { news } from '@/content/news';
-import { club } from '@/content/site';
+import { clubPages, clubPageGroups } from '@/content/club-life';
+import { adverts } from '@/content/adverts';
 
 export const metadata = { title: 'Club Life' };
 
+/**
+ * The index. Each card goes to a real page with the club's own writing on it,
+ * not to a document search — that was the complaint about the first version and
+ * it was a fair one.
+ */
 export default function ClubLifePage() {
   return (
     <>
       <PageHeader
         eyebrow="More than flying"
         title="Club Life"
-        lead="News, flying reports, the calendar, galleries, trophies and everything else that makes Camphill a club rather than an airfield."
+        lead="News, flying reports, the calendar, competitions, the vintage rally and everything else that makes Camphill a club rather than an airfield."
       />
 
-      <Section title="Read">
+      <Section title="What is happening">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionTile href="/club-life/news" label="News and Notices" hint={`${news.length} recent items`} icon={icons.book} />
+          <ActionTile href="/club-life/news" label="News and Notices" hint={`${news.length} notices, 2016 to date`} icon={icons.book} />
           <ActionTile href="/club-life/blog" label="Flying Blog" hint="Reports of flying days" icon={icons.plane} />
           <ActionTile href="/calendar" label="Calendar" hint="Courses, meetings, events" icon={icons.calendar} />
-          <ActionTile href="/archive?q=newsletter" label="Newsletters" hint="Camphill Newsletter, 2004 on" icon={icons.archive} />
+          <ActionTile href="/buy-and-sell" label="Buy and Sell" hint={`${adverts.length} member adverts`} icon={icons.people} />
         </div>
       </Section>
 
-      <Section title="Competition and achievement">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionTile href={club.bgaLadder} external label="BGA Ladder" hint="National cross-country ladder" icon={icons.plane} />
-          <ActionTile href="/archive?q=inter-club" label="Inter-Club League" hint="Results and past seasons" icon={icons.people} />
-          <ActionTile href="/archive?q=trophies" label="Trophy Winners" hint="Historic record" icon={icons.archive} />
-          <ActionTile href="/documents?q=blake" label="Blake-Robertshaw Trophy" hint="Briefing and turnpoint photos" icon={icons.book} />
-        </div>
-      </Section>
-
-      <Section title="Groups and events">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <ActionTile href="/archive?q=vintage" label="Vintage Rally" hint="The club's flagship vintage event" icon={icons.plane} />
-          <ActionTile href="/documents?q=junior" label="Junior Gliding" hint="For younger members" icon={icons.people} />
-          <ActionTile href="/documents?q=silver" label="Silver Seekers" hint="Working towards Silver" icon={icons.graduation} />
-        </div>
-      </Section>
-
-      <Section
-        title="Members' classifieds"
-        description="Anything to sell or hire? Seeking something to buy? Something to give away to a good home?"
-      >
-        <div className="card p-6">
-          <h3 className="text-lg">Items for sale</h3>
-          <div className="mt-3 border-l-4 border-skyLine pl-4">
-            <p className="font-medium text-navy">Glider Guider — £25</p>
-            <p className="mt-1 text-sm text-slate2">
-              Can be loaded with SeeYou Mobile, XCSoar and LK8000. A great little nav aid. Comes with
-              the full manual.
-            </p>
-            <p className="mt-1 text-xs text-slate2">Placed 7 November 2025 · Peter Gill</p>
-          </div>
-          <p className="mt-5 text-sm text-slate2">
-            No items wanted and no other notices at present. To place an advert, contact the website
-            editor.
-          </p>
-        </div>
-      </Section>
+      {clubPageGroups.map((group) => {
+        const pages = clubPages.filter((p) => p.group === group);
+        if (!pages.length) return null;
+        return (
+          <Section key={group} title={group}>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {pages.map((p) => (
+                <li key={p.slug}>
+                  <Link
+                    href={`/club-life/${p.slug}`}
+                    className="card flex h-full flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+                  >
+                    <span className="text-lg font-semibold text-navy">{p.title}</span>
+                    <span className="mt-1 text-xs uppercase tracking-wide text-sky">{p.eyebrow}</span>
+                    <span className="mt-2 flex-1 text-sm text-slate2">{p.cardBlurb}</span>
+                    <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
+                      Open the page
+                      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M5 3l5 5-5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        );
+      })}
 
       <Section title="Photographs">
         <div className="grid gap-4 sm:grid-cols-2">
           <ActionTile
             href="/gallery"
             label="Photo Gallery"
-            hint="888 photographs across 54 albums"
+            hint="881 photographs across 67 albums"
             icon={icons.archive}
           />
           <ActionTile

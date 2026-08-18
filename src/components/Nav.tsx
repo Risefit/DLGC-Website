@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
@@ -12,6 +13,7 @@ const NAV = [
   { href: '/safety', label: 'Safety' },
   { href: '/documents', label: 'Documents' },
   { href: '/club-life', label: 'Club Life' },
+  { href: '/buy-and-sell', label: 'Buy & Sell' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/archive', label: 'Archive' },
   { href: '/directory', label: 'Directory' },
@@ -134,11 +136,18 @@ export default function Nav() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-between gap-4 py-3">
           <Link href="/dashboard" className="tap min-w-0 gap-3">
-            <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M2 14l20-7-9 9-3-2-2 4-1-3-5-1z" fill="currentColor" />
-              </svg>
-            </span>
+            {/* The club's own crest, from the old site's images/logo200x200.jpg.
+                On a white disc because the badge is drawn in navy — reversing it
+                out would lose the lettering. */}
+            <Image
+              src="/dlgc-logo.png"
+              alt=""
+              aria-hidden="true"
+              width={44}
+              height={44}
+              priority
+              className="h-11 w-11 shrink-0 rounded-full bg-white object-cover ring-1 ring-white/30"
+            />
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-base font-semibold">DLGC Members</span>
               <span className="hidden truncate text-xs text-white/70 sm:block">

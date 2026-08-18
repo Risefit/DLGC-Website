@@ -53,49 +53,73 @@ export const contacts = {
  * genuinely useful notes on each. The presentation was the problem, not the
  * content. Keep the annotations.
  */
-export type WeatherLink = { name: string; source: string; href: string; note: string };
+export type WeatherLink = {
+  name: string;
+  source: string;
+  href: string;
+  note: string;
+  /** True where the target needs a login or registration before it is useful. */
+  login?: boolean;
+};
 
-export const weatherGroups: { group: string; links: WeatherLink[] }[] = [
+/**
+ * Every href below is the club's OWN curated deep link, taken from the old
+ * met_page.asp — not a homepage. That page's links pointed at a specific
+ * location: Bretton Youth Hostel rather than "Met Office", Abney rather than
+ * "Meteoblue". The first version of this portal replaced several of them with
+ * homepages, which is why forecasts opened on the wrong area.
+ *
+ * If you change one, keep it location-specific. A forecast for the wrong part
+ * of the country is worse than no link.
+ */
+export const weatherGroups: { group: string; blurb: string; links: WeatherLink[] }[] = [
   {
     group: 'Flying forecasts',
+    blurb: 'Soaring-specific. Start here on a flying day.',
     links: [
-      { name: 'RASP Soaring Forecast — Camphill', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/', note: 'Graphical hourly forecasts for the range of parameters relevant to gliding and soaring. Select "CPH" from the list, then Get Results.' },
-      { name: 'RASP UK Map', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/', note: 'UK map with selectable predictions of all gliding meteorological data.' },
-      { name: 'RASP Tephigram — Camphill', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php/soundings', note: 'Skew-T tephigrams for today and tomorrow. Click "Camphill" at the bottom of the locations list, then select date and time. Click within the tephigram to step forward an hour.' },
-      { name: 'RASP Index (Dr Jack)', source: 'RASP', href: 'https://rasp.stratus.org.uk/', note: 'Index to the full range of weather forecast data affecting gliding.' },
-      { name: 'GA F214 / F215 via MAVIS', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Cloud, visibility, weather and wind forecasts geared to General Aviation. Requires registration. After login: General Aviation → Briefing Charts → Significant Weather.' },
-      { name: 'XC Weather', source: 'XCWeather', href: 'https://www.xcweather.co.uk/GB/forecast', note: 'Basic forecasts — wind, temperature, weather — all on a UK map. Mainly for hang gliders and paragliders.' },
+      { name: 'RASP Soaring Forecast — Camphill', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php/rasp-by-turn-point', note: 'Graphical hourly forecasts for the parameters that matter to soaring. Select "CPH" from the turn point list, then Get Results.' },
+      { name: 'RASP Tephigram — Camphill', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php/soundings', note: 'Skew-T tephigrams for today and tomorrow. Click "Camphill" at the bottom of the locations list, then pick date and time. Click within the tephigram to step forward an hour.' },
+      { name: 'RASP UK Map', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php/rasptable-desktop', note: 'UK map with selectable predictions of all gliding meteorological data.' },
+      { name: 'RASP Index', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php', note: 'Index to the full range of forecast data affecting gliding.' },
+      { name: 'RASP BLIPMAP explained', source: 'Dr Jack', href: 'http://www.drjack.info/RASP/INFO/parameters.html', note: 'What each RASP parameter actually means. Worth reading once.' },
+      { name: 'GA F214 / F215 via MAVIS', source: 'Met Office', href: 'http://mavis.metoffice.gov.uk/', note: 'Cloud, visibility, weather and wind forecasts geared to General Aviation. After login: General Aviation → Briefing Charts → Significant Weather.', login: true },
+      { name: 'Met Office aviation services', source: 'Met Office', href: 'https://register.metoffice.gov.uk/WaveRegistrationClient/public/register.do?service=generalaviation', note: 'Register once for free General Aviation access, then use MAVIS above.', login: true },
+      { name: 'XC Weather', source: 'XCWeather', href: 'https://www.xcweather.co.uk/GB/forecast', note: 'Basic wind, temperature and weather on a UK map. Aimed at hang gliders and paragliders, but a quick read of the day.' },
     ],
   },
   {
     group: 'Local forecasts',
+    blurb: 'Places within a few miles of Camphill, at similar elevation.',
     links: [
-      { name: 'Bretton Youth Hostel', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Wide range of data for every 1 then 3 hours for the week ahead. One mile east of Camphill.' },
-      { name: 'Abney Meteogram', source: 'Meteoblue', href: 'https://www.meteoblue.com/', note: 'Graphical forecast of several measures by time and altitude for today plus two days. One mile east of Camphill.' },
-      { name: 'Bamford Edge', source: 'MetCheck', href: 'https://www.metcheck.com/', note: '7+ day forecast for a location only 5km NE of Camphill at the same elevation — so realistic wind and temperature.' },
-      { name: 'Bakewell / Buxton', source: 'BBC Weather', href: 'https://www.bbc.co.uk/weather', note: 'Next 24 hours every 3 hours, plus next 4 days.' },
-      { name: 'Peak District', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Latest and forecast cloud, temperature, wind, pressure and rainfall, with warnings.' },
-      { name: 'Peak District', source: 'MWIS', href: 'https://www.mwis.org.uk/', note: 'Mountain Weather Information Service, aimed at walkers and climbers. Useful for gliding.' },
+      { name: 'Bretton Youth Hostel', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/forecast/gcqz1nqtx', note: 'Hourly then three-hourly for the week ahead. One mile east of Camphill and at much the same height.' },
+      { name: 'Abney meteogram', source: 'Meteoblue', href: 'https://www.meteoblue.com/en/weather/forecast/air/abney-and-abney-grange_united-kingdom_7293236', note: 'Graphical forecast by time AND altitude for today plus two days. Abney is one mile east of the airfield.' },
+      { name: 'Abney — rainfall and cloud', source: 'Meteoblue', href: 'https://www.meteoblue.com/en/weather/forecast/current/abney-and-abney-grange_united-kingdom_7293236', note: 'Current conditions and precipitation for the same point.' },
+      { name: 'Crag forecasts — pick Bamford Edge', source: 'MetCheck', href: 'https://www.metcheck.com/HOBBIES/climbing_forecast.asp', note: 'Seven-day forecast for a point 5km north-east of Camphill at the same elevation, so the wind and temperature are realistic for us. MetCheck retired the direct link, so choose Bamford Edge from the crag list.' },
+      { name: 'Peak District mountain forecast', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/specialist-forecasts/mountain/peak-district', note: 'Cloud base, wind, temperature and hazards for the uplands rather than the valleys.' },
+      { name: 'Peak District', source: 'MWIS', href: 'https://www.mwis.org.uk/forecasts/english-and-welsh/peak-district', note: 'Mountain Weather Information Service, written for walkers and climbers. The cloud base and hill wind assessments are useful to us.' },
+      { name: 'Recent rain', source: 'RainToday', href: 'http://www.raintoday.co.uk/', note: 'Where it has actually rained in the last few hours — useful for judging the state of the field.' },
     ],
   },
   {
     group: 'National forecasts',
+    blurb: 'The bigger picture, for planning further ahead.',
     links: [
-      { name: 'Synoptic Charts', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Atlantic synoptic charts for the next 3+ days in colour, with optional animation.' },
-      { name: 'UK Weather', source: 'BBC', href: 'https://www.bbc.co.uk/weather', note: 'Cloud, precipitation, wind and temperature by hour for the next 12 days, by location or postcode.' },
-      { name: 'North England', source: 'Meteoblue', href: 'https://www.meteoblue.com/', note: 'Map view of cloud and rain for today and the next three days in 1 hour steps.' },
-      { name: 'Jetstream', source: 'Netweather.tv', href: 'https://www.netweather.tv/', note: 'Position and velocity of high level winds every 3 hours for the next 16 days.' },
+      { name: 'Surface pressure charts', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/maps-and-charts/surface-pressure', note: 'Atlantic synoptic charts for the next three days and more, with animation.' },
+      { name: 'UK weather', source: 'BBC', href: 'https://www.bbc.co.uk/weather', note: 'Hourly for 14 days. Search for Tideswell or Buxton — BBC Weather has no stable link for a named place, so this is the one link on this page that starts on a search box.' },
+      { name: 'North England map', source: 'Meteoblue', href: 'https://www.meteoblue.com/en/weather-maps/abney-and-abney-grange_united-kingdom_7293236?variable=precipitation3h_cloudcover_pressure&level=surface&lines=none&mapcenter=53.3132N-1.7069&zoom=8', note: 'Cloud and rain across the north for today and the next three days in one-hour steps, centred on Camphill.' },
+      { name: 'Jetstream', source: 'Netweather.tv', href: 'https://www.netweather.tv/charts-and-data/jetstream', note: 'Position and velocity of high level winds every three hours for the next 16 days.' },
     ],
   },
   {
-    group: 'Observations & webcams',
+    group: 'Observations and webcams',
+    blurb: 'What is happening right now, rather than what is forecast.',
     links: [
-      { name: 'Camphill Weather Station', source: 'DLGC', href: 'https://dlgc.org.uk/members/metstation.html', note: 'Current observations plus wind average speeds history for the past 24 hours.' },
-      { name: 'Camphill Webcam', source: 'DLGC', href: 'https://dlgc.org.uk/members/metstation.html', note: 'View looking north across the front of the hangar. Reached via the met station page while the camera credentials are rotated.' },
-      { name: 'Cloud Cover', source: 'Sat24.com', href: 'https://en.sat24.com/', note: 'Cloud image video, last 90 minutes. Select visible (UK & Ireland) or infra red (Europe).' },
-      { name: 'Rainfall', source: 'Met Office', href: 'https://www.metoffice.gov.uk/', note: 'Precipitation of any kind and intensity on a map over the last several hours.' },
-      { name: 'Thunderstorms', source: 'Blitzortung.org', href: 'https://www.blitzortung.org/', note: 'Instantaneous location of lightning strikes, up to 2 hours old.' },
-      { name: 'Wind Streamlines', source: 'earth.nullschool.net', href: 'https://earth.nullschool.net/', note: 'Wind at the 1000hPa pressure level every 3 hours.' },
+      { name: 'Camphill weather station', source: 'DLGC', href: 'https://www.dlgc.org.uk/members/metstation.html', note: 'The club\u2019s own Davis station — current observations plus 24 hours of wind averages. Also embedded at the top of this page.' },
+      { name: 'Bradwell webcam', source: 'Derbyshire Soaring Club', href: 'https://derbyshiresoaringclub.org.uk/brad-cam/', note: 'Looking at the Bradwell slope, four miles north-east. A useful second opinion on the hill cloud.' },
+      { name: 'Cloud cover', source: 'Sat24', href: 'https://en.sat24.com/en/gb/visual', note: 'Satellite cloud video for the last 90 minutes. Visible for UK and Ireland, or infra-red for Europe.' },
+      { name: 'Rainfall radar', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/maps-and-charts/rainfall-radar-forecast-map', note: 'Precipitation of any kind and intensity, centred on the Peak District.' },
+      { name: 'Lightning strikes', source: 'Blitzortung', href: 'https://www.blitzortung.org/en/live_lightning_maps.php?map=12', note: 'Instantaneous location of lightning strikes up to two hours old.' },
+      { name: 'Wind streamlines', source: 'earth.nullschool.net', href: 'https://earth.nullschool.net/#current/wind/isobaric/1000hPa/orthographic=-1.18,55.34,1970', note: 'Wind at the 1000hPa level every three hours, centred on the UK.' },
     ],
   },
 ];

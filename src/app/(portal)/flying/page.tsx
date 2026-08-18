@@ -1,6 +1,7 @@
 import { PageHeader, Section, ActionTile, icons, Callout, ToMigrate } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
+import { manualGroups, flightManualCaveat } from '@/content/manuals';
 
 export const metadata = { title: 'Flying' };
 
@@ -41,6 +42,42 @@ export default function FlyingPage() {
           </Callout>
           <ToMigrate what="Airspace pages, NOTAM links, Wave Box chart and the Letter of Agreement from the old site's Airspace section." />
         </div>
+      </Section>
+
+      {/* Ported from the old manuals_webpage.asp. Three columns, in the club's
+          own groupings — the five that govern how we operate, the specialist
+          procedures, and the aircraft flight manuals. */}
+      <Section
+        title="Club manuals"
+        description="How the club operates, written down. If you only read one, make it the Pilots Manual."
+      >
+        <div className="grid gap-4 lg:grid-cols-3">
+          {manualGroups.map((g) => (
+            <div key={g.group} className="card flex flex-col overflow-hidden">
+              <div className="border-b border-skyLine bg-skyTint px-5 py-3.5">
+                <h3 className="text-lg font-semibold text-navy">{g.group}</h3>
+                <p className="mt-1 text-sm text-slate2">{g.blurb}</p>
+              </div>
+              <ul className="flex-1 divide-y divide-skyLine">
+                {g.manuals.map((m) => (
+                  <li key={m.href}>
+                    <a
+                      href={m.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-5 py-3.5 transition-colors hover:bg-skyTint"
+                    >
+                      <span className="font-medium text-navy">{m.title}</span>
+                      {m.note && <span className="mt-0.5 block text-xs text-slate2">{m.note}</span>}
+                      <span className="sr-only">(PDF, opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 max-w-prose2 text-xs text-slate2">{flightManualCaveat}</p>
       </Section>
 
       <Section

@@ -78,7 +78,7 @@ export const safetySpot: SafetyLink[] = [
   {
     label: 'Safety Lessons Log',
     sub: 'Learn from safety occurrences at Camphill',
-    href: 'https://dlgc.org.uk/members/safety/SftyLssnsLg.asp',
+    href: '/safety/lessons',
   },
   {
     label: 'About CHIRP and its help',
@@ -98,7 +98,7 @@ export const safetySpot: SafetyLink[] = [
   {
     label: 'Crash / emergency — actions',
     sub: 'What to do when it has gone wrong',
-    href: 'https://dlgc.org.uk/members/safety/MainGd.asp',
+    href: '/safety/emergency',
     strong: true,
   },
 ];

@@ -197,22 +197,32 @@ export default function Dashboard() {
             <p className="mt-1 text-sm text-ink/80">{safetySpotIntro}</p>
           </div>
           <ul className="grid gap-px bg-bad/15 sm:grid-cols-2 lg:grid-cols-3">
-            {safetySpot.map((l) => (
-              <li key={l.label} className="bg-white">
-                <a
-                  href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-full flex-col px-5 py-4 hover:bg-badTint transition-colors"
-                >
+            {safetySpot.map((l) => {
+              // Two of these now live in the portal — the emergency procedures
+              // and the lessons log. Those must not open in a new tab.
+              const internal = l.href.startsWith('/');
+              const body = (
+                <>
                   <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>
                     {l.label}
                   </span>
                   {l.sub && <span className="mt-1 text-sm text-slate2">{l.sub}</span>}
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
-              </li>
-            ))}
+                  {!internal && <span className="sr-only">(opens in a new tab)</span>}
+                </>
+              );
+              const cls = 'flex h-full flex-col px-5 py-4 transition-colors hover:bg-badTint';
+              return (
+                <li key={l.label} className="bg-white">
+                  {internal ? (
+                    <Link href={l.href} className={cls}>{body}</Link>
+                  ) : (
+                    <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                      {body}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <div className="border-t-2 border-bad/40 bg-bad/5 px-6 py-3">
             <Link href="/safety" className="link font-medium">

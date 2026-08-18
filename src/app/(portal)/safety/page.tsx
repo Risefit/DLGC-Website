@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui';
-import { safetyCulture } from '@/content/site';
+import { safetyCulture, contacts } from '@/content/site';
 import { documents } from '@/content/documents';
+import { safetyLessons } from '@/content/safety-log';
+import SafetyReportForm from '@/components/SafetyReportForm';
 
 export const metadata = { title: 'Safety' };
 
@@ -45,23 +47,20 @@ export default function SafetyPage() {
             icon={icons.alert}
           />
           <ActionTile
-            href="/documents?q=safety+lessons"
+            href="/safety/lessons"
             label="Safety Lessons Log"
-            hint="Report a near miss or something unsafe"
+            hint={`${safetyLessons.length} occurrences and what was learned`}
             icon={icons.shield}
           />
         </div>
-        <div className="mt-4">
-          <Callout tone="info" title="Saw something?">
-            <p>
-              Something that might have been an accident? Something that was unsafe? A near
-              accident? Let others learn from it — send an entry to the Safety Officer for the
-              Safety Lessons Log. The log has many lessons already recorded, and a copy is kept in
-              the clubroom.
-            </p>
-          </Callout>
-        </div>
       </Section>
+
+      {/* The reporting form sits high on the page on purpose. A member who has
+          just seen something unsafe should not have to scroll past a document
+          library to tell somebody about it. */}
+      <section className="mb-10">
+        <SafetyReportForm safetyOfficerEmail={contacts.office.email} />
+      </section>
 
       <Section
         title="Safety documents"

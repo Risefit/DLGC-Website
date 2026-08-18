@@ -315,7 +315,35 @@ const rebased: Doc[] = importedDocuments.map((d) =>
     : d
 );
 
-export const documents: Doc[] = [...curatedKept, ...rebased];
+/**
+ * The importer classified by folder, which put every ground-training document
+ * under "Operational Notices" or "Manuals" and left the Ground Training section
+ * of the Training page completely empty. The curated Ground Training entries
+ * could not fill it either — they were placeholders pointing at the old Links
+ * Library index, so `curatedKept` correctly drops them.
+ *
+ * This is the explicit, auditable correction: real documents, moved to where a
+ * member would look for them. Add to it rather than editing the generated
+ * manifest, which gets overwritten by the importer.
+ */
+const RECATEGORISE: Record<string, Doc['category']> = {
+  'flyingnotices-canopy-care-pdf': 'Ground Training',
+  'flyingnotices-care-of-the-airfield-pdf': 'Ground Training',
+  'flyingnotices-ground-movements-pdf': 'Ground Training',
+  'pdfs-understanding-flarm-v7-1116-pdf': 'Ground Training',
+  'pdfs-hangarrashprevent-pdf': 'Ground Training',
+  'pdfs-clm-prevent-hangar-rash-february-2019-pdf': 'Ground Training',
+  'pdfs-clm-airfield-organisation-pdf': 'Ground Training',
+  'pdfs-airfield-holes-pdf': 'Ground Training',
+  'pdfs-asw15b-ground-handling-pdf': 'Ground Training',
+  'pdfs-trailerparkrules-f2-pdf': 'Ground Training',
+  'sossfiles-sosshintstips-trailer-towing-check-list-doc': 'Ground Training',
+  'manuals-dlgc-gtm-080623-amended-030625-pdf': 'Ground Training',
+};
+
+export const documents: Doc[] = [...curatedKept, ...rebased].map((d) =>
+  RECATEGORISE[d.id] ? { ...d, category: RECATEGORISE[d.id] } : d
+);
 
 /**
  * Collections are DERIVED, not hand-listed — so adding documents to a series
