@@ -1,4 +1,5 @@
 import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui';
+import ClubNumbers from '@/components/ClubNumbers';
 import { contacts, roles } from '@/content/site';
 import { aim } from '@/content/awareim';
 
@@ -23,20 +24,16 @@ export default function DirectoryPage() {
         lead="Club phone numbers, who holds which role, and where to find member contact details."
       />
 
-      <Section title="Club numbers">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { label: 'Office', value: contacts.office.tel, note: 'Weekday mornings — see hours below' },
-            { label: 'Clubhouse', value: contacts.clubhouse, note: '' },
-            { label: 'Launch Point', value: contacts.launchPoint, note: 'When flying is on' },
-          ].map((c) => (
-            <a key={c.label} href={`tel:${c.value.replace(/\s/g, '')}`} className="card p-5 hover:shadow-lift hover:border-sky transition-all">
-              <span className="block text-sm text-slate2">{c.label}</span>
-              <span className="mt-1 block text-2xl font-semibold text-navy">{c.value}</span>
-              {c.note && <span className="mt-1 block text-xs text-slate2">{c.note}</span>}
-            </a>
-          ))}
-        </div>
+      <Section
+        title="Club numbers"
+        description="Call, or open a WhatsApp message. See the note below about WhatsApp."
+      >
+        <ClubNumbers />
+        <p className="mt-3 max-w-prose2 text-xs text-slate2">
+          All three are landlines. The WhatsApp button opens a chat only once the club has
+          registered that number with WhatsApp Business — until then it will say the number is not
+          on WhatsApp. Calling always works.
+        </p>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <div className="card p-5">

@@ -3,6 +3,7 @@ import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui
 import { safetyCulture, contacts } from '@/content/site';
 import { documents } from '@/content/documents';
 import { safetyLessons } from '@/content/safety-log';
+import { safetyGroups, accidentReviews, ssaExtracts, gasco, safetyPageSource } from '@/content/safety-links';
 import SafetyReportForm from '@/components/SafetyReportForm';
 
 export const metadata = { title: 'Safety' };
@@ -59,8 +60,70 @@ export default function SafetyPage() {
           just seen something unsafe should not have to scroll past a document
           library to tell somebody about it. */}
       <section className="mb-10">
-        <SafetyReportForm safetyOfficerEmail={contacts.office.email} />
+        <SafetyReportForm
+          safetyOfficerEmail={contacts.safetyOfficer.email}
+          safetyOfficerName={contacts.safetyOfficer.name}
+        />
       </section>
+
+      {/* Everything else from the old safety_page.asp, grouped by what a member
+          is trying to do rather than left as one column of "this link". */}
+      {safetyGroups.map((g) => (
+        <Section key={g.group} title={g.group} description={g.blurb}>
+          <ul className="card divide-y divide-skyLine overflow-hidden">
+            {g.items.map((r) => (
+              <li key={r.href}>
+                <a
+                  href={r.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-5 py-4 transition-colors hover:bg-skyTint"
+                >
+                  <span className="font-medium text-navy">{r.title}</span>
+                  {r.note && <span className="mt-1 block max-w-prose2 text-sm text-slate2">{r.note}</span>}
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ))}
+
+      <Section
+        title="BGA annual accident reviews"
+        description="Reading a bad year end to end changes how people fly. Newest first."
+      >
+        <ul className="flex flex-wrap gap-2">
+          {accidentReviews.map((r) => (
+            <li key={r.year}>
+              <a
+                href={r.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tap rounded-lg border-2 border-skyLine bg-white px-4 py-2.5 font-semibold text-navy transition-colors hover:border-sky"
+              >
+                {r.year}
+                <span className="sr-only"> accident review (opens in a new tab)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {[ssaExtracts, gasco].map((x) => (
+            <a
+              key={x.href}
+              href={x.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+            >
+              <span className="font-semibold text-navy">{x.title}</span>
+              <span className="mt-1 text-sm text-slate2">{x.note}</span>
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          ))}
+        </div>
+      </Section>
 
       <Section
         title="Safety documents"
@@ -102,6 +165,14 @@ export default function SafetyPage() {
           ))}
         </ul>
       </Section>
+    <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+        Checked against the club&rsquo;s own safety page —{' '}
+        <a href={safetyPageSource} target="_blank" rel="noopener noreferrer" className="link">
+          the original is still there
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+        .
+      </p>
     </>
   );
 }

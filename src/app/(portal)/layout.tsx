@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import { previewOpen } from '@/lib/auth';
+import ClubNumbers from '@/components/ClubNumbers';
 import { contacts, club } from '@/content/site';
 import SocialButtons from '@/components/SocialButtons';
 
@@ -37,22 +38,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           <div className="grid gap-8 text-sm sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <h2 className="mb-2 text-base">Contact the club</h2>
-              <p className="text-slate2">
-                Office{' '}
-                <a href={`tel:${contacts.office.tel.replace(/\s/g, '')}`} className="link">
-                  {contacts.office.tel}
-                </a>
-                <br />
-                Clubhouse{' '}
-                <a href={`tel:${contacts.clubhouse.replace(/\s/g, '')}`} className="link">
-                  {contacts.clubhouse}
-                </a>
-                <br />
-                Launch Point{' '}
-                <a href={`tel:${contacts.launchPoint.replace(/\s/g, '')}`} className="link">
-                  {contacts.launchPoint}
-                </a>
-              </p>
+              <ClubNumbers compact />
               <p className="mt-2">
                 <a href={`mailto:${contacts.office.email}`} className="link">
                   {contacts.office.email}

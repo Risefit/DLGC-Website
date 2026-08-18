@@ -1,68 +1,162 @@
-import { PageHeader, Section, Callout, ToMigrate, ActionTile, icons } from '@/components/ui';
+import Link from 'next/link';
+import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
 import { aim } from '@/content/awareim';
-import { documents } from '@/content/documents';
+import {
+  rotaQuarters,
+  rotaPreparedBy,
+  briefingsPreparedBy,
+  swapGuidance,
+  rotaDocs,
+  winchDrivers,
+  rotaSource,
+} from '@/content/roster';
 
 export const metadata = { title: 'Duty Roster' };
 
+/**
+ * PORTED FROM dutyrotas.asp.
+ *
+ * The old page was a grid of cells all reading "Click LINK", so you could not
+ * tell which quarter you were opening until the PDF loaded. Each quarter is now
+ * a named card carrying its own rotas.
+ *
+ * The Daily Flying Planner tile is deliberately NOT here. It is on the
+ * dashboard and on the Flying page; a third copy on the page about duties just
+ * sent people to the wrong system.
+ */
 export default function RosterPage() {
-  const rota = documents.filter((d) => d.id.startsWith('rota-') || d.id === 'op-launchmarshals');
+  const [current, ...previous] = rotaQuarters;
 
   return (
     <>
       <PageHeader
-        eyebrow="Who is on when"
+        eyebrow="Instructors, winch drivers, launch marshals and duty clerks"
         title="Duty Roster"
-        lead="Instructor rotas, launch marshals and the duties you have volunteered for."
+        lead="Saturdays, Sundays and Bank Holidays, quarter by quarter. Your own duties and swap requests live in Members’ Admin."
       />
 
-      <Section title="Your duties">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <Section
+        title={`This quarter — ${current.label}`}
+        description={`${current.covers}. Prepared by ${rotaPreparedBy}.`}
+      >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {current.sheets.map((s) => (
+            <a
+              key={s.href}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+            >
+              <span className="text-lg font-semibold text-navy">{s.label}</span>
+              <span className="mt-1 text-sm text-slate2">{current.label}</span>
+              <span className="mt-3 text-sm font-medium text-sky">Open the PDF</span>
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          ))}
+          {current.briefings && (
+            <a
+              href={current.briefings.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+            >
+              <span className="text-lg font-semibold text-navy">SPL classroom briefings</span>
+              <span className="mt-1 text-sm text-slate2">
+                Topics and schedule · prepared by {briefingsPreparedBy}
+              </span>
+              <span className="mt-3 text-sm font-medium text-sky">Open the PDF</span>
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          )}
+        </div>
+      </Section>
+
+      <Section title="Your duties, and swapping one">
+        <div className="grid gap-4 lg:grid-cols-2">
           <ActionTile
             href={aim('duties')}
             external
             label="Duties and Volunteers"
-            hint="What you have signed up for, and sign up for more"
+            hint="What you have signed up for, swaps and offers — in Members’ Admin"
             icon={icons.people}
           />
-          <ActionTile
-            href={aim('flyingPlanner')}
-            external
-            label="Daily Flying Planner"
-            hint="Put your name down for a flying day"
-            icon={icons.plane}
-          />
+          <div className="card p-5">
+            <h3 className="text-lg">Documents</h3>
+            <ul className="mt-2 space-y-2">
+              {rotaDocs.map((d) => (
+                <li key={d.href}>
+                  <a href={d.href} target="_blank" rel="noopener noreferrer" className="link">
+                    {d.label}
+                    <span className="sr-only"> (PDF, opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <p className="mt-3 text-xs text-slate2">
-          Duties are held in Members&rsquo; Admin, which has its own login.
-        </p>
-      </Section>
 
-      <Section title="Published rotas">
-        <ul className="card divide-y divide-skyLine overflow-hidden">
-          {rota.map((d) => (
-            <li key={d.id}>
-              <a href={d.href} target="_blank" rel="noopener noreferrer" className="block px-5 py-4 hover:bg-skyTint transition-colors">
-                <span className="font-medium text-navy">{d.title}</span>
-                {d.version && <span className="ml-2 text-sm text-slate2">{d.version}</span>}
-                {d.note && <span className="mt-0.5 block text-sm text-slate2">{d.note}</span>}
-              </a>
-            </li>
-          ))}
-        </ul>
         <div className="mt-4">
-          <Callout tone="warn" title="Rotas are still PDFs">
-            <p>
-              On the old site every rota was a quarterly PDF — hard to read on a phone and easy to
-              be looking at an out-of-date copy. Converting these into a proper roster view is a
-              priority once the import is done; the PDFs remain available in the meantime.
-            </p>
+          <Callout tone="info" title="If you cannot do a duty">
+            {swapGuidance.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
           </Callout>
         </div>
       </Section>
 
-      <Section title="Still to import">
-        <ToMigrate what="Duty rotas and SPL briefings for all quarters, the Summer Weeks calendar, winter winch driver lists, and the members' phone and email lists from the old Duty Rotas page." />
+      {previous.length > 0 && (
+        <Section title="Earlier quarters" description="Kept so the record is complete.">
+          <ul className="card divide-y divide-skyLine overflow-hidden">
+            {previous.map((q) => (
+              <li key={q.code} className="px-5 py-4">
+                <p className="font-medium text-navy">{q.label}</p>
+                <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                  {q.sheets.map((s) => (
+                    <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="link">
+                      {s.label}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ))}
+                  {q.briefings && (
+                    <a href={q.briefings.href} target="_blank" rel="noopener noreferrer" className="link">
+                      SPL briefings
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      <Section
+        title="Solo winch drivers"
+        description="Members qualified to winch solo, most recent first. If you want to join them, talk to the Winch Master."
+      >
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {winchDrivers.map((d) => (
+            <li key={d.name} className="card flex items-baseline justify-between gap-3 px-4 py-3">
+              <span className="font-medium text-navy">{d.name}</span>
+              <span className="shrink-0 text-sm text-slate2">{d.qualified}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-sm text-slate2">
+          Winch training is run by the Winch Master —{' '}
+          <Link href="/club-life/roles" className="link">see who holds that role</Link>.
+        </p>
       </Section>
+
+      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+        Rebuilt from the club&rsquo;s duty rotas page.{' '}
+        <a href={rotaSource} target="_blank" rel="noopener noreferrer" className="link">
+          The original is still there
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+        .
+      </p>
     </>
   );
 }

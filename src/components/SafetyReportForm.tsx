@@ -62,7 +62,13 @@ const WHERE = [
   'Something else',
 ];
 
-export default function SafetyReportForm({ safetyOfficerEmail }: { safetyOfficerEmail: string }) {
+export default function SafetyReportForm({
+  safetyOfficerEmail,
+  safetyOfficerName,
+}: {
+  safetyOfficerEmail: string;
+  safetyOfficerName?: string;
+}) {
   const [anonymous, setAnonymous] = useState(false);
   const [risk, setRisk] = useState<{ l: number; c: number } | null>(null);
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -133,6 +139,11 @@ export default function SafetyReportForm({ safetyOfficerEmail }: { safetyOfficer
         <p className="mt-1 max-w-prose2 text-sm text-ink/80">
           Anything that did go wrong, or nearly did. Near misses are the most useful reports we
           get — nobody has to be hurt for it to be worth telling us.
+        </p>
+        <p className="mt-2 text-sm text-ink/70">
+          Goes to {safetyOfficerName ? `${safetyOfficerName}, ` : ''}the Safety Officer
+          {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link">{safetyOfficerEmail}</a>).
+          Not published, and not seen by the website editor.
         </p>
       </div>
 

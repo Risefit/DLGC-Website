@@ -97,7 +97,7 @@ export default function BlogPage() {
           intro="Tell other members what the flying was like. The website editor reads everything and publishes it — nothing goes up automatically."
           bodyLabel="Your story"
           bodyPlaceholder="What the day was like, who flew, what the conditions did, anything that made it worth being there…"
-          editorEmail={contacts.office.email}
+          editorEmail={contacts.websiteEditor.email}
         />
       </Section>
 

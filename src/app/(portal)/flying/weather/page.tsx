@@ -26,9 +26,12 @@ export default function WeatherPage() {
           <iframe
             src={club.weatherStationEmbed}
             title="Camphill weather station — live observations"
-            className="block h-[360px] w-full flex-1 border-0"
+            className="block h-[420px] w-full flex-1 border-0"
             loading="lazy"
           />
+          <p className="border-t border-skyLine bg-skyTint px-5 py-3 text-sm text-slate2">
+            {club.weatherStationNote}
+          </p>
           <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-skyLine px-5 py-3">
             <span className="font-medium text-navy">Camphill Weather Station — live</span>
             <a
@@ -43,7 +46,7 @@ export default function WeatherPage() {
           </div>
         </div>
 
-        <Webcam fallbackHref={club.webcam} mediaClassName="h-[360px]" />
+        <Webcam fallbackHref={club.webcam} mediaClassName="h-[420px]" />
       </div>
 
       <div className="mb-8">

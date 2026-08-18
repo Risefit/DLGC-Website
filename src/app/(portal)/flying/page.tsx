@@ -1,4 +1,4 @@
-import { PageHeader, Section, ActionTile, icons, Callout, ToMigrate } from '@/components/ui';
+import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 import { manualGroups, flightManualCaveat } from '@/content/manuals';
@@ -25,22 +25,30 @@ export default function FlyingPage() {
         </div>
       </Section>
 
-      <Section title="Airspace and NOTAMs" description="Check before every cross-country flight.">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Callout tone="info" title="Wave Box and Letter of Agreement">
-            <p>
-              The club&rsquo;s airspace arrangements, including the Wave Box and the Letter of
-              Agreement, are held in the document library. Your annual airspace re-brief is recorded
-              in Members&rsquo; Admin.
-            </p>
-            <p>
-              <a href={aim('rebrief')} target="_blank" rel="noopener noreferrer" className="link">
-                Record your airspace re-brief
-              </a>{' '}
-              (opens Members&rsquo; Admin in a new tab)
-            </p>
-          </Callout>
-          <ToMigrate what="Airspace pages, NOTAM links, Wave Box chart and the Letter of Agreement from the old site's Airspace section." />
+      <Section
+        title="Before you fly cross-country"
+        description="Airspace agreements, NOTAMs, and the notices that govern how we operate."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ActionTile
+            href="/flying/airspace"
+            label="Airspace and NOTAMs"
+            hint="Wave Box, L975, East Midlands, NSGAs"
+            icon={icons.cloud}
+          />
+          <ActionTile
+            href="/flying/notices"
+            label="CFI and Launch Marshal notices"
+            hint="How we check, launch and report"
+            icon={icons.book}
+          />
+          <ActionTile
+            href={aim('rebrief')}
+            external
+            label="Airspace re-brief"
+            hint="Due every 12 months"
+            icon={icons.calendar}
+          />
         </div>
       </Section>
 

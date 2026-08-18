@@ -175,8 +175,8 @@ export async function POST(request: Request) {
     photo: 'Thank you — your photograph has gone to the website editor for the gallery.',
     advert: 'Thank you — your advert has gone to the website editor, who will put it on the page.',
     safety: anonymous
-      ? 'Your report has reached the Safety Officer. Nothing identifying you was sent with it.'
-      : 'Your report has reached the Safety Officer, who may come back to you with questions.',
+      ? 'Your report is logged for the Safety Officer. Nothing identifying you was recorded with it.'
+      : 'Your report is logged for the Safety Officer, who may come back to you with questions.',
   };
 
   return NextResponse.json({ ok: true, message: MESSAGES[kind] });

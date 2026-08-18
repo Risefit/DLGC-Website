@@ -25,6 +25,13 @@ export const club = {
   weatherStationEmbed:
     'https://www.weatherlink.com/embeddablePage/show/8afbe67f6cb640b488cf7d1c06487900/wide',
   /**
+   * What the station page says about itself, and what to scroll for. From
+   * metstation.html — the widget is the same one, but the old page's framing
+   * text is the bit that tells you the trends are further down the panel.
+   */
+  weatherStationNote:
+    'Data from the DSC/DLGC weather station on West Edge. Scroll inside the panel for trends of average wind speed, gusts and wind direction; the other readings are at the lower left.',
+  /**
    * SECURITY: the old site's direct webcam URL embeds a shared username and
    * password in clear text over unencrypted HTTP. That must not be committed to
    * this repository, which is why this points at the met station page instead.
@@ -37,6 +44,10 @@ export const club = {
 export const contacts = {
   postal: ['Derbyshire and Lancashire Gliding Club', 'Camphill', 'Great Hucklow', 'BUXTON', 'SK17 8RQ'],
   office: { tel: '01298 871270', email: 'dlgc@glidingclub.org.uk' },
+  /** Safety occurrence reports go here, not to the website editor. */
+  safetyOfficer: { name: 'Bob Bollom', email: 'rsbollom@gmail.com' },
+  /** The website editor — blog stories, gallery photographs, adverts. */
+  websiteEditor: { name: 'Bob Bollom', email: 'rsbollom@gmail.com' },
   officeHours:
     'Normally staffed 8:30am to noon every weekday morning from May to September, and three weekday mornings from October to April. Occasional weekend mornings throughout the year. Planned hours are in the Daily Flying Planner. Out of hours, leave a message on the answerphone or send an email.',
   clubhouse: '01298 871207',
@@ -53,6 +64,27 @@ export const contacts = {
  * genuinely useful notes on each. The presentation was the problem, not the
  * content. Keep the annotations.
  */
+/**
+ * A UK number in the form WhatsApp needs: no spaces, no leading zero, 44 in
+ * front. wa.me opens the chat if — and only if — that number is registered on
+ * WhatsApp. All three club numbers are landlines, so these work only once the
+ * club registers them with WhatsApp Business. The call link always works, which
+ * is why both are offered rather than replacing one with the other.
+ */
+export const whatsappNumber = (tel: string): string =>
+  '44' + tel.replace(/[^\d]/g, '').replace(/^0/, '');
+
+export const whatsappHref = (tel: string): string => `https://wa.me/${whatsappNumber(tel)}`;
+
+export const telHref = (tel: string): string => `tel:${tel.replace(/\s/g, '')}`;
+
+/** The club's own numbers, in the order a member is most likely to want them. */
+export const clubNumbers: { label: string; tel: string; note: string }[] = [
+  { label: 'Launch Point', tel: '01298 405019', note: 'When flying is on' },
+  { label: 'Clubhouse', tel: '01298 871207', note: 'Bar and clubroom' },
+  { label: 'Office', tel: '01298 871270', note: 'Weekday mornings — see hours' },
+];
+
 export type WeatherLink = {
   name: string;
   source: string;
@@ -217,7 +249,13 @@ export const partYearScale = [
 export const calendarNote =
   'These are the most significant dates only. The master Events Planner lives in Members’ Admin and is maintained by the office and committee — check there for critical dates and full detail. Anyone arranging an event and needing facilities (e.g. the clubroom) must contact the office or a committee member to check availability and book.';
 
-export const calendar: { month: string; events: { when: string; what: string; kind?: 'course' | 'committee' | 'social' | 'season' }[] }[] = [
+export type CalendarEvent = {
+  when: string;
+  what: string;
+  kind?: 'course' | 'committee' | 'social' | 'season';
+};
+
+export const calendar: { month: string; events: CalendarEvent[] }[] = [
   { month: 'August 2026', events: [
     { when: 'Mon 10 – Fri 14', what: 'Public Course', kind: 'course' },
     { when: 'Fri 14, 18:30', what: 'Committee Meeting (Zoom) — or TBC 19:30 face-to-face at Camphill', kind: 'committee' },
@@ -234,6 +272,22 @@ export const calendar: { month: string; events: { when: string; what: string; ki
   { month: 'January 2027', events: [{ when: 'Fri 15, 19:00', what: 'Committee Meeting (Zoom)', kind: 'committee' }] },
   { month: 'February 2027', events: [{ when: 'Sat 13, 17:00', what: 'Annual General Meeting', kind: 'committee' }] },
 ];
+
+/**
+ * The same events with the month and year folded into the date, because "Fri
+ * 11" on a dashboard tells a member nothing — "Fri 11 September 2026" does.
+ * A `when` that already names its month (a range spanning two) is left alone.
+ */
+export const upcomingEvents: (CalendarEvent & { displayWhen: string; month: string })[] =
+  calendar.flatMap(({ month, events }) =>
+    events.map((e) => {
+      const named = new RegExp(month.split(' ')[0], 'i').test(e.when);
+      const [time] = e.when.match(/,\s*\d{1,2}[:.]\d{2}/) ?? [];
+      const dayPart = time ? e.when.slice(0, e.when.length - time.length) : e.when;
+      const displayWhen = named ? e.when : `${dayPart} ${month}${time ?? ''}`;
+      return { ...e, month, displayWhen };
+    })
+  );
 
 // ── Legacy "Find It" index ─────────────────────────────────────────────────
 /**

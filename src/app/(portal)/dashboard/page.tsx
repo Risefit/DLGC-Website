@@ -3,7 +3,7 @@ import { ActionTile, Section, Badge, icons, Callout } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { news } from '@/content/news';
 import { documents, isOverdue } from '@/content/documents';
-import { calendar } from '@/content/site';
+import { upcomingEvents } from '@/content/site';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
 
 export const metadata = { title: 'Dashboard' };
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const latest = news.slice(0, 4);
   const liveDocs = documents.filter((d) => d.tier === 'live');
   const overdue = documents.filter((d) => isOverdue(d));
-  const nextEvents = calendar[0]?.events.slice(0, 3) ?? [];
+  const nextEvents = upcomingEvents.slice(0, 4);
 
   return (
     <>
@@ -164,8 +164,8 @@ export default function Dashboard() {
           <Section title="Coming up" action={<Link href="/calendar" className="link text-sm">Calendar</Link>}>
             <ul className="card divide-y divide-skyLine">
               {nextEvents.map((e) => (
-                <li key={e.what} className="px-5 py-3.5">
-                  <p className="text-sm font-medium text-navy">{e.when}</p>
+                <li key={`${e.displayWhen}-${e.what}`} className="px-5 py-3.5">
+                  <p className="text-sm font-medium text-navy">{e.displayWhen}</p>
                   <p className="text-sm text-slate2">{e.what}</p>
                 </li>
               ))}

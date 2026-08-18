@@ -26,6 +26,7 @@ export default function ClubLifePage() {
           <ActionTile href="/club-life/blog" label="Flying Blog" hint="Reports of flying days" icon={icons.plane} />
           <ActionTile href="/calendar" label="Calendar" hint="Courses, meetings, events" icon={icons.calendar} />
           <ActionTile href="/buy-and-sell" label="Buy and Sell" hint={`${adverts.length} member adverts`} icon={icons.people} />
+          <ActionTile href="/club-life/roles" label="Roles and Role Holders" hint="Who does what, and what is vacant" icon={icons.people} />
         </div>
       </Section>
 
@@ -59,7 +60,13 @@ export default function ClubLifePage() {
       })}
 
       <Section title="Photographs">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ActionTile
+            href="/club-life/photo-galleries"
+            label="Photo Galleries"
+            hint="The club's six curated galleries"
+            icon={icons.archive}
+          />
           <ActionTile
             href="/gallery"
             label="Photo Gallery"

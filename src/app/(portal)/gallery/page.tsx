@@ -25,7 +25,7 @@ export default function GalleryPage() {
           bodyLabel="Tell us about it"
           bodyPlaceholder="Where, when, who is in it, and anything worth knowing."
           imageRequired
-          editorEmail={contacts.office.email}
+          editorEmail={contacts.websiteEditor.email}
         />
       </section>
 
