@@ -285,8 +285,7 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] **Transfer Supabase / Vercel / GitHub to club-owned accounts before handover** (see above)
 - [ ] Convert duty rotas from quarterly PDFs into a real roster view
 - [ ] Photo galleries — import and lay out
-- [ ] Run `supabase/migrations/002_submission_details.sql` in the Supabase SQL editor —
-      adverts and safety reports need the `details` column
+- [x] `supabase/migrations/002_submission_details.sql` — applied 18 August 2026
 - [ ] Decide whether safety reports should also arrive by email (see Safety occurrence
       reports above) and set the three variables if so
 - [ ] Restart the Flying Blog (last entry November 2024)
