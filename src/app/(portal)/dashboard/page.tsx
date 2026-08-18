@@ -28,32 +28,32 @@ export default function Dashboard() {
         <div className="overflow-hidden rounded-card border border-skyLine bg-gradient-to-br from-navy to-sky text-white shadow-card">
           <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4">
             <div className="p-5">
-              <p className="text-xs uppercase tracking-widest text-white/70">Today at Camphill</p>
+              <p className="text-xs uppercase tracking-widest text-white/90">Today at Camphill</p>
               <p className="mt-1 text-2xl font-semibold">Check the DFP</p>
-              <p className="mt-1 text-sm text-white/80">
+              <p className="mt-1 text-sm text-white/90">
                 Flying status is set on the Daily Flying Planner
               </p>
             </div>
             <div className="p-5 sm:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/70">Wind</p>
+              <p className="text-xs uppercase tracking-widest text-white/90">Wind</p>
               <p className="mt-1 text-2xl font-semibold">
-                <span className="text-white/50">—</span>
+                <span className="text-white/90">—</span>
               </p>
-              <p className="mt-1 text-sm text-white/80">
+              <p className="mt-1 text-sm text-white/90">
                 <Link href="/flying/weather" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
                   Camphill weather station
                 </Link>
               </p>
             </div>
             <div className="p-5 lg:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/70">Season</p>
+              <p className="text-xs uppercase tracking-widest text-white/90">Season</p>
               <p className="mt-1 text-2xl font-semibold">Summer</p>
-              <p className="mt-1 text-sm text-white/80">Last day Fri 11 September</p>
+              <p className="mt-1 text-sm text-white/90">Last day Fri 11 September</p>
             </div>
             <div className="p-5 sm:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/70">Webcam</p>
+              <p className="text-xs uppercase tracking-widest text-white/90">Webcam</p>
               <p className="mt-1 text-2xl font-semibold">Live view</p>
-              <p className="mt-1 text-sm text-white/80">
+              <p className="mt-1 text-sm text-white/90">
                 <Link href="/flying/weather" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
                   Looking north across the hangar
                 </Link>
@@ -121,7 +121,7 @@ export default function Dashboard() {
                 <article key={`${n.date}-${i}`} className="card p-5">
                   <div className="mb-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <h3 className="text-lg">{n.title}</h3>
-                    {n.from && <span className="text-sm italic text-slate2">from {n.from}</span>}
+                    {n.from && <span className="text-sm italic text-inkMuted">from {n.from}</span>}
                   </div>
                   <time dateTime={n.date} className="mb-2 block text-xs text-slate2">
                     {n.displayDate}
@@ -148,7 +148,7 @@ export default function Dashboard() {
                     href={d.href}
                     target={d.href.startsWith('/') ? undefined : '_blank'}
                     rel={d.href.startsWith('/') ? undefined : 'noopener noreferrer'}
-                    className="tap w-full flex-col items-start px-5 py-3.5 hover:bg-skyTint transition-colors"
+                    className="tap w-full flex-col items-start px-5 py-3.5 hover:bg-sky50 transition-colors"
                   >
                     <span className="font-medium text-navy">{d.title}</span>
                     {d.version && <span className="text-xs text-slate2">{d.version}</span>}
@@ -166,7 +166,7 @@ export default function Dashboard() {
               {nextEvents.map((e) => (
                 <li key={`${e.displayWhen}-${e.what}`} className="px-5 py-3.5">
                   <p className="text-sm font-medium text-navy">{e.displayWhen}</p>
-                  <p className="text-sm text-slate2">{e.what}</p>
+                  <p className="text-sm text-inkMuted">{e.what}</p>
                 </li>
               ))}
             </ul>
@@ -206,7 +206,7 @@ export default function Dashboard() {
                   <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>
                     {l.label}
                   </span>
-                  {l.sub && <span className="mt-1 text-sm text-slate2">{l.sub}</span>}
+                  {l.sub && <span className="mt-1 text-sm text-inkMuted">{l.sub}</span>}
                   {!internal && <span className="sr-only">(opens in a new tab)</span>}
                 </>
               );
@@ -236,7 +236,7 @@ export default function Dashboard() {
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
         <Section title="Looking for something?">
           <div className="card p-5">
-            <p className="mb-3 text-sm text-slate2">
+            <p className="mb-3 text-sm text-inkMuted">
               Search every manual, policy, set of minutes and notice the club holds — including
               the full archive.
             </p>
@@ -265,10 +265,10 @@ export default function Dashboard() {
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-5 py-4 hover:bg-skyTint transition-colors"
+                  className="block px-5 py-4 hover:bg-sky50 transition-colors"
                 >
                   <span className="block font-semibold text-navy">{c.name}</span>
-                  <span className="mt-0.5 block text-sm text-slate2">{c.why}</span>
+                  <span className="mt-0.5 block text-sm text-inkMuted">{c.why}</span>
                   <span className="sr-only">(opens in a new tab)</span>
                 </a>
               </li>

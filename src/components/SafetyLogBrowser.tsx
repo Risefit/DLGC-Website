@@ -60,7 +60,7 @@ export default function SafetyLogBrowser({
           placeholder="cable, canopy, winch, undercarriage, airbrake…"
           className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 placeholder:text-slate2/70 focus:border-sky focus:outline-none"
         />
-        <p className="mt-2 text-sm text-slate2" aria-live="polite">
+        <p className="mt-2 text-sm text-inkMuted" aria-live="polite">
           {query
             ? `${visible.length} ${visible.length === 1 ? 'entry' : 'entries'} match “${q.trim()}”, across all ${years.length} years.`
             : `Showing ${visible.length} entries from the last ${Math.min(shownYears, years.length)} years. ${lessons.length} in total.`}
@@ -69,7 +69,7 @@ export default function SafetyLogBrowser({
 
       {grouped.length === 0 && (
         <div className="card p-6">
-          <p className="text-slate2">
+          <p className="text-inkMuted">
             Nothing matches that. Try a single word — the entries are written in plain language.
           </p>
         </div>
@@ -81,9 +81,9 @@ export default function SafetyLogBrowser({
           <ul className="space-y-4">
             {items.map((l) => (
               <li key={l.id} className="card overflow-hidden">
-                <div className="border-b border-skyLine bg-skyTint px-5 py-3">
+                <div className="border-b border-skyLine bg-sunken px-5 py-3">
                   <h3 className="text-lg font-semibold text-navy">{l.title}</h3>
-                  <p className="text-sm text-slate2">{l.displayDate}</p>
+                  <p className="text-sm text-inkMuted">{l.displayDate}</p>
                 </div>
                 <dl className="grid gap-px bg-skyLine lg:grid-cols-3">
                   {[
@@ -94,7 +94,7 @@ export default function SafetyLogBrowser({
                     <div key={head} className="bg-white px-5 py-4">
                       <dt className="mb-1 text-xs font-bold uppercase tracking-wide text-sky">{head}</dt>
                       <dd className="text-sm leading-relaxed">
-                        {value ? value : <span className="text-slate2">—</span>}
+                        {value ? value : <span className="text-inkMuted">—</span>}
                       </dd>
                     </div>
                   ))}
@@ -107,7 +107,7 @@ export default function SafetyLogBrowser({
 
       {!query && moreYears > 0 && (
         <div className="rounded-card border-2 border-dashed border-skyLine bg-white p-6 text-center">
-          <p className="text-sm text-slate2">
+          <p className="text-sm text-inkMuted">
             {moreYears} earlier {moreYears === 1 ? 'year is' : 'years are'} kept too, back to{' '}
             {years[years.length - 1]}. Nothing has been deleted.
           </p>

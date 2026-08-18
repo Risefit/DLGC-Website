@@ -38,7 +38,7 @@ export default function DirectoryPage() {
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <div className="card p-5">
             <h3 className="text-lg">Office hours</h3>
-            <p className="mt-2 text-sm text-slate2">{contacts.officeHours}</p>
+            <p className="mt-2 text-sm text-inkMuted">{contacts.officeHours}</p>
             <p className="mt-3">
               <a href={`mailto:${contacts.office.email}`} className="link">{contacts.office.email}</a>
             </p>
@@ -48,7 +48,7 @@ export default function DirectoryPage() {
             <ul className="mt-2 space-y-2">
               {contacts.catering.map((c) => (
                 <li key={c.name} className="flex items-baseline justify-between gap-3">
-                  <span className="text-slate2">{c.name}</span>
+                  <span className="text-inkMuted">{c.name}</span>
                   <a href={`tel:${c.tel.replace(/\s/g, '')}`} className="link font-medium">{c.tel}</a>
                 </li>
               ))}
@@ -85,7 +85,7 @@ export default function DirectoryPage() {
           {roles.map((r) => (
             <li key={r.role} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4">
               <span className="font-medium text-navy">{r.role}</span>
-              <span className="text-slate2">{r.holder}</span>
+              <span className="text-inkMuted">{r.holder}</span>
             </li>
           ))}
         </ul>

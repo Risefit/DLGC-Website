@@ -49,7 +49,7 @@ export default function RosterPage() {
               className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
             >
               <span className="text-lg font-semibold text-navy">{s.label}</span>
-              <span className="mt-1 text-sm text-slate2">{current.label}</span>
+              <span className="mt-1 text-sm text-inkMuted">{current.label}</span>
               <span className="mt-3 text-sm font-medium text-sky">Open the PDF</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
@@ -62,7 +62,7 @@ export default function RosterPage() {
               className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
             >
               <span className="text-lg font-semibold text-navy">SPL classroom briefings</span>
-              <span className="mt-1 text-sm text-slate2">
+              <span className="mt-1 text-sm text-inkMuted">
                 Topics and schedule · prepared by {briefingsPreparedBy}
               </span>
               <span className="mt-3 text-sm font-medium text-sky">Open the PDF</span>
@@ -139,17 +139,17 @@ export default function RosterPage() {
           {winchDrivers.map((d) => (
             <li key={d.name} className="card flex items-baseline justify-between gap-3 px-4 py-3">
               <span className="font-medium text-navy">{d.name}</span>
-              <span className="shrink-0 text-sm text-slate2">{d.qualified}</span>
+              <span className="shrink-0 text-sm text-inkMuted">{d.qualified}</span>
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-sm text-slate2">
+        <p className="mt-3 text-sm text-inkMuted">
           Winch training is run by the Winch Master —{' '}
           <Link href="/club-life/roles" className="link">see who holds that role</Link>.
         </p>
       </Section>
 
-      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
         Rebuilt from the club&rsquo;s duty rotas page.{' '}
         <a href={rotaSource} target="_blank" rel="noopener noreferrer" className="link">
           The original is still there

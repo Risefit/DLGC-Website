@@ -64,7 +64,7 @@ export default function FlyingPage() {
             <div key={g.group} className="card flex flex-col overflow-hidden">
               <div className="border-b border-skyLine bg-skyTint px-5 py-3.5">
                 <h3 className="text-lg font-semibold text-navy">{g.group}</h3>
-                <p className="mt-1 text-sm text-slate2">{g.blurb}</p>
+                <p className="mt-1 text-sm text-inkMuted">{g.blurb}</p>
               </div>
               <ul className="flex-1 divide-y divide-skyLine">
                 {g.manuals.map((m) => (
@@ -73,7 +73,7 @@ export default function FlyingPage() {
                       href={m.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block px-5 py-3.5 transition-colors hover:bg-skyTint"
+                      className="block px-5 py-3.5 transition-colors hover:bg-sky50"
                     >
                       <span className="font-medium text-navy">{m.title}</span>
                       {m.note && <span className="mt-0.5 block text-xs text-slate2">{m.note}</span>}
@@ -101,10 +101,10 @@ export default function FlyingPage() {
                   href={d.href}
                   target={external ? '_blank' : undefined}
                   rel={external ? 'noopener noreferrer' : undefined}
-                  className="block px-5 py-4 hover:bg-skyTint transition-colors"
+                  className="block px-5 py-4 hover:bg-sky50 transition-colors"
                 >
                   <span className="font-medium text-navy">{d.title}</span>
-                  {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+                  {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
                   {d.owner && <span className="mt-1 block text-xs text-slate2">Owner: {d.owner}</span>}
                 </a>
               </li>

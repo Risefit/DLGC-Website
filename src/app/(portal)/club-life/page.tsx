@@ -44,7 +44,7 @@ export default function ClubLifePage() {
                   >
                     <span className="text-lg font-semibold text-navy">{p.title}</span>
                     <span className="mt-1 text-xs uppercase tracking-wide text-sky">{p.eyebrow}</span>
-                    <span className="mt-2 flex-1 text-sm text-slate2">{p.cardBlurb}</span>
+                    <span className="mt-2 flex-1 text-sm text-inkMuted">{p.cardBlurb}</span>
                     <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
                       Open the page
                       <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">

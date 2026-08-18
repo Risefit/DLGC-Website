@@ -22,8 +22,8 @@ export default function NoticesPage() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/flying" className="link">Flying</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">Notices</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">Notices</span>
       </nav>
 
       <PageHeader
@@ -57,7 +57,7 @@ export default function NoticesPage() {
                 href={b.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block px-5 py-4 transition-colors hover:bg-skyTint"
+                className="block px-5 py-4 transition-colors hover:bg-sky50"
               >
                 <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="font-medium text-navy">{b.title}</span>
@@ -73,7 +73,7 @@ export default function NoticesPage() {
         </ul>
       </Section>
 
-      <p className="border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="border-t border-skyLine pt-6 text-sm text-inkMuted">
         Rebuilt from{' '}
         <a href={cfiNoticesSource} target="_blank" rel="noopener noreferrer" className="link">
           the CFI&rsquo;s Notices page

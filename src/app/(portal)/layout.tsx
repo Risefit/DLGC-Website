@@ -48,7 +48,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
             <div>
               <h2 className="mb-2 text-base">Where we are</h2>
-              <p className="text-slate2">
+              <p className="text-inkMuted">
                 {contacts.postal.map((l) => (
                   <span key={l} className="block">{l}</span>
                 ))}
@@ -57,7 +57,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
             <div>
               <h2 className="mb-2 text-base">Quick links</h2>
-              <ul className="space-y-1.5 text-slate2">
+              <ul className="space-y-1.5 text-inkMuted">
                 <li><Link href="/find-it" className="link">Find It (old site A–Z)</Link></li>
                 <li><Link href="/fees" className="link">Fees and charges</Link></li>
                 <li><Link href="/archive" className="link">Archive</Link></li>
@@ -69,7 +69,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
             <div>
               <h2 className="mb-2 text-base">Elsewhere</h2>
-              <ul className="space-y-1.5 text-slate2">
+              <ul className="space-y-1.5 text-inkMuted">
                 <li><a href={club.publicSite} className="link" target="_blank" rel="noopener noreferrer">Club public website</a></li>
                 <li><a href={club.bga} className="link" target="_blank" rel="noopener noreferrer">British Gliding Association</a></li>
                 <li><a href={club.bgaLadder} className="link" target="_blank" rel="noopener noreferrer">BGA Ladder</a></li>

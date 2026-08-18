@@ -50,7 +50,7 @@ export default function AccountPage() {
               </span>
               <span>
                 <span className="block text-lg font-semibold text-navy">{l.label}</span>
-                <span className="block text-sm text-slate2">{l.hint}</span>
+                <span className="block text-sm text-inkMuted">{l.hint}</span>
                 <span className="sr-only">(opens in a new tab)</span>
               </span>
             </a>
@@ -58,7 +58,7 @@ export default function AccountPage() {
         ))}
       </ul>
 
-      <p className="mt-6 text-sm text-slate2">
+      <p className="mt-6 text-sm text-inkMuted">
         Problems signing in to Members&rsquo; Admin, or something wrong with your account? Contact
         Mo Bent — this portal&rsquo;s editors cannot see or change anything in that system.
       </p>

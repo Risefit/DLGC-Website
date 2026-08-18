@@ -49,7 +49,7 @@ export default function CalendarPage() {
               {m.events.map((e) => (
                 <li key={`${m.month}-${e.what}`} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4">
                   <span className="w-full shrink-0 font-semibold text-navy sm:w-40">{e.when}</span>
-                  <span className="flex-1 text-slate2">{e.what}</span>
+                  <span className="flex-1 text-inkMuted">{e.what}</span>
                   {e.kind && <Badge tone={kindTone[e.kind]}>{kindLabel[e.kind]}</Badge>}
                 </li>
               ))}
@@ -58,7 +58,7 @@ export default function CalendarPage() {
         ))}
       </div>
 
-      <p className="mt-8 text-sm text-slate2">
+      <p className="mt-8 text-sm text-inkMuted">
         Arranging an event and need the clubroom or other facilities? Contact the office or a
         committee member to check availability and book — putting it in the calendar is not a
         booking.

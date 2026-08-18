@@ -29,7 +29,7 @@ export default function WeatherPage() {
             className="block h-[420px] w-full flex-1 border-0"
             loading="lazy"
           />
-          <p className="border-t border-skyLine bg-skyTint px-5 py-3 text-sm text-slate2">
+          <p className="border-t border-skyLine bg-skyTint px-5 py-3 text-sm text-inkMuted">
             {club.weatherStationNote}
           </p>
           <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-skyLine px-5 py-3">
@@ -68,7 +68,7 @@ export default function WeatherPage() {
                   href={l.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-5 py-4 transition-colors hover:bg-skyTint"
+                  className="block px-5 py-4 transition-colors hover:bg-sky50"
                 >
                   <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <span className="font-medium text-navy">{l.name}</span>
@@ -79,7 +79,7 @@ export default function WeatherPage() {
                       </span>
                     )}
                   </span>
-                  <span className="mt-1 block max-w-prose2 text-sm text-slate2">{l.note}</span>
+                  <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{l.note}</span>
                   <span className="sr-only">(opens in a new tab)</span>
                 </a>
               </li>

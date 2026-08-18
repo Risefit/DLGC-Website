@@ -101,7 +101,7 @@ export default async function ArchivePage({
         description="Complete runs of the club's recurring documents. Every one opens inside the portal."
       >
         {cols.length === 0 ? (
-          <p className="text-sm text-slate2">No collections match that search.</p>
+          <p className="text-sm text-inkMuted">No collections match that search.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* News is a collection too — it just lives in news.ts rather than
@@ -115,7 +115,7 @@ export default async function ArchivePage({
                   <span className="text-lg font-semibold text-navy">News and Notices</span>
                   <Badge tone="archive">before {currentNewsYear}</Badge>
                 </span>
-                <span className="mt-2 flex-1 text-sm text-slate2">
+                <span className="mt-2 flex-1 text-sm text-inkMuted">
                   {archivedNews.length} notices, with the photographs and documents each one linked to
                 </span>
                 <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
@@ -136,7 +136,7 @@ export default async function ArchivePage({
                   <span className="text-lg font-semibold text-navy">{c.title}</span>
                   {c.span && <Badge tone="archive">{c.span}</Badge>}
                 </span>
-                <span className="mt-2 flex-1 text-sm text-slate2">
+                <span className="mt-2 flex-1 text-sm text-inkMuted">
                   {c.count} documents · {fmtSize(c.totalBytes)}
                 </span>
                 <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
@@ -156,7 +156,7 @@ export default async function ArchivePage({
         description="Historic items that don't belong to a run."
       >
         {loose.length === 0 ? (
-          <p className="text-sm text-slate2">Nothing here matches that search.</p>
+          <p className="text-sm text-inkMuted">Nothing here matches that search.</p>
         ) : (
           <ul className="card divide-y divide-skyLine overflow-hidden">
             {loose.map((d) => {
@@ -167,16 +167,16 @@ export default async function ArchivePage({
                     href={d.href}
                     target={external ? '_blank' : undefined}
                     rel={external ? 'noopener noreferrer' : undefined}
-                    className="block px-5 py-4 hover:bg-skyTint transition-colors"
+                    className="block px-5 py-4 hover:bg-sky50 transition-colors"
                   >
                     <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                      <span className={`font-medium ${d.superseded ? 'text-slate2' : 'text-navy'}`}>
+                      <span className={`font-medium ${d.superseded ? 'text-inkMuted' : 'text-navy'}`}>
                         {d.title}
                       </span>
                       {d.superseded && <Badge tone="warn">No longer in force</Badge>}
                       {d.version && <span className="text-xs text-slate2">{d.version}</span>}
                     </span>
-                    {d.note && <span className="mt-1 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+                    {d.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
                     <span className="mt-1 block text-xs text-slate2">{d.category}</span>
                   </a>
                 </li>
@@ -186,7 +186,7 @@ export default async function ArchivePage({
         )}
       </Section>
 
-      <p className="text-sm text-slate2">
+      <p className="text-sm text-inkMuted">
         Looking for something current instead?{' '}
         <Link href="/documents" className="link">Search all documents</Link>.
       </p>

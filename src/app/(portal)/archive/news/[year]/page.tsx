@@ -28,10 +28,10 @@ export default async function NewsYearPage({ params }: { params: Promise<{ year:
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
         <Link href="/archive/news" className="link">News and Notices</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">{y}</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">{y}</span>
       </nav>
 
       <PageHeader

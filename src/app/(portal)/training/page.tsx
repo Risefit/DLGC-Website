@@ -22,10 +22,10 @@ export default function TrainingPage() {
               href={d.href}
               target={external ? '_blank' : undefined}
               rel={external ? 'noopener noreferrer' : undefined}
-              className="block px-5 py-4 hover:bg-skyTint transition-colors"
+              className="block px-5 py-4 hover:bg-sky50 transition-colors"
             >
               <span className="font-medium text-navy">{d.title}</span>
-              {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+              {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
               <span className="mt-1 block text-xs text-slate2">{d.audience.join(' · ')}</span>
             </a>
           </li>
@@ -63,7 +63,7 @@ export default function TrainingPage() {
             className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
           >
             <span className="font-semibold text-navy">All four cards on one page</span>
-            <span className="mt-1 text-sm text-slate2">
+            <span className="mt-1 text-sm text-inkMuted">
               The club&rsquo;s summary card — White, Red, Yellow and Green side by side, as the CFI
               publishes it. This is the authoritative version.
             </span>
@@ -76,7 +76,7 @@ export default function TrainingPage() {
             className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
           >
             <span className="font-semibold text-navy">Red Card Theory Test</span>
-            <span className="mt-1 text-sm text-slate2">
+            <span className="mt-1 text-sm text-inkMuted">
               One of the requirements to move to the Yellow card. Talk to any instructor when you
               are ready to sit it.
             </span>

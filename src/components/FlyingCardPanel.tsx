@@ -30,12 +30,12 @@ export default function FlyingCardPanel({ cards }: { cards: FlyingCard[] }) {
                 onClick={() => setOpen(isOpen ? null : c.slug)}
                 aria-expanded={isOpen}
                 aria-controls={`card-${c.slug}`}
-                className="flex w-full items-center gap-4 text-left transition-colors hover:bg-skyTint"
+                className="flex w-full items-center gap-4 text-left transition-colors hover:bg-sky50"
               >
                 <span className={`w-2 self-stretch ${c.tone.band}`} aria-hidden="true" />
                 <span className="min-w-0 flex-1 py-4">
                   <span className="block text-lg font-semibold text-navy">{c.name}</span>
-                  <span className="block text-sm text-slate2">{c.who}</span>
+                  <span className="block text-sm text-inkMuted">{c.who}</span>
                 </span>
                 <span className="shrink-0 pr-5 text-sm font-medium text-sky">
                   {isOpen ? 'Close' : 'What it means'}
@@ -45,7 +45,7 @@ export default function FlyingCardPanel({ cards }: { cards: FlyingCard[] }) {
                   height="18"
                   viewBox="0 0 16 16"
                   aria-hidden="true"
-                  className={`mr-5 shrink-0 text-slate2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                  className={`mr-5 shrink-0 text-inkMuted transition-transform ${isOpen ? 'rotate-180' : ''}`}
                 >
                   <path d="M2 5l6 6 6-6" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

@@ -51,8 +51,8 @@ export default async function CollectionPage({
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">{c.title}</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">{c.title}</span>
       </nav>
 
       <PageHeader
@@ -86,16 +86,16 @@ export default async function CollectionPage({
                     href={d.href}
                     target={external ? '_blank' : undefined}
                     rel={external ? 'noopener noreferrer' : undefined}
-                    className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-skyTint transition-colors"
+                    className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-sky50 transition-colors"
                   >
                     <span className="min-w-0">
                       <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <span className={`font-medium ${d.superseded ? 'text-slate2' : 'text-navy'}`}>
+                        <span className={`font-medium ${d.superseded ? 'text-inkMuted' : 'text-navy'}`}>
                           {d.title}
                         </span>
                         {d.superseded && <Badge tone="warn">No longer in force</Badge>}
                       </span>
-                      {d.note && <span className="mt-1 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+                      {d.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
                       <span className="mt-1 block text-xs text-slate2">
                         {d.format ?? 'PDF'}
                         {size ? ` · ${size}` : ''}

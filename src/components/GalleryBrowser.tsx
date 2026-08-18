@@ -75,7 +75,7 @@ export default function GalleryBrowser({ base }: { base: string }) {
           })}
         </div>
 
-        <p className="mt-3 text-sm text-slate2">
+        <p className="mt-3 text-sm text-inkMuted">
           {selected
             ? `Showing ${count} photograph${count === 1 ? '' : 's'}. Click the album again to close it.`
             : 'Choose an album to see the photographs.'}

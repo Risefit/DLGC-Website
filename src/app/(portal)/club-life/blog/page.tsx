@@ -77,7 +77,7 @@ export default function BlogPage() {
           <article key={e.date} className="card p-6">
             <div className="mb-1 flex flex-wrap items-baseline gap-x-3">
               <time dateTime={e.date} className="text-lg font-semibold text-navy">{e.display}</time>
-              <span className="text-sm italic text-slate2">from {e.from}</span>
+              <span className="text-sm italic text-inkMuted">from {e.from}</span>
             </div>
             <div className="prose-club mt-3">
               {e.body.map((p, i) => <p key={i}>{p}</p>)}
@@ -103,7 +103,7 @@ export default function BlogPage() {
 
       <div className="mt-8">
         <ToMigrate what="The full Flying Blog archive (home and away), including the soaring week write-ups from 2013 to 2024." />
-        <p className="mt-3 text-sm text-slate2">
+        <p className="mt-3 text-sm text-inkMuted">
           Everything imports into <Link href="/archive" className="link">the Archive</Link>, searchable by year.
         </p>
       </div>

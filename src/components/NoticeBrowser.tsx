@@ -38,7 +38,7 @@ export default function NoticeBrowser({ notices }: { notices: CfiNotice[] }) {
           placeholder="radio, FLARM, annual check, rigging, cable…"
           className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 placeholder:text-slate2/70 focus:border-sky focus:outline-none"
         />
-        <p className="mt-2 text-sm text-slate2" aria-live="polite">
+        <p className="mt-2 text-sm text-inkMuted" aria-live="polite">
           {query
             ? `${shown.length} of ${notices.length} notices match.`
             : `${notices.length} notices, newest first.`}
@@ -47,7 +47,7 @@ export default function NoticeBrowser({ notices }: { notices: CfiNotice[] }) {
 
       {shown.length === 0 && (
         <div className="card p-6">
-          <p className="text-slate2">Nothing matches that. Try a single word.</p>
+          <p className="text-inkMuted">Nothing matches that. Try a single word.</p>
         </div>
       )}
 
@@ -62,17 +62,17 @@ export default function NoticeBrowser({ notices }: { notices: CfiNotice[] }) {
                   onClick={() => setOpen(isOpen ? null : n.num)}
                   aria-expanded={isOpen}
                   aria-controls={`cfi-${n.num}`}
-                  className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-skyTint"
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-sky50"
                 >
                   <span
                     aria-hidden="true"
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-skyTint font-bold text-navy"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sunken font-bold text-navy"
                   >
                     {n.num}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold text-navy">{n.title}</span>
-                    <span className="block text-sm text-slate2">
+                    <span className="block text-sm text-inkMuted">
                       CFI&rsquo;s Notice {n.num}
                       {n.date && ` · ${n.date}`}
                     </span>
@@ -82,7 +82,7 @@ export default function NoticeBrowser({ notices }: { notices: CfiNotice[] }) {
                     height="18"
                     viewBox="0 0 16 16"
                     aria-hidden="true"
-                    className={`shrink-0 text-slate2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`shrink-0 text-inkMuted transition-transform ${isOpen ? 'rotate-180' : ''}`}
                   >
                     <path d="M2 5l6 6 6-6" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>

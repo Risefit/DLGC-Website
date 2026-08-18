@@ -59,7 +59,7 @@ export default function AdvertForm({ editorEmail }: { editorEmail: string }) {
   return (
     <form onSubmit={onSubmit} id="place-an-advert" className="card p-6">
       <h3 className="text-xl">Place an advert</h3>
-      <p className="mt-1 max-w-prose2 text-sm text-slate2">
+      <p className="mt-1 max-w-prose2 text-sm text-inkMuted">
         Selling, wanting, giving away or announcing something. It goes to the website editor, who
         will put it on this page.
       </p>
@@ -85,7 +85,7 @@ export default function AdvertForm({ editorEmail }: { editorEmail: string }) {
         </div>
         <div>
           <label htmlFor="ad-price" className={label}>
-            Price <span className="font-normal text-slate2">(leave blank if not selling)</span>
+            Price <span className="font-normal text-inkMuted">(leave blank if not selling)</span>
           </label>
           <input id="ad-price" name="price" placeholder="e.g. £25, or offers" className={field} />
         </div>
@@ -109,7 +109,7 @@ export default function AdvertForm({ editorEmail }: { editorEmail: string }) {
 
         <div className="sm:col-span-2">
           <label htmlFor="ad-image" className={label}>
-            Photograph <span className="font-normal text-slate2">(optional, but it helps)</span>
+            Photograph <span className="font-normal text-inkMuted">(optional, but it helps)</span>
           </label>
           <input
             id="ad-image"

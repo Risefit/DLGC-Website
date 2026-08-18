@@ -28,7 +28,7 @@ export default function FindItPage() {
           From the old site
         </p>
         <h1 className="text-3xl lg:text-4xl">Find It (A–Z)</h1>
-        <p className="mt-3 max-w-prose2 text-slate2">
+        <p className="mt-3 max-w-prose2 text-inkMuted">
           Knew your way around the old members&rsquo; site? Look up the old subject name here and
           it will tell you where that thing lives now.
         </p>
@@ -54,7 +54,7 @@ export default function FindItPage() {
         </p>
       </div>
 
-      <p aria-live="polite" className="mb-3 text-sm text-slate2">
+      <p aria-live="polite" className="mb-3 text-sm text-inkMuted">
         <strong className="text-navy">{results.length}</strong>{' '}
         {results.length === 1 ? 'entry' : 'entries'}
       </p>
@@ -64,7 +64,7 @@ export default function FindItPage() {
           <li key={e.term}>
             <Link
               href={e.to}
-              className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4 hover:bg-skyTint transition-colors"
+              className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4 hover:bg-sky50 transition-colors"
             >
               <span className="font-medium text-navy">{e.term}</span>
               <span className="flex items-center gap-1.5 text-sm text-sky">
@@ -81,7 +81,7 @@ export default function FindItPage() {
       {results.length === 0 && (
         <div className="card p-8 text-center">
           <p className="text-lg font-medium text-navy">No match in the old A–Z</p>
-          <p className="mt-1 text-sm text-slate2">
+          <p className="mt-1 text-sm text-inkMuted">
             <Link href="/documents" className="link">Search all documents</Link> — it covers far more
             than this list did.
           </p>

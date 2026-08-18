@@ -18,8 +18,8 @@ export default function PhotoGalleriesPage() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/club-life" className="link">Club Life</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">Photo Galleries</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">Photo Galleries</span>
       </nav>
 
       <PageHeader
@@ -38,7 +38,7 @@ export default function PhotoGalleriesPage() {
                   {g.count}
                 </span>
               </span>
-              <span className="mt-2 flex-1 text-sm text-slate2">{g.blurb}</span>
+              <span className="mt-2 flex-1 text-sm text-inkMuted">{g.blurb}</span>
               <span className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sky">
                 {g.internal ? 'Open' : 'Open on the old site'}
                 <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
@@ -69,7 +69,7 @@ export default function PhotoGalleriesPage() {
         </p>
       </Callout>
 
-      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
         <a href={photoGalleriesSource} target="_blank" rel="noopener noreferrer" className="link">
           The original index is still on the old site
           <span className="sr-only"> (opens in a new tab)</span>

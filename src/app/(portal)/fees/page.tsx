@@ -50,7 +50,7 @@ export default function FeesPage() {
                   <th scope="col" className="px-5 py-3 text-right text-sm font-semibold text-navy">
                     From {feesMeta.effective.replace(' 2026', ' 26')}
                   </th>
-                  <th scope="col" className="px-5 py-3 text-right text-sm font-semibold text-slate2">
+                  <th scope="col" className="px-5 py-3 text-right text-sm font-semibold text-inkMuted">
                     Previous
                   </th>
                 </tr>
@@ -59,9 +59,9 @@ export default function FeesPage() {
                 {g.rows.map((r, i) => (
                   <tr key={r.item} className={i % 2 ? 'bg-cloud/60' : ''}>
                     <th scope="row" className="px-5 py-3 text-sm font-normal text-ink">{r.item}</th>
-                    <td className="px-5 py-3 text-sm text-slate2">{r.basis ?? '—'}</td>
+                    <td className="px-5 py-3 text-sm text-inkMuted">{r.basis ?? '—'}</td>
                     <td className="px-5 py-3 text-right text-sm font-semibold tabular-nums text-navy">{r.now}</td>
-                    <td className="px-5 py-3 text-right text-sm tabular-nums text-slate2">{r.prev ?? '—'}</td>
+                    <td className="px-5 py-3 text-right text-sm tabular-nums text-inkMuted">{r.prev ?? '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -72,7 +72,7 @@ export default function FeesPage() {
 
       <section className="mb-8">
         <h2 className="mb-3 text-2xl">Part-year membership</h2>
-        <p className="mb-3 max-w-prose2 text-sm text-slate2">
+        <p className="mb-3 max-w-prose2 text-sm text-inkMuted">
           Joining part way through the club year? Annual membership and rental fees are charged by
           month of joining, rounded to the nearest pound.
         </p>
@@ -99,7 +99,7 @@ export default function FeesPage() {
 
       <section>
         <h2 className="mb-3 text-2xl">Notes</h2>
-        <ul className="card space-y-3 p-6 text-sm text-slate2">
+        <ul className="card space-y-3 p-6 text-sm text-inkMuted">
           {feeNotes.map((n) => (
             <li key={n} className="flex gap-3">
               <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky" />

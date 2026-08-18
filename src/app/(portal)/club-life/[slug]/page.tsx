@@ -33,7 +33,7 @@ function LinkGrid({ section }: { section: ClubSection }) {
               className="card flex h-full flex-col p-4 transition-all hover:border-sky hover:shadow-lift"
             >
               <span className="font-medium text-navy">{l.label}</span>
-              {l.note && <span className="mt-1 text-sm text-slate2">{l.note}</span>}
+              {l.note && <span className="mt-1 text-sm text-inkMuted">{l.note}</span>}
               {!internal && <span className="sr-only">(opens in a new tab)</span>}
             </a>
           </li>
@@ -61,8 +61,8 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/club-life" className="link">Club Life</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">{page.title}</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">{page.title}</span>
       </nav>
 
       <PageHeader eyebrow={page.eyebrow} title={page.title} lead={page.lead} />
@@ -71,8 +71,8 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
         <div className="mb-8 rounded-card border-l-4 border-sky bg-skyTint px-5 py-4">
           <p className="text-sm">
             <strong className="text-navy">{page.steward.name}</strong>
-            <span className="text-slate2"> — {page.steward.role}</span>
-            {page.steward.contact && <span className="text-slate2"> · {page.steward.contact}</span>}
+            <span className="text-inkMuted"> — {page.steward.role}</span>
+            {page.steward.contact && <span className="text-inkMuted"> · {page.steward.contact}</span>}
           </p>
         </div>
       )}
@@ -92,7 +92,7 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
       ))}
 
       <div className="mt-10 border-t border-skyLine pt-6">
-        <p className="text-sm text-slate2">
+        <p className="text-sm text-inkMuted">
           Rebuilt from the club&rsquo;s own page.{' '}
           <a href={page.source} target="_blank" rel="noopener noreferrer" className="link">
             The original is still there
@@ -110,7 +110,7 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
                     className="card flex h-full flex-col p-4 transition-all hover:border-sky hover:shadow-lift"
                   >
                     <span className="font-medium text-navy">{p.title}</span>
-                    <span className="mt-1 text-sm text-slate2">{p.cardBlurb}</span>
+                    <span className="mt-1 text-sm text-inkMuted">{p.cardBlurb}</span>
                   </Link>
                 </li>
               ))}

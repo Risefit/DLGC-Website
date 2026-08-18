@@ -12,7 +12,7 @@ import { clubNumbers, telHref, whatsappHref } from '@/content/site';
 export default function ClubNumbers({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
-      <ul className="space-y-1.5 text-slate2">
+      <ul className="space-y-1.5 text-inkMuted">
         {clubNumbers.map((n) => (
           <li key={n.label} className="flex flex-wrap items-baseline gap-x-2">
             <span>{n.label}</span>
@@ -39,7 +39,7 @@ export default function ClubNumbers({ compact = false }: { compact?: boolean }) 
         <li key={n.label} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
           <span className="min-w-0">
             <span className="block font-medium text-navy">{n.label}</span>
-            <span className="block text-sm text-slate2">{n.note}</span>
+            <span className="block text-sm text-inkMuted">{n.note}</span>
           </span>
           <span className="flex flex-wrap items-center gap-2">
             <a

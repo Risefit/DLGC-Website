@@ -16,8 +16,8 @@ export default function NewsArchiveIndex() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">News and Notices</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">News and Notices</span>
       </nav>
 
       <PageHeader
@@ -34,7 +34,7 @@ export default function NewsArchiveIndex() {
               className="card flex h-full flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
             >
               <span className="text-3xl font-bold text-navy">{y.year}</span>
-              <span className="mt-1 text-sm text-slate2">
+              <span className="mt-1 text-sm text-inkMuted">
                 {y.count} {y.count === 1 ? 'notice' : 'notices'}
               </span>
               {y.sample && (

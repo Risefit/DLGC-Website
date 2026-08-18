@@ -37,7 +37,7 @@ export default function Webcam({
     return (
       <div className="card flex flex-col justify-center p-6">
         <h3 className="text-lg">Camphill Webcam</h3>
-        <p className="mt-2 text-sm text-slate2">
+        <p className="mt-2 text-sm text-inkMuted">
           The camera isn&rsquo;t reachable from the portal yet. It still works on the old site.
         </p>
         <a

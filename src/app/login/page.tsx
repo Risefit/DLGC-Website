@@ -63,14 +63,14 @@ export default function LoginPage() {
             </svg>
           </span>
           <h1 className="text-2xl text-white">DLGC Members&rsquo; Portal</h1>
-          <p className="mt-1 text-sm text-white/80">
+          <p className="mt-1 text-sm text-white/90">
             Gliding at Camphill since {club.founded}
           </p>
         </div>
 
         <div className="card p-6">
           <h2 className="text-xl">Sign in</h2>
-          <p className="mt-1 text-sm text-slate2">
+          <p className="mt-1 text-sm text-inkMuted">
             Use your portal email and password. This is <strong>not</strong> your Members&rsquo;
             Admin login — that system has its own separate sign-in.
           </p>
@@ -78,7 +78,7 @@ export default function LoginPage() {
           {previewOpen && (
             <div className="mt-4 rounded-lg border-l-4 border-warn bg-warnTint p-4 text-sm">
               <p className="font-semibold text-warn">Preview mode</p>
-              <p className="mt-1 text-slate2">
+              <p className="mt-1 text-inkMuted">
                 Accounts aren&rsquo;t set up yet. Press Sign in to look around.
               </p>
             </div>
@@ -131,14 +131,14 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-5 border-t border-skyLine pt-4 text-sm text-slate2">
+          <p className="mt-5 border-t border-skyLine pt-4 text-sm text-inkMuted">
             Forgotten your password, or need an account? Contact the website editor or the club
             office on{' '}
             <a href="tel:01298871270" className="link">01298 871270</a>.
           </p>
         </div>
 
-        <p className="mt-6 text-center text-sm text-white/80">
+        <p className="mt-6 text-center text-sm text-white/90">
           <a
             href={club.publicSite}
             target="_blank"

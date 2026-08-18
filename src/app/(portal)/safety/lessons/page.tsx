@@ -23,8 +23,8 @@ export default function SafetyLessonsPage() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/safety" className="link">Safety</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">Safety Lessons Log</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">Safety Lessons Log</span>
       </nav>
 
       <PageHeader
@@ -42,7 +42,7 @@ export default function SafetyLessonsPage() {
           </p>
         </Callout>
         <div className="card flex flex-col justify-center p-5">
-          <p className="text-sm text-slate2">Got something to add to it?</p>
+          <p className="text-sm text-inkMuted">Got something to add to it?</p>
           <Link
             href="/safety#report-an-occurrence"
             className="tap mt-2 gap-2 rounded-lg bg-good px-5 py-3 font-semibold text-white transition-colors hover:brightness-110"
@@ -59,7 +59,7 @@ export default function SafetyLessonsPage() {
         initialYears={SAFETY_LOG_RECENT_YEARS}
       />
 
-      <p className="mt-10 border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="mt-10 border-t border-skyLine pt-6 text-sm text-inkMuted">
         Both volumes of the log are reproduced here.{' '}
         <a href={safetyLogSource} target="_blank" rel="noopener noreferrer" className="link">
           The original page is still on the old site

@@ -25,10 +25,10 @@ function DocList({ docs }: { docs: { title: string; note?: string; href: string 
             href={d.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="block px-5 py-4 transition-colors hover:bg-skyTint"
+            className="block px-5 py-4 transition-colors hover:bg-sky50"
           >
             <span className="font-medium text-navy">{d.title}</span>
-            {d.note && <span className="mt-1 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+            {d.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         </li>
@@ -49,8 +49,8 @@ export default function AirspacePage() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/flying" className="link">Flying</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">Airspace and NOTAMs</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">Airspace and NOTAMs</span>
       </nav>
 
       <PageHeader
@@ -66,7 +66,7 @@ export default function AirspacePage() {
         </div>
         <div className="px-6 py-5">
           <p className="max-w-prose2">{REBRIEF_RULE}</p>
-          <p className="mt-3 max-w-prose2 text-sm text-slate2">
+          <p className="mt-3 max-w-prose2 text-sm text-inkMuted">
             When you have reviewed the LoA for the Wave Box and Airway Crossing, and the Camphill
             Wave Box and L975 Crossing Briefing, reset your briefing date in Members&rsquo; Admin.
           </p>
@@ -120,7 +120,7 @@ export default function AirspacePage() {
                 <span className={`font-semibold ${t.caution ? 'text-warn' : 'text-navy'}`}>
                   {t.name}
                 </span>
-                <span className="mt-1 text-sm text-slate2">{t.note}</span>
+                <span className="mt-1 text-sm text-inkMuted">{t.note}</span>
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
             </li>
@@ -141,7 +141,7 @@ export default function AirspacePage() {
         </Callout>
       </div>
 
-      <p className="border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="border-t border-skyLine pt-6 text-sm text-inkMuted">
         Rebuilt from the club&rsquo;s airspace pages —{' '}
         <a href={airspaceSource} target="_blank" rel="noopener noreferrer" className="link">
           Airspace and NOTAMS

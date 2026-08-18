@@ -28,7 +28,7 @@ export default function BuyAndSellPage() {
         <div>
           {live.length === 0 ? (
             <div className="card p-6">
-              <p className="text-slate2">
+              <p className="text-inkMuted">
                 Nothing is advertised at the moment. Yours would be the first — use the form.
               </p>
             </div>
@@ -95,7 +95,7 @@ export default function BuyAndSellPage() {
             </ul>
           </Callout>
           <div className="mt-4 card p-5">
-            <p className="text-sm text-slate2">
+            <p className="text-sm text-inkMuted">
               Sold it, or found what you were after? Tell the editor and the advert comes down —
               nobody enjoys ringing about something that went weeks ago.
             </p>

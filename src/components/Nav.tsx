@@ -94,7 +94,7 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => { setOpen(false); onNavigate?.(); }}
-                  className="flex items-start gap-2 rounded-lg px-3 py-2.5 hover:bg-skyTint transition-colors"
+                  className="flex items-start gap-2 rounded-lg px-3 py-2.5 hover:bg-sky50 transition-colors"
                   role="menuitem"
                 >
                   <span className="min-w-0 flex-1">
@@ -102,7 +102,7 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
                     <span className="block text-xs text-slate2">{l.hint}</span>
                     <span className="mt-0.5 block text-xs text-sky">{l.where}</span>
                   </span>
-                  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="mt-1.5 shrink-0 text-slate2">
+                  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="mt-1.5 shrink-0 text-inkMuted">
                     <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />
                   </svg>
                   <span className="sr-only">(opens in a new tab)</span>

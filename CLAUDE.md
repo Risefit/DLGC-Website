@@ -205,7 +205,31 @@ Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
 email the editor instead — it never fails silently.
 
-### Change colours, spacing, type
+### Colour — the tonal ladder
+`tailwind.config.ts`. The palette is one hue plus three semantic colours, in graded steps:
+
+| Purpose | Token | On white |
+|---|---|---|
+| Headings | `navy` | 11.8:1 |
+| Body prose | `ink` (set on `body`) | 16.7:1 |
+| Supporting text — card descriptions, section leads, form hints | `inkMuted` | 9.5:1 |
+| Captions — timestamps, counts, "opens in a new tab" | `slate2` | 6.9:1 |
+
+Surfaces, lightest to darkest: `white` → `sky50` (hover) → `cloud` (page) → `skyTint` (panels)
+→ `sunken` (inset) → `sky200` (selected).
+
+**Two rules that are not style preferences:**
+
+1. **`sky` must not sit on `sunken` or `sky200`** — 4.48:1 and 4.25:1, at or under the AA
+   floor. Those fills take `navy` or `ink` text. The config says so too.
+2. **Do not darken `cloud` further.** `#E9EEF5` would look crisper but drags `sky` to 4.6:1
+   on the page background. On a site built for members mostly over 60, headroom on link
+   contrast beats a sharper card edge.
+
+Reach for a step, not a new colour. If something needs emphasis, move it one notch up the
+ladder rather than adding a hue.
+
+### Change spacing and type
 `tailwind.config.ts` holds every design token. Do not introduce new colours ad hoc.
 **Base font size is 18px on purpose** (`src/app/globals.css`) — this membership skews older.
 Do not reduce it.

@@ -18,8 +18,8 @@ export default function RolesPage() {
     <>
       <nav aria-label="Breadcrumb" className="mb-4 text-sm">
         <Link href="/club-life" className="link">Club Life</Link>
-        <span className="mx-2 text-slate2" aria-hidden="true">/</span>
-        <span className="text-slate2">Roles and Role Holders</span>
+        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
+        <span className="text-inkMuted">Roles and Role Holders</span>
       </nav>
 
       <PageHeader
@@ -50,11 +50,11 @@ export default function RolesPage() {
               <li key={r.role} className="grid gap-1 px-5 py-4 sm:grid-cols-[1fr_1fr] sm:gap-6">
                 <span>
                   <span className="block font-semibold text-navy">{r.role}</span>
-                  {r.remit && <span className="block text-sm text-slate2">{r.remit}</span>}
+                  {r.remit && <span className="block text-sm text-inkMuted">{r.remit}</span>}
                 </span>
                 <span className="flex flex-wrap items-start gap-x-3 gap-y-1">
                   {r.holders.length === 0 ? (
-                    <span className="text-sm text-slate2">—</span>
+                    <span className="text-sm text-inkMuted">—</span>
                   ) : (
                     r.holders.map((h) => (
                       <span
@@ -76,7 +76,7 @@ export default function RolesPage() {
         </ul>
       </div>
 
-      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
         Contact details are not published here — they are in Members&rsquo; Admin, or ask the
         office. Committee roles are on{' '}
         <a href={committeeSource} target="_blank" rel="noopener noreferrer" className="link">

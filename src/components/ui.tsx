@@ -16,7 +16,7 @@ export function PageHeader({
         <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-sky">{eyebrow}</p>
       )}
       <h1 className="text-3xl lg:text-4xl">{title}</h1>
-      {lead && <p className="mt-3 max-w-prose2 text-slate2">{lead}</p>}
+      {lead && <p className="mt-3 max-w-prose2 text-inkMuted">{lead}</p>}
     </div>
   );
 }
@@ -37,7 +37,7 @@ export function Section({
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-2xl">{title}</h2>
-          {description && <p className="mt-1 max-w-prose2 text-sm text-slate2">{description}</p>}
+          {description && <p className="mt-1 max-w-prose2 text-sm text-inkMuted">{description}</p>}
         </div>
         {action}
       </div>
@@ -69,12 +69,12 @@ export function ActionTile({
         <span className="flex items-center gap-1.5 text-lg font-semibold text-navy">
           {label}
           {external && (
-            <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0 text-slate2">
+            <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0 text-inkMuted">
               <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />
             </svg>
           )}
         </span>
-        <span className="mt-0.5 block text-sm text-slate2">{hint}</span>
+        <span className="mt-0.5 block text-sm text-inkMuted">{hint}</span>
         {external && <span className="sr-only">(opens in a new tab)</span>}
       </span>
     </>
@@ -143,7 +143,7 @@ export function Badge({
 /** Marks content still to be migrated from the old site. Honest placeholders beat fake ones. */
 export function ToMigrate({ what }: { what: string }) {
   return (
-    <div className="rounded-card border border-dashed border-skyLine bg-white p-5 text-sm text-slate2">
+    <div className="rounded-card border border-dashed border-skyLine bg-white p-5 text-sm text-inkMuted">
       <span className="font-medium text-navy">Awaiting import:</span> {what}
       <span className="mt-1 block text-xs">
         Will populate automatically once the mirrored files from the old site are imported.

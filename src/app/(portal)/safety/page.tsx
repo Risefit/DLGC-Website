@@ -33,7 +33,7 @@ export default function SafetyPage() {
                   <path d="M8 12l3 3 5-6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
-              <span className="text-white/95">{line}</span>
+              <span className="text-white">{line}</span>
             </li>
           ))}
         </ul>
@@ -77,10 +77,10 @@ export default function SafetyPage() {
                   href={r.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-5 py-4 transition-colors hover:bg-skyTint"
+                  className="block px-5 py-4 transition-colors hover:bg-sky50"
                 >
                   <span className="font-medium text-navy">{r.title}</span>
-                  {r.note && <span className="mt-1 block max-w-prose2 text-sm text-slate2">{r.note}</span>}
+                  {r.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{r.note}</span>}
                   <span className="sr-only">(opens in a new tab)</span>
                 </a>
               </li>
@@ -118,7 +118,7 @@ export default function SafetyPage() {
               className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
             >
               <span className="font-semibold text-navy">{x.title}</span>
-              <span className="mt-1 text-sm text-slate2">{x.note}</span>
+              <span className="mt-1 text-sm text-inkMuted">{x.note}</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
           ))}
@@ -138,10 +138,10 @@ export default function SafetyPage() {
                   href={d.href}
                   target={external ? '_blank' : undefined}
                   rel={external ? 'noopener noreferrer' : undefined}
-                  className="block px-5 py-4 hover:bg-skyTint transition-colors"
+                  className="block px-5 py-4 hover:bg-sky50 transition-colors"
                 >
                   <span className="font-medium text-navy">{d.title}</span>
-                  {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-slate2">{d.note}</span>}
+                  {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
                 </a>
               </li>
             );
@@ -157,15 +157,15 @@ export default function SafetyPage() {
         <ul className="card divide-y divide-skyLine overflow-hidden">
           {archived.map((d) => (
             <li key={d.id}>
-              <a href={d.href} target="_blank" rel="noopener noreferrer" className="block px-5 py-4 hover:bg-skyTint transition-colors">
+              <a href={d.href} target="_blank" rel="noopener noreferrer" className="block px-5 py-4 hover:bg-sky50 transition-colors">
                 <span className="font-medium text-navy">{d.title}</span>
-                {d.note && <span className="mt-0.5 block text-sm text-slate2">{d.note}</span>}
+                {d.note && <span className="mt-0.5 block text-sm text-inkMuted">{d.note}</span>}
               </a>
             </li>
           ))}
         </ul>
       </Section>
-    <p className="mt-8 border-t border-skyLine pt-6 text-sm text-slate2">
+    <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
         Checked against the club&rsquo;s own safety page —{' '}
         <a href={safetyPageSource} target="_blank" rel="noopener noreferrer" className="link">
           the original is still there

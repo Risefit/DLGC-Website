@@ -36,7 +36,7 @@ export default function NewsPage() {
       {archivedNews.length > 0 && (
         <div className="mt-10 rounded-card border-2 border-dashed border-skyLine bg-white p-6 text-center">
           <h2 className="text-xl">Looking for something older?</h2>
-          <p className="mx-auto mt-2 max-w-prose2 text-sm text-slate2">
+          <p className="mx-auto mt-2 max-w-prose2 text-sm text-inkMuted">
             {archivedNews.length} notices going back to 2016 are kept in the archive, year by year —
             nothing has been deleted.
           </p>

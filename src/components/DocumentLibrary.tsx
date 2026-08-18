@@ -37,10 +37,10 @@ function DocRow({ d }: { d: Doc }) {
         href={d.href}
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer' : undefined}
-        className="block px-5 py-4 hover:bg-skyTint transition-colors"
+        className="block px-5 py-4 hover:bg-sky50 transition-colors"
       >
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-          <span className={`font-medium ${d.superseded ? 'text-slate2' : 'text-navy'}`}>
+          <span className={`font-medium ${d.superseded ? 'text-inkMuted' : 'text-navy'}`}>
             {d.title}
           </span>
           <Badge tone={tierTone(d.tier)}>
@@ -56,7 +56,7 @@ function DocRow({ d }: { d: Doc }) {
           )}
         </div>
 
-        {d.note && <p className="mt-1 max-w-prose2 text-sm text-slate2">{d.note}</p>}
+        {d.note && <p className="mt-1 max-w-prose2 text-sm text-inkMuted">{d.note}</p>}
 
         <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate2">
           <span>{d.category}</span>
@@ -128,7 +128,7 @@ export default function DocumentLibrary({
           Search documents
         </label>
         <div className="relative">
-          <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate2">
+          <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-inkMuted">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" strokeWidth="2" />
               <path d="M15.5 15.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -216,7 +216,7 @@ export default function DocumentLibrary({
 
       {/* Results */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <p aria-live="polite" className="text-sm text-slate2">
+        <p aria-live="polite" className="text-sm text-inkMuted">
           <strong className="text-navy">{results.length}</strong>{' '}
           {results.length === 1 ? 'document' : 'documents'}
           {filtersActive && ' matching your filters'}
@@ -235,7 +235,7 @@ export default function DocumentLibrary({
       {results.length === 0 ? (
         <div className="card p-8 text-center">
           <p className="text-lg font-medium text-navy">Nothing matched</p>
-          <p className="mt-1 text-sm text-slate2">
+          <p className="mt-1 text-sm text-inkMuted">
             Try a shorter search, or clear the filters. If you are certain the club has this
             document and it isn&rsquo;t here, tell the website editor — it may still be waiting to
             be imported from the old site.

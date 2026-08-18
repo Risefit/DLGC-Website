@@ -44,13 +44,13 @@ export default function ProcedureAccordion({ procedures }: { procedures: Procedu
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-lg font-semibold text-navy">{p.when}</span>
-                  <span className="mt-0.5 block text-sm text-slate2">
+                  <span className="mt-0.5 block text-sm text-inkMuted">
                     {isOpen ? p.title : 'Tap to open this procedure'}
                   </span>
                 </span>
                 <span
                   aria-hidden="true"
-                  className={`shrink-0 text-slate2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                  className={`shrink-0 text-inkMuted transition-transform ${isOpen ? 'rotate-180' : ''}`}
                 >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                     <path d="M5 8l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -61,7 +61,7 @@ export default function ProcedureAccordion({ procedures }: { procedures: Procedu
 
             {isOpen && (
               <div id={`panel-${p.slug}`} className="border-t-2 border-bad/30 px-5 pb-6 pt-5">
-                <p className="mb-3 text-sm text-slate2">
+                <p className="mb-3 text-sm text-inkMuted">
                   {p.revised && `Revised ${p.revised}. `}
                   <a href={p.source} target="_blank" rel="noopener noreferrer" className="link">
                     Original procedure on the old site
@@ -90,7 +90,7 @@ export default function ProcedureAccordion({ procedures }: { procedures: Procedu
                         <span className={`block ${s.emphasis ? 'font-semibold text-bad' : 'text-ink'}`}>
                           {s.text}
                         </span>
-                        {s.detail && <span className="mt-0.5 block text-sm text-slate2">{s.detail}</span>}
+                        {s.detail && <span className="mt-0.5 block text-sm text-inkMuted">{s.detail}</span>}
                       </span>
                     </li>
                   ))}

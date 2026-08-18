@@ -14,10 +14,10 @@ export default function NewsArticle({ item }: { item: NewsItem }) {
     <article className="card p-6">
       <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
         <h3 className="text-xl font-semibold text-navy">{item.title}</h3>
-        {item.from && <span className="text-sm italic text-slate2">from {item.from}</span>}
+        {item.from && <span className="text-sm italic text-inkMuted">from {item.from}</span>}
         {item.pinned && <Badge tone="warn">Worth knowing now</Badge>}
       </div>
-      <time dateTime={item.date} className="mb-3 block text-sm text-slate2">
+      <time dateTime={item.date} className="mb-3 block text-sm text-inkMuted">
         {item.displayDate}
       </time>
 

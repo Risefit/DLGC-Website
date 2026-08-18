@@ -114,7 +114,7 @@ export default function SafetyReportForm({
       <div className="rounded-card border-2 border-good bg-goodTint p-6">
         <h3 className="text-lg text-good">Report sent</h3>
         <p className="mt-1 text-sm">{message}</p>
-        <p className="mt-2 text-sm text-slate2">
+        <p className="mt-2 text-sm text-inkMuted">
           Thank you. Reports like this are why the Safety Lessons Log exists.
         </p>
         <button type="button" onClick={() => setState('idle')} className="link tap mt-3 text-sm">
@@ -287,7 +287,7 @@ export default function SafetyReportForm({
                   {CONSEQUENCE.map((c) => (
                     <th key={c.key} scope="col" className="px-1 pb-1 text-center text-xs font-semibold text-navy">
                       {c.label}
-                      <span className="block font-normal text-slate2">{c.hint}</span>
+                      <span className="block font-normal text-inkMuted">{c.hint}</span>
                     </th>
                   ))}
                 </tr>
@@ -297,7 +297,7 @@ export default function SafetyReportForm({
                   <tr key={l.key}>
                     <th scope="row" className="pr-2 text-left text-xs font-semibold text-navy">
                       {l.label}
-                      <span className="block font-normal text-slate2">{l.hint}</span>
+                      <span className="block font-normal text-inkMuted">{l.hint}</span>
                     </th>
                     {CONSEQUENCE.map((c, ci) => {
                       const level = RISK[li][ci];
@@ -332,7 +332,7 @@ export default function SafetyReportForm({
                 consequence — <span className="capitalize">{RISK[risk.l][risk.c]}</span> risk.
               </span>
             ) : (
-              <span className="text-slate2">Nothing selected — that is fine.</span>
+              <span className="text-inkMuted">Nothing selected — that is fine.</span>
             )}
           </p>
         </fieldset>
@@ -351,7 +351,7 @@ export default function SafetyReportForm({
 
         <div className="mb-6">
           <label htmlFor="sr-image" className={label}>
-            Photograph <span className="font-normal text-slate2">(optional)</span>
+            Photograph <span className="font-normal text-inkMuted">(optional)</span>
           </label>
           <input
             id="sr-image"

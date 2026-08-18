@@ -74,7 +74,7 @@ export default function SubmitForm({
   return (
     <form onSubmit={onSubmit} className="card p-6">
       <h3 className="text-xl">{heading}</h3>
-      <p className="mt-1 max-w-prose2 text-sm text-slate2">{intro}</p>
+      <p className="mt-1 max-w-prose2 text-sm text-inkMuted">{intro}</p>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
@@ -101,7 +101,7 @@ export default function SubmitForm({
 
       <div className="mt-4">
         <label htmlFor={`${kind}-title`} className="mb-1.5 block font-medium text-navy">
-          Title <span className="font-normal text-slate2">(optional)</span>
+          Title <span className="font-normal text-inkMuted">(optional)</span>
         </label>
         <input
           id={`${kind}-title`}
@@ -134,7 +134,7 @@ export default function SubmitForm({
       <div className="mt-4">
         <label htmlFor={`${kind}-image`} className="mb-1.5 block font-medium text-navy">
           {imageRequired ? 'Photograph' : 'Add a photograph'}{' '}
-          {!imageRequired && <span className="font-normal text-slate2">(optional)</span>}
+          {!imageRequired && <span className="font-normal text-inkMuted">(optional)</span>}
         </label>
         <input
           id={`${kind}-image`}
