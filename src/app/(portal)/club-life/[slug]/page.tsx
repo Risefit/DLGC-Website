@@ -30,7 +30,7 @@ function LinkGrid({ section }: { section: ClubSection }) {
               href={l.href}
               target={internal ? undefined : '_blank'}
               rel={internal ? undefined : 'noopener noreferrer'}
-              className="card flex h-full flex-col p-4 transition-all hover:border-sky hover:shadow-lift"
+              className="card-interactive flex h-full flex-col p-4"
             >
               <span className="font-medium text-navy">{l.label}</span>
               {l.note && <span className="mt-1 text-sm text-inkMuted">{l.note}</span>}
@@ -107,7 +107,7 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
                 <li key={p.slug}>
                   <Link
                     href={`/club-life/${p.slug}`}
-                    className="card flex h-full flex-col p-4 transition-all hover:border-sky hover:shadow-lift"
+                    className="card-interactive flex h-full flex-col p-4"
                   >
                     <span className="font-medium text-navy">{p.title}</span>
                     <span className="mt-1 text-sm text-inkMuted">{p.cardBlurb}</span>

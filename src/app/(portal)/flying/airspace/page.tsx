@@ -60,7 +60,7 @@ export default function AirspacePage() {
       />
 
       {/* The re-brief is the thing people forget. Top of the page, own box. */}
-      <section className="mb-10 overflow-hidden rounded-card border-2 border-warn/60 bg-warnTint/50 shadow-card">
+      <section className="mb-10 overflow-hidden rounded-card border-2 border-warn/60 bg-warnTint/50 shadow-panel">
         <div className="border-b-2 border-warn/40 bg-warn/10 px-6 py-4">
           <h2 className="text-2xl text-warn">Re-brief every 12 months</h2>
         </div>
@@ -113,9 +113,7 @@ export default function AirspacePage() {
                 href={t.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`card flex h-full flex-col p-5 transition-all hover:shadow-lift ${
-                  t.caution ? 'border-2 border-warn/60 bg-warnTint/30' : 'hover:border-sky'
-                }`}
+                className={`card-interactive flex h-full flex-col p-5 ${ t.caution ? 'border-2 border-warn/60 bg-warnTint/30' : '' }`}
               >
                 <span className={`font-semibold ${t.caution ? 'text-warn' : 'text-navy'}`}>
                   {t.name}

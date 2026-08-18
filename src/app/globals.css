@@ -10,7 +10,17 @@
   }
 
   body {
-    @apply bg-cloud text-ink antialiased;
+    @apply bg-cloud text-ink antialiased font-sans;
+    /* Plex has proper old-style/lining figures and real ligatures; ask for
+       them rather than leaving the browser to guess. */
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  }
+
+  /* Numbers that sit in columns — rota dates, counts, times, prices — must
+     line up. Tabular figures are the whole reason to specify a typeface with
+     good numerals. */
+  table, .tabular, time, .font-mono {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Visible focus everywhere. WCAG 2.4.7 — the old site had none. */
@@ -20,9 +30,28 @@
     border-radius: 3px;
   }
 
-  h1, h2, h3, h4 {
-    @apply text-navy font-semibold tracking-tight;
+  /**
+   * HEADINGS. The site ran on a 500/600 weight range — 84 font-medium and 72
+   * font-semibold against 6 font-bold — so headings barely outranked labels.
+   * Display sizes now carry 700, body stays 400, and the gap between them is
+   * what creates hierarchy without needing a rule or a box to signal it.
+   *
+   * Optical sizing: the larger the type, the tighter the tracking. Set at the
+   * scale in tailwind.config.ts rather than here so it travels with the size.
+   */
+  h1, h2 {
+    @apply text-navy font-bold;
     text-wrap: balance;
+  }
+
+  h3, h4 {
+    @apply text-navy font-semibold;
+    text-wrap: balance;
+  }
+
+  /* Body copy wants a real 400, not the 500 that was carrying most text. */
+  p, li, dd {
+    font-weight: 400;
   }
 
   /* Never let a long URL or table force horizontal scroll. WCAG 1.4.10 */
@@ -30,11 +59,41 @@
 }
 
 @layer components {
+  /**
+   * CONTAINERS — four elevation steps, matching the shadow tokens.
+   *
+   * The rule that makes this read as designed rather than decorated: a
+   * container gets EITHER a border OR a shadow, not both, except at the top
+   * step where the shadow is doing real work and the hairline keeps the edge
+   * crisp. Everything previously had both, which is why the interface looked
+   * outlined rather than layered.
+   */
+  .card-flat {
+    @apply bg-white border border-skyLine rounded-card shadow-flat;
+    overflow-wrap: break-word;
+  }
+
   .card {
     @apply bg-white border border-skyLine rounded-card shadow-card;
     /* Document titles come from the old site's filenames and include tokens
        like "DLGC SportDvlpmntPlanApril2013.revD2013" with no break opportunity.
        Without this they push the page sideways on a phone. */
+    overflow-wrap: break-word;
+  }
+
+  /* Interactive cards: raise on hover, and move a hair. Both are cheap signals
+     that a whole card is a target rather than just the link inside it. */
+  .card-interactive {
+    @apply card transition-all duration-200;
+  }
+  .card-interactive:hover {
+    @apply border-sky shadow-lift;
+    transform: translateY(-1px);
+  }
+
+  /* The two or three things per page that sit above everything else. */
+  .card-panel {
+    @apply bg-white border border-skyLine/70 rounded-card shadow-panel;
     overflow-wrap: break-word;
   }
 

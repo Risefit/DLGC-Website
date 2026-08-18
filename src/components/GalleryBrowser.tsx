@@ -92,8 +92,7 @@ export default function GalleryBrowser({ base }: { base: string }) {
                 href={src(p.src)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block overflow-hidden rounded-card border border-skyLine bg-white
-                           hover:border-sky hover:shadow-lift transition-all"
+                className="group block overflow-hidden rounded-card-interactive border border-skyLine bg-white"
               >
                 <span className="block aspect-[4/3] w-full overflow-hidden bg-skyTint">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

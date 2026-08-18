@@ -229,7 +229,42 @@ Surfaces, lightest to darkest: `white` → `sky50` (hover) → `cloud` (page) �
 Reach for a step, not a new colour. If something needs emphasis, move it one notch up the
 ladder rather than adding a hue.
 
-### Change spacing and type
+### Typeface and type scale
+The typeface is **IBM Plex Sans**, self-hosted from `src/app/fonts` and wired up in
+`src/app/layout.tsx`. **Plex Mono** is there for data read character by character —
+registrations, frequencies, times.
+
+Self-hosted on purpose: no member's browser calls Google to read a club notice, and the
+build does not depend on a third party. 80 KB for the whole site. To change it, swap the
+file and the `src` in `layout.tsx` — everything else keys off `font-sans` / `font-mono`.
+
+- **Body copy is 400. Headings are 700.** The site previously ran on 500/600 only, so
+  headings barely outranked labels.
+- **18px base stays.** Do not reduce it.
+- Display sizes carry negative tracking, set on the scale so it travels with the size.
+- `table`, `time`, `.tabular` and `.font-mono` get tabular figures, so numbers in columns
+  line up. That is most of the reason to specify a typeface with good numerals.
+
+### Containers and elevation
+Four tiers, and they mean something. Do not add a fifth.
+
+| Class | Use | Treatment |
+|---|---|---|
+| `.card-flat` | rows and chips inside a container, dense peer grids | border, no shadow |
+| `.card` | a standalone resting card | border + soft two-layer shadow |
+| `.card-interactive` | the whole card is a link | raises 1px and lifts on hover |
+| `.card-panel` | the two or three things per page that sit above everything | three-layer shadow |
+
+**Two radii only:** `rounded-control` (8px) for buttons, inputs and chips;
+`rounded-card` (12px) for containers; `rounded-full` for pills. `rounded-lg`, `rounded-md`
+and `rounded-xl` are aliases onto those, so old class names still land on the system —
+there were five competing values before, which is what makes an interface feel assembled
+rather than designed.
+
+**When everything is raised, nothing is.** If a page has more than three `card-panel`s,
+that is the bug.
+
+### Change spacing
 `tailwind.config.ts` holds every design token. Do not introduce new colours ad hoc.
 **Base font size is 18px on purpose** (`src/app/globals.css`) — this membership skews older.
 Do not reduce it.

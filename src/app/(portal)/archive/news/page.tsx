@@ -31,7 +31,7 @@ export default function NewsArchiveIndex() {
           <li key={y.year}>
             <Link
               href={`/archive/news/${y.year}`}
-              className="card flex h-full flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+              className="card-interactive flex h-full flex-col p-5"
             >
               <span className="text-3xl font-bold text-navy">{y.year}</span>
               <span className="mt-1 text-sm text-inkMuted">

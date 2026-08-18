@@ -41,7 +41,7 @@ export default function AccountPage() {
               href={l.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex min-h-[88px] items-center gap-4 p-5 hover:shadow-lift hover:border-sky transition-all"
+              className="card-interactive flex min-h-[88px] items-center gap-4 p-5"
             >
               <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-skyTint text-sky">
                 <svg width="24" height="24" viewBox="0 0 16 16" fill="none">

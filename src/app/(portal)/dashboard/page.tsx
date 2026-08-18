@@ -191,7 +191,7 @@ export default function Dashboard() {
 
       {/* ── Safety Spot: full width, red-edged, unmistakably its own thing ── */}
       <section aria-labelledby="safety-spot-h" className="mt-10">
-        <div className="overflow-hidden rounded-card border-2 border-bad/60 bg-badTint/40 shadow-card">
+        <div className="overflow-hidden rounded-card border-2 border-bad/60 bg-badTint/40 shadow-panel">
           <div className="border-b-2 border-bad/40 bg-bad/10 px-6 py-4">
             <h2 id="safety-spot-h" className="text-2xl text-bad">The Safety Spot</h2>
             <p className="mt-1 text-sm text-ink/80">{safetySpotIntro}</p>

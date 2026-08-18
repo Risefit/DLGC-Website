@@ -62,20 +62,74 @@ const config: Config = {
         goodTint: '#EDF6F1',
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        // Set in src/app/layout.tsx via next/font/local, self-hosted.
+        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+        // For data read character by character: registrations, frequencies,
+        // times, reference numbers.
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
+      /**
+       * TYPE SCALE. Base is 18px, not 16px — this membership skews older, and
+       * that does not change.
+       *
+       * The top of the scale was doing nothing: 197 uses of text-sm against 3
+       * of text-3xl, so headings barely outranked body copy. Display sizes are
+       * now genuinely large and tightly tracked, which is what lets a page have
+       * a clear top note instead of everything sitting at the same pitch.
+       *
+       * Line height tightens as size grows — long lines need air, headlines do
+       * not, and a headline set at body leading looks like an accident.
+       */
       fontSize: {
-        // Base is 18px, not 16px — this membership skews older.
-        base: ['1.125rem', { lineHeight: '1.65' }],
-        sm: ['1rem', { lineHeight: '1.6' }],
         xs: ['0.9375rem', { lineHeight: '1.55' }],
+        sm: ['1rem', { lineHeight: '1.6' }],
+        base: ['1.125rem', { lineHeight: '1.65' }],
+        lg: ['1.25rem', { lineHeight: '1.45' }],
+        xl: ['1.5rem', { lineHeight: '1.35', letterSpacing: '-0.011em' }],
+        '2xl': ['1.875rem', { lineHeight: '1.25', letterSpacing: '-0.018em' }],
+        '3xl': ['2.25rem', { lineHeight: '1.18', letterSpacing: '-0.022em' }],
+        '4xl': ['2.75rem', { lineHeight: '1.12', letterSpacing: '-0.026em' }],
+        '5xl': ['3.5rem', { lineHeight: '1.05', letterSpacing: '-0.03em' }],
       },
+      /**
+       * TWO RADII, and only two. Controls (buttons, inputs, chips) at 8px;
+       * containers (cards, panels, callouts) at 12px. Pills use rounded-full.
+       *
+       * There were five competing values in use — rounded-lg, rounded-card,
+       * rounded-xl, rounded-md and rounded-full — which is what makes an
+       * interface feel assembled rather than designed. rounded-xl and
+       * rounded-md are now aliases so old class names still land on the system.
+       */
       borderRadius: {
-        card: '0.75rem',
+        control: '0.5rem',   // buttons, inputs, chips
+        card: '0.75rem',     // cards, panels, callouts
+        md: '0.5rem',        // alias → control
+        lg: '0.5rem',        // alias → control
+        xl: '0.75rem',       // alias → card
       },
+      /**
+       * ELEVATION — four steps, and they mean something.
+       *
+       * Every one of the 120 cards carried the identical shadow AND a border,
+       * regardless of whether it was the Safety Spot or a footnote. When
+       * everything is raised, nothing is.
+       *
+       *   flat   nothing. Rows inside a container, dense grids. Border only.
+       *   card   the resting state of a standalone card.
+       *   lift   hover, and cards that are genuinely interactive.
+       *   panel  the two or three things per page that sit above everything —
+       *          the Safety Spot, the re-brief box, an open form.
+       *
+       * Each is two or three layers: a tight contact shadow plus a wide soft
+       * one. Real light does both; a single blurred rectangle does neither, and
+       * that is what makes default shadows look like stickers.
+       */
       boxShadow: {
-        card: '0 1px 2px rgba(14,31,46,0.06), 0 4px 12px rgba(14,31,46,0.05)',
-        lift: '0 2px 4px rgba(14,31,46,0.08), 0 8px 24px rgba(14,31,46,0.09)',
+        flat: 'none',
+        card: '0 1px 2px rgba(14,31,46,0.05), 0 4px 12px rgba(14,31,46,0.05)',
+        lift: '0 2px 4px rgba(14,31,46,0.07), 0 10px 28px rgba(14,31,46,0.10)',
+        panel:
+          '0 1px 2px rgba(14,31,46,0.06), 0 8px 20px rgba(14,31,46,0.08), 0 24px 56px rgba(14,31,46,0.10)',
       },
       maxWidth: {
         prose2: '68ch',

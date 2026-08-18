@@ -115,7 +115,7 @@ export default function SafetyPage() {
               href={x.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+              className="card-interactive flex flex-col p-5"
             >
               <span className="font-semibold text-navy">{x.title}</span>
               <span className="mt-1 text-sm text-inkMuted">{x.note}</span>

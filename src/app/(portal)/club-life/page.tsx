@@ -40,7 +40,7 @@ export default function ClubLifePage() {
                 <li key={p.slug}>
                   <Link
                     href={`/club-life/${p.slug}`}
-                    className="card flex h-full flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+                    className="card-interactive flex h-full flex-col p-5"
                   >
                     <span className="text-lg font-semibold text-navy">{p.title}</span>
                     <span className="mt-1 text-xs uppercase tracking-wide text-sky">{p.eyebrow}</span>

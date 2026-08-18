@@ -109,7 +109,7 @@ export default async function ArchivePage({
             {archivedNews.length > 0 && (
               <Link
                 href="/archive/news"
-                className="card flex flex-col p-5 hover:shadow-lift hover:border-sky transition-all"
+                className="card-interactive flex flex-col p-5"
               >
                 <span className="flex items-start justify-between gap-2">
                   <span className="text-lg font-semibold text-navy">News and Notices</span>
@@ -130,7 +130,7 @@ export default async function ArchivePage({
               <Link
                 key={c.slug}
                 href={`/archive/${c.slug}`}
-                className="card flex flex-col p-5 hover:shadow-lift hover:border-sky transition-all"
+                className="card-interactive flex flex-col p-5"
               >
                 <span className="flex items-start justify-between gap-2">
                   <span className="text-lg font-semibold text-navy">{c.title}</span>

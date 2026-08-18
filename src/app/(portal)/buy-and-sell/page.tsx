@@ -44,7 +44,7 @@ export default function BuyAndSellPage() {
                         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                           <h3 className="text-lg font-semibold text-navy">{a.title}</h3>
                           {a.price && (
-                            <span className="rounded bg-goodTint px-2.5 py-0.5 font-semibold text-good">
+                            <span className="rounded-control bg-goodTint px-2.5 py-0.5 font-semibold text-good tabular">
                               {a.price}
                             </span>
                           )}

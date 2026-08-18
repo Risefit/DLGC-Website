@@ -60,7 +60,7 @@ export default function TrainingPage() {
             href={flyingCardSummary.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+            className="card-interactive flex flex-col p-5"
           >
             <span className="font-semibold text-navy">All four cards on one page</span>
             <span className="mt-1 text-sm text-inkMuted">
@@ -73,7 +73,7 @@ export default function TrainingPage() {
             href={redCardTheoryTest.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+            className="card-interactive flex flex-col p-5"
           >
             <span className="font-semibold text-navy">Red Card Theory Test</span>
             <span className="mt-1 text-sm text-inkMuted">

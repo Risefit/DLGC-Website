@@ -132,7 +132,7 @@ export default function SafetyReportForm({
     <form
       onSubmit={onSubmit}
       id="report-an-occurrence"
-      className="overflow-hidden rounded-card border-2 border-good/60 bg-goodTint/40 shadow-card"
+      className="overflow-hidden rounded-card border-2 border-good/60 bg-goodTint/40 shadow-panel"
     >
       <div className="border-b-2 border-good/40 bg-good/10 px-6 py-4">
         <h2 className="text-2xl text-good">Report a safety occurrence</h2>

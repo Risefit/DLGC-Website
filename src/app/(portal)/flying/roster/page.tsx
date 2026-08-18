@@ -46,7 +46,7 @@ export default function RosterPage() {
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+              className="card-interactive flex flex-col p-5"
             >
               <span className="text-lg font-semibold text-navy">{s.label}</span>
               <span className="mt-1 text-sm text-inkMuted">{current.label}</span>
@@ -59,7 +59,7 @@ export default function RosterPage() {
               href={current.briefings.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex flex-col p-5 transition-all hover:border-sky hover:shadow-lift"
+              className="card-interactive flex flex-col p-5"
             >
               <span className="text-lg font-semibold text-navy">SPL classroom briefings</span>
               <span className="mt-1 text-sm text-inkMuted">
@@ -137,7 +137,7 @@ export default function RosterPage() {
       >
         <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {winchDrivers.map((d) => (
-            <li key={d.name} className="card flex items-baseline justify-between gap-3 px-4 py-3">
+            <li key={d.name} className="card-flat flex items-baseline justify-between gap-3 px-4 py-3">
               <span className="font-medium text-navy">{d.name}</span>
               <span className="shrink-0 text-sm text-inkMuted">{d.qualified}</span>
             </li>
