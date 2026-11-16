@@ -1,5 +1,5 @@
 import { Callout } from '@/components/ui';
-import { roles, vacantRoles, rolesUpdated, rolesSource, committeeSource } from '@/content/roles';
+import { roles, vacantRoles, rolesUpdated, committeeSource } from '@/content/roles';
 
 /**
  * WHO DOES WHAT AT CAMPHILL — from job&roles.asp, shown on the Directory page.
@@ -68,12 +68,7 @@ export default function RolesList() {
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
         .
-        {rolesUpdated && ` List last updated ${rolesUpdated} on the old site — `}
-        <a href={rolesSource} target="_blank" rel="noopener noreferrer" className="link">
-          the original is still there
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
-        . If it is out of date, tell the website editor.
+        {rolesUpdated && ` List last updated ${rolesUpdated}.`} If it is out of date, tell the website editor.
       </p>
     </>
   );

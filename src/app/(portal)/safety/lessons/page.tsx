@@ -5,7 +5,6 @@ import {
   safetyLessons,
   safetyLessonYears,
   SAFETY_LOG_RECENT_YEARS,
-  safetyLogSource,
 } from '@/content/safety-log';
 
 export const metadata = { title: 'Safety Lessons Log' };
@@ -55,14 +54,6 @@ export default function SafetyLessonsPage() {
         initialYears={SAFETY_LOG_RECENT_YEARS}
       />
 
-      <p className="mt-10 border-t border-skyLine pt-6 text-sm text-inkMuted">
-        Both volumes of the log are reproduced here.{' '}
-        <a href={safetyLogSource} target="_blank" rel="noopener noreferrer" className="link">
-          The original page is still on the old site
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
-        .
-      </p>
     </>
   );
 }

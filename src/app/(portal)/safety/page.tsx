@@ -3,8 +3,9 @@ import { Band, Figures, Section } from '@/components/ui';
 import { safetyCulture, contacts } from '@/content/site';
 import { documents } from '@/content/documents';
 import { safetyLessons } from '@/content/safety-log';
-import { safetyGroups, accidentReviews, ssaExtracts, gasco, safetyPageSource } from '@/content/safety-links';
+import { safetyGroups, accidentReviews, ssaExtracts, gasco } from '@/content/safety-links';
 import SafetyReportForm from '@/components/SafetyReportForm';
+import { isPortalPage } from '@/lib/files';
 
 export const metadata = { title: 'Safety' };
 
@@ -170,7 +171,7 @@ export default function SafetyPage() {
       >
         <ul className="card divide-y divide-skyLine overflow-hidden">
           {more.map((d) => {
-            const external = !d.href.startsWith('/');
+            const external = !isPortalPage(d.href);
             return (
               <li key={d.id}>
                 <a
@@ -187,14 +188,6 @@ export default function SafetyPage() {
             );
           })}
         </ul>
-        <p className="mt-6 text-sm text-inkMuted">
-          Checked against the club&rsquo;s own safety page —{' '}
-          <a href={safetyPageSource} target="_blank" rel="noopener noreferrer" className="link">
-            the original is still there
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          .
-        </p>
       </Section>
     </>
   );

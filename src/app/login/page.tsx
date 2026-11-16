@@ -77,14 +77,6 @@ export default function LoginPage() {
             Admin login — that system has its own separate sign-in.
           </p>
 
-          {previewOpen && (
-            <div className="mt-4 rounded-lg border-l-4 border-warn bg-warnTint p-4 text-sm">
-              <p className="font-semibold text-warn">Preview mode</p>
-              <p className="mt-1 text-inkMuted">
-                Accounts aren&rsquo;t set up yet. Press Sign in to look around.
-              </p>
-            </div>
-          )}
 
           <form onSubmit={onSubmit} className="mt-5 space-y-4">
             <div>

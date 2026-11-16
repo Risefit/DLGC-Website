@@ -10,7 +10,7 @@
   }
 
   body {
-    @apply bg-cloud text-ink antialiased font-sans;
+    @apply bg-white text-ink antialiased font-sans;
     /* Plex has proper old-style/lining figures and real ligatures; ask for
        them rather than leaving the browser to guess. */
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
@@ -206,6 +206,12 @@
   main > .page-head + *:not(.sec):not([class*='band-']) { margin-top: 2rem; }
   main > .sec + *:not(.sec):not([class*='band-']) { margin-top: 2rem; }
   main > *:not(.sec):not([class*='band-']) + .sec { margin-top: 2rem; }
+
+  /* A dated piece of writing — a notice, a blog entry — set as reading text
+     with a rule between items rather than a box round each. */
+  .story { @apply border-t border-skyLine py-8; }
+  .story:first-child { @apply border-t-0 pt-0; }
+  .story:last-child { @apply pb-0; }
 
   /* Display type: page titles and band headings. The <em> is the phrase picked
      out in italic — windsock orange on a dark band, sky on a light one. */

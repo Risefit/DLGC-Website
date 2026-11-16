@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader, Section } from '@/components/ui';
 import { clubPages, clubPageBySlug, type ClubSection } from '@/content/club-life';
+import { isPortalPage } from '@/lib/files';
 
 export function generateStaticParams() {
   return clubPages.map((p) => ({ slug: p.slug }));
@@ -23,7 +24,7 @@ function LinkGrid({ section }: { section: ClubSection }) {
   return (
     <ul className={`grid gap-3 ${cols}`}>
       {section.links!.map((l) => {
-        const internal = l.href.startsWith('/');
+        const internal = isPortalPage(l.href);
         return (
           <li key={l.href + l.label}>
             <a
@@ -60,61 +61,63 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
   return (
     <>
 
-      <PageHeader back={{ href: '/club-life', label: 'Club Life' }} eyebrow={page.eyebrow} title={page.title} lead={page.lead} />
+      <PageHeader
+        back={{ href: '/club-life', label: 'Club Life' }}
+        eyebrow={page.eyebrow}
+        title={page.title}
+        lead={
+          page.steward ? (
+            <>
+              {page.lead}
+              <span className="mt-3 block text-base text-white/80">
+                <strong className="font-semibold text-white">{page.steward.name}</strong> — {page.steward.role}
+                {page.steward.contact && <> · {page.steward.contact}</>}
+              </span>
+            </>
+          ) : (
+            page.lead
+          )
+        }
+      />
 
-      {page.steward && (
-        <div className="mb-8 rounded-card border-l-4 border-sky bg-skyTint px-5 py-4">
-          <p className="text-sm">
-            <strong className="text-navy">{page.steward.name}</strong>
-            <span className="text-inkMuted"> — {page.steward.role}</span>
-            {page.steward.contact && <span className="text-inkMuted"> · {page.steward.contact}</span>}
-          </p>
-        </div>
-      )}
-
-      {page.sections.map((s, i) => (
-        <section key={i} className="mb-10">
-          {s.heading && <h2 className="mb-3 text-2xl">{s.heading}</h2>}
-          {s.paras && (
-            <div className="prose-club mb-4">
-              {s.paras.map((p, j) => (
-                <p key={j}>{p}</p>
-              ))}
-            </div>
-          )}
-          {s.links && s.links.length > 0 && <LinkGrid section={s} />}
-        </section>
-      ))}
-
-      <div className="mt-10 border-t border-skyLine pt-6">
-        <p className="text-sm text-inkMuted">
-          Rebuilt from the club&rsquo;s own page.{' '}
-          <a href={page.source} target="_blank" rel="noopener noreferrer" className="link">
-            The original is still there
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          .
-        </p>
-        {siblings.length > 0 && (
-          <div className="mt-8">
-          <Section title={`More under ${page.group}`}>
-            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {siblings.map((p) => (
-                <li key={p.slug}>
-                  <Link
-                    href={`/club-life/${p.slug}`}
-                    className="card-interactive flex h-full flex-col p-4"
-                  >
-                    <span className="font-medium text-navy">{p.title}</span>
-                    <span className="mt-1 text-sm text-inkMuted">{p.cardBlurb}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+      {page.sections.map((s, i) => {
+        const body = (
+          <>
+            {s.paras && (
+              <div className={`prose-club ${s.links && s.links.length > 0 ? 'mb-6' : ''}`}>
+                {s.paras.map((p, j) => (
+                  <p key={j}>{p}</p>
+                ))}
+              </div>
+            )}
+            {s.links && s.links.length > 0 && <LinkGrid section={s} />}
+          </>
+        );
+        return s.heading ? (
+          <Section key={i} title={s.heading}>
+            {body}
           </Section>
-          </div>
-        )}
-      </div>
+        ) : (
+          <section key={i} className="sec">
+            {body}
+          </section>
+        );
+      })}
+
+      {siblings.length > 0 && (
+        <Section title={`More under ${page.group}`}>
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {siblings.map((p) => (
+              <li key={p.slug}>
+                <Link href={`/club-life/${p.slug}`} className="card-interactive flex h-full flex-col p-4">
+                  <span className="font-medium text-navy">{p.title}</span>
+                  <span className="mt-1 text-sm text-inkMuted">{p.cardBlurb}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
     </>
   );
 }

@@ -7,8 +7,6 @@ import {
   currentCfiNoticesIntro,
   clmBulletins,
   clmIntro,
-  cfiNoticesSource,
-  clmNoticesSource,
 } from '@/content/notices';
 
 export const metadata = { title: 'CFI and Launch Marshal Notices' };
@@ -129,17 +127,6 @@ export default function NoticesPage() {
           ))}
         </ul>
 
-        <p className="mt-8 text-sm text-inkMuted">
-          Rebuilt from{' '}
-          <a href={cfiNoticesSource} target="_blank" rel="noopener noreferrer" className="link">
-            the CFI’s Notices page
-          </a>{' '}
-          and{' '}
-          <a href={clmNoticesSource} target="_blank" rel="noopener noreferrer" className="link">
-            the Chief Launch Marshal’s page
-          </a>
-          , both still on the old site.
-        </p>
       </section>
     </>
   );

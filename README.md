@@ -56,31 +56,54 @@ they are the same.
 
 ---
 
-## Importing the old site's files
+## The old site's files
 
-The old members' site was mirrored with `wget` into a folder (typically `~/Desktop/dlgc-mirror`).
+Every document, photograph and presentation from the old members' site is linked as
+`/files/members/…`. The portal decides where it comes from each time one is opened:
 
-**The classification is already done.** `src/content/documents-imported.ts` holds all
-**571 documents** recovered from the mirror, deduplicated and sorted into tiers. What
-remains is copying the actual files so the links resolve:
+| Who is asking | The file has been copied across | What happens |
+|---|---|---|
+| Signed in to the portal | yes | Opens from the club's private storage. No second password |
+| Signed in to the portal | no (too big, or newer than the copy) | Opens on the old site, as before |
+| Not signed in, portal in preview | either | Opens on the old site, as before |
+| Not signed in, login gate on | either | Sent to the sign-in page |
 
-```bash
-# See what's there without copying anything
-node scripts/import-mirror.mjs ~/Desktop/dlgc-mirror --dry-run
+The copies live in a **private** Supabase Storage bucket called `legacy`. It is never made
+public: it holds committee minutes, accounts and lists of named members.
 
-# Copy assets into public/legacy/ and produce the reports
-node scripts/import-mirror.mjs ~/Desktop/dlgc-mirror
-```
+### Copying the files across (once, and again whenever the old site gains files)
 
-### Before you copy: the size problem
+1. Run `supabase/migrations/003_legacy_files.sql` in the Supabase SQL editor. It creates the
+   private bucket and lets signed-in members read from it.
+2. On the computer that has the wget copy of the old site (usually `~/Desktop/dlgc-mirror`):
 
-The mirror is 2.4 GB on disk, ~1.4 GB deduplicated. **That cannot go in the git repo** —
-GitHub rejects files over 100 MB and Vercel would rebuild the lot on every deploy.
+   ```bash
+   node scripts/upload-legacy.mjs ~/Desktop/dlgc-mirror --dry-run   # look first
+   node scripts/upload-legacy.mjs ~/Desktop/dlgc-mirror             # then copy
+   ```
 
-Where the bulk actually is:
+   It asks for the Supabase **secret** key and does not show it. Never put that key in a chat,
+   an email or this repository. Files already uploaded are skipped, so it is safe to re-run.
+3. Read `dlgc-upload-report.json`: it lists what went up, what was over 50 MB, and which
+   files the portal links to that were not in your copy (they keep opening on the old site).
 
-| Item | Size |
+### What does not fit
+
+The free plan holds 1 GB and 50 MB per file. Everything fits except three files, which stay
+on the old site until they are moved somewhere else:
+
+| File | Size |
 |---|---|
+| Bronze Theory Zoom recording — Operational Procedures (`.mp4`) | 381 MB |
+| Bronze Theory Zoom recording — Threat and Error Management (`.mp4`) | 215 MB |
+| Camphill News, October 2018, high-resolution (`.pdf`) | 60 MB |
+
+The two recordings would sit well as unlisted videos on the club's own YouTube channel.
+
+`scripts/import-mirror.mjs` is the earlier importer that produced the document list. It is
+kept for reference and is not part of copying files across.
+
+---|---|
 | 2 Bronze Theory Zoom recordings (`.mp4`) | **596 MB** |
 | 569 other documents (PDFs, Word, PowerPoint) | ~730 MB |
 | 952 images | 87 MB |

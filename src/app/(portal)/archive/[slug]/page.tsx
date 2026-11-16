@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PageHeader, Callout, Badge } from '@/components/ui';
-import { collections, getCollection, servedFromOldSite } from '@/content/documents';
+import { PageHeader, Badge } from '@/components/ui';
+import { collections, getCollection } from '@/content/documents';
+import { isPortalPage } from '@/lib/files';
 
 /** Pre-render every collection at build time. */
 export function generateStaticParams() {
@@ -54,27 +55,16 @@ export default async function CollectionPage({
         back={{ href: '/archive', label: 'Archive' }}
         eyebrow={c.span ? `${c.span} · ${c.count} documents` : `${c.count} documents`}
         title={c.title}
-        lead="Newest first. Every document in this collection, complete — nothing has been left on the old site."
+        lead="Newest first. Every document in this collection."
       />
 
-      {servedFromOldSite && (
-        <div className="mb-8">
-          <Callout tone="warn" title="Files still open on the old site">
-            <p>
-              The documents below are listed and ordered here, but the files themselves have not
-              moved yet — opening one asks for the members&rsquo; username and password, the same
-              one you have always used. That extra step disappears once the archive is hosted.
-            </p>
-          </Callout>
-        </div>
-      )}
 
       {years.map((year) => (
         <section key={year} className="mb-8">
-          <h2 className="mb-3 text-2xl">{year}</h2>
+          <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">{year}</h2>
           <ul className="card divide-y divide-skyLine overflow-hidden">
             {byYear.get(year)!.map((d) => {
-              const external = !d.href.startsWith('/');
+              const external = !isPortalPage(d.href);
               const size = fmtSize((d as { bytes?: number }).bytes);
               return (
                 <li key={d.id}>

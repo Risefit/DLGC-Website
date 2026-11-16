@@ -12,6 +12,7 @@ import {
   type Audience,
 } from '@/content/documents';
 import { Badge } from '@/components/ui';
+import { isPortalPage } from '@/lib/files';
 
 type TierFilter = Tier | 'all' | 'current';
 
@@ -28,7 +29,7 @@ function tierTone(t: Tier) {
 }
 
 function DocRow({ d }: { d: Doc }) {
-  const external = !d.href.startsWith('/');
+  const external = !isPortalPage(d.href);
   const overdue = isOverdue(d);
 
   return (
@@ -124,9 +125,10 @@ export default function DocumentLibrary({
   const filtersActive = q || tier !== 'current' || category !== 'all' || audience !== 'all' || onlyOverdue;
 
   return (
-    <div>
+    <>
+      <section className="band-contour -mt-0 py-8 lg:py-10" aria-label="Search and filter">
       {/* Search */}
-      <div className="card mb-5 p-5">
+      <div className="card-panel mb-5 p-5">
         <label htmlFor="doc-search" className="mb-2 block font-medium text-navy">
           Search documents
         </label>
@@ -177,7 +179,7 @@ export default function DocumentLibrary({
       </div>
 
       {/* Facets */}
-      <div className="card mb-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <label htmlFor="f-cat" className="mb-1.5 block text-sm font-medium text-navy">Category</label>
           <select
@@ -217,8 +219,11 @@ export default function DocumentLibrary({
         </div>
       </div>
 
+      </section>
+
+      <section className="band-white py-8 lg:py-10" aria-label="Documents">
       {/* Results */}
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <p aria-live="polite" className="text-sm text-inkMuted">
           <strong className="text-navy">{results.length}</strong>{' '}
           {results.length === 1 ? 'document' : 'documents'}
@@ -240,15 +245,16 @@ export default function DocumentLibrary({
           <p className="text-lg font-medium text-navy">Nothing matched</p>
           <p className="mt-1 text-sm text-inkMuted">
             Try a shorter search, or clear the filters. If you are certain the club has this
-            document and it isn&rsquo;t here, tell the website editor — it may still be waiting to
-            be imported from the old site.
+            document and it isn&rsquo;t here, tell the website editor.
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           {grouped.map(([cat, docs]) => (
             <section key={cat}>
-              <h2 className="mb-2 text-xl">{cat}</h2>
+              <h2 className="display mb-3 text-2xl lg:text-3xl">
+                {cat} <span className="font-sans text-base font-normal tracking-normal text-slate2">{docs.length}</span>
+              </h2>
               <ul className="card divide-y divide-skyLine overflow-hidden">
                 {docs.map((d) => <DocRow key={d.id} d={d} />)}
               </ul>
@@ -256,6 +262,7 @@ export default function DocumentLibrary({
           ))}
         </div>
       )}
-    </div>
+      </section>
+    </>
   );
 }

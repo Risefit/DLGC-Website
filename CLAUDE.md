@@ -260,6 +260,38 @@ Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
 email the editor instead — it never fails silently.
 
+### Files from the old site — one address, and a private store
+Every old-site file is linked as `/files/members/…` (`src/lib/files.ts`). The route at
+`src/app/files/[...path]/route.ts` gives a **signed-in** member a ten-minute link to the
+club's private copy in Supabase Storage (bucket `legacy`), and sends everyone else — and
+any file that was never copied — to the old site as before. README has the table.
+
+Three rules:
+
+1. **The bucket stays private.** It holds minutes, accounts and named lists. Never make it
+   public, and never add a way to a file that skips the sign-in check in that route.
+2. **A file link is not a page.** Use `isPortalPage(href)` from `src/lib/files.ts` to decide
+   whether a link is internal; a `/files/…` link opens in a new tab and must never be given
+   to `next/link`.
+3. **`storageKey()` exists twice** — in `src/lib/files.ts` and in
+   `scripts/upload-legacy.mjs`. They must stay identical or files are stored under names
+   the portal never asks for.
+
+To copy files across, see README ("The old site's files"). After adding documents, run
+`npx tsx --tsconfig tsconfig.json tools/list-wanted-files.ts` so the uploader knows about them.
+
+### No preview notes or hint boxes on the pages
+Phil's instruction, November 2026: pages carry the club's content, not commentary about
+the website. The "Preview mode" banner, the "still on the old site" boxes, the "how this
+page is organised" boxes and the "rebuilt from the old page" footers were all removed.
+Do not add new ones. Things that stayed because they are content or a safety matter: the
+vacant-roles callout, the airspace re-brief panel, the notes inside the emergency
+procedures, and the red "Verify before relying on this page" box on Emergency Procedures —
+that one comes out only when the Safety Officer has checked the telephone numbers.
+
+**The login gate is still OFF** (`NEXT_PUBLIC_PREVIEW_OPEN=true`) even though nothing on
+the page says so any more.
+
 ### The menu — six items, and it stays six
 Dashboard, Flying, Training, Safety, Documents, Club Life. Gallery, Directory, Archive and
 Buy and Sell are reached from the Club Life page, the footer, and the "Also" group in the
@@ -421,9 +453,11 @@ src/
 │   ├── site.ts            Fees, calendar, weather links, contacts, Find It A–Z
 │   ├── awareim.ts         The ONLY place AwareIM URLs appear
 │   └── retired/           Kept, not used
-└── lib/                   Supabase clients and auth config
+├── lib/                   Supabase clients, auth config, files.ts (old-site file addresses)
+└── app/files/             The one route every old-site file goes through
 next.config.mjs            Redirects for merged and moved pages
 tools/make-contours.mjs    Draws the contour background
+scripts/upload-legacy.mjs  Copies the old site's files into private storage
 ```
 
 **Rule of thumb:** content changes go in `src/content/`. If you find yourself editing a page
@@ -454,7 +488,12 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 
 ## Still to do
 
-- [ ] Import the mirrored files from the old site (`scripts/import-mirror.mjs` — see README)
+- [ ] **Copy the old site's files into private storage** — run migration 003, then
+      `scripts/upload-legacy.mjs` on the computer that has the mirror (README)
+- [ ] **Before switching the login gate on:** in Supabase → Authentication, turn OFF
+      "Allow new users to sign up". Otherwise anybody can register themselves and is then
+      "signed in" as far as the portal and the file store are concerned
+- [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them
 - [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
       from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone
       numbers in the source have irregular digit counts. They are reproduced exactly as

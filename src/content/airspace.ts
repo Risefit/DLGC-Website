@@ -12,6 +12,7 @@
  */
 
 import { file, current } from './documents';
+import { portalise } from '@/lib/files';
 
 const A = 'https://www.dlgc.org.uk/members/airspace';
 
@@ -60,11 +61,11 @@ export const nsgaIntro = [
   'You can transition from the Derbyshire NSGA to the Greater Yorkshire NSGA and back again without a transponder. Read the briefing before you rely on it.',
 ];
 
-export const nsgaDocs: AirspaceDoc[] = [
+export const nsgaDocs: AirspaceDoc[] = portalise([
   { title: 'Derbyshire NSGA', note: 'The local area, in detail', href: file('airspace-derbyshire-nsga-pdf') },
   { title: 'Derbyshire Non-SSR Area', note: 'Overview of the areas where transponders are not required', href: `${A}/Derbyshire%20NonSSR%20Area%20.pdf` },
   { title: 'Transition to the Yorkshire NTA', note: 'Crossing between the two areas', href: file('airspace-transition-to-yorkshire-nta-pdf') },
-];
+]);
 
 export const bgaDocs: AirspaceDoc[] = [
   {

@@ -3,10 +3,11 @@ import Image from 'next/image';
 import { Band, BandSection, Figures, Badge, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { news } from '@/content/news';
-import { documents, isOverdue } from '@/content/documents';
+import { documents } from '@/content/documents';
 import { upcomingEvents, eventDate, startOfToday } from '@/content/site';
 import { rotaQuarters } from '@/content/roster';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
+import { isPortalPage } from '@/lib/files';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -40,7 +41,6 @@ export default function Dashboard() {
   const newest = news[0];
   const quarter = rotaQuarters[0];
   const liveDocs = documents.filter((d) => d.tier === 'live');
-  const overdue = documents.filter((d) => isOverdue(d));
 
   return (
     <>
@@ -168,24 +168,17 @@ export default function Dashboard() {
                   <li key={d.id}>
                     <a
                       href={d.href}
-                      target={d.href.startsWith('/') ? undefined : '_blank'}
-                      rel={d.href.startsWith('/') ? undefined : 'noopener noreferrer'}
+                      target={isPortalPage(d.href) ? undefined : '_blank'}
+                      rel={isPortalPage(d.href) ? undefined : 'noopener noreferrer'}
                       className="tap w-full justify-between gap-3 py-2.5 font-medium text-navy hover:text-skyDark"
                     >
                       {d.title}
-                      {!d.href.startsWith('/') && <span className="text-slate2">{outIcon}</span>}
-                      {!d.href.startsWith('/') && <span className="sr-only">(opens in a new tab)</span>}
+                      {!isPortalPage(d.href) && <span className="text-slate2">{outIcon}</span>}
+                      {!isPortalPage(d.href) && <span className="sr-only">(opens in a new tab)</span>}
                     </a>
                   </li>
                 ))}
               </ul>
-              {overdue.length > 0 && (
-                <p className="mt-4 rounded-card border-l-4 border-warn bg-warnTint px-4 py-3 text-sm">
-                  <strong>{overdue.length}</strong>{' '}
-                  {overdue.length === 1 ? 'document is' : 'documents are'} past the review date.{' '}
-                  <Link href="/documents?review=overdue" className="link">Show them</Link>
-                </p>
-              )}
             </section>
           </div>
         </div>
@@ -206,7 +199,7 @@ export default function Dashboard() {
           {safetySpot.map((l) => {
             // Two of these live in the portal — the emergency procedures and the
             // lessons log. Those must not open in a new tab.
-            const internal = l.href.startsWith('/');
+            const internal = isPortalPage(l.href);
             const body = (
               <>
                 <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>{l.label}</span>

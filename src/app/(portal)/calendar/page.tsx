@@ -1,4 +1,4 @@
-import { PageHeader, Section, Callout, Badge } from '@/components/ui';
+import { PageHeader, Section, Badge } from '@/components/ui';
 import { calendar, calendarNote, eventDate, startOfToday } from '@/content/site';
 import { aim } from '@/content/awareim';
 
@@ -61,19 +61,15 @@ export default function CalendarPage() {
         lead="Courses, committee meetings, camps and the season's key dates."
       />
 
-      {/* The old site's disclaimer was buried in small print. It matters, so it
-          goes at the top — but the fix is to eventually have one source. */}
-      <div className="mb-8">
-        <Callout tone="warn" title="This is a summary, not the master">
-          <p>{calendarNote}</p>
-          <p>
-            <a href={aim('events')} target="_blank" rel="noopener noreferrer" className="link">
-              Open the Events Planner in Members&rsquo; Admin
-            </a>{' '}
-            (new tab)
-          </p>
-        </Callout>
-      </div>
+      {/* The club's own note about the master planner — its wording, kept. */}
+      <p className="mb-8 max-w-prose2 text-inkMuted">
+        {calendarNote}{' '}
+        <a href={aim('events')} target="_blank" rel="noopener noreferrer" className="link">
+          Open the Events Planner in Members&rsquo; Admin
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+        .
+      </p>
 
       <Section title="Coming up">
         {coming.length > 0 ? list(coming) : <p className="text-inkMuted">Nothing in the calendar yet.</p>}

@@ -1,4 +1,4 @@
-import { PageHeader, Section, Callout } from '@/components/ui';
+import { PageHeader, Section } from '@/components/ui';
 import { weatherGroups, club } from '@/content/site';
 import Webcam from '@/components/Webcam';
 
@@ -49,15 +49,6 @@ export default function WeatherPage() {
         <Webcam fallbackHref={club.webcam} mediaClassName="h-[420px]" />
       </div>
 
-      <div className="mb-8">
-        <Callout tone="info" title="A note on the links below">
-          <p>
-            Every link opens the source site in a new tab. Where registration is needed, or where a
-            particular option must be selected to get Camphill data, the instruction is written out
-            — you should not have to work it out each time.
-          </p>
-        </Callout>
-      </div>
 
       {weatherGroups.map((g) => (
         <Section key={g.group} title={g.group} description={g.blurb}>

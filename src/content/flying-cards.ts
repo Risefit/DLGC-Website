@@ -19,6 +19,8 @@
  * if something here is wrong, fix it against the club's PDF, not from memory.
  */
 
+import { portalise } from '@/lib/files';
+
 const OLD = 'https://www.dlgc.org.uk/members';
 
 export type FlyingCard = {
@@ -41,7 +43,7 @@ export type FlyingCard = {
   };
 };
 
-export const flyingCards: FlyingCard[] = [
+export const flyingCards: FlyingCard[] = portalise([
   {
     slug: 'white',
     name: 'White Card',
@@ -166,18 +168,18 @@ export const flyingCards: FlyingCard[] = [
     href: `${OLD}/misc_pages/Flying%20Cards/BlueCard1406.pdf`,
     tone: { band: 'bg-sky text-white', text: 'text-sky', tint: 'bg-skyTint', border: 'border-sky' },
   },
-];
+]);
 
 /** The one-page comparison of all four main cards, as the club publishes it. */
-export const flyingCardSummary = {
+export const flyingCardSummary = portalise({
   label: 'Flying Cards Summary — all four cards on one page',
   href: `${OLD}/pdfs/Flying%20Cards%20Summary-1.pdf`,
-};
+});
 
 /** The old site's index page, kept so nothing is lost. */
 export const flyingCardsIndex = `${OLD}/flyingcards.asp`;
 
-export const redCardTheoryTest = {
+export const redCardTheoryTest = portalise({
   label: 'Red Card Theory Test',
   href: `${OLD}/pdfs/Red%20Card%20Theory%20test%20V23%20final.pdf`,
-};
+});

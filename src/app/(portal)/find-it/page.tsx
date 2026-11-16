@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { findIt } from '@/content/site';
+import { PageHeader } from '@/components/ui';
 
 /**
  * The old site's "Find It" A–Z, kept as a safety net.
@@ -23,16 +24,15 @@ export default function FindItPage() {
 
   return (
     <>
-      <div className="mb-8">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-sky">
-          From the old site
-        </p>
-        <h1 className="text-3xl lg:text-4xl">Find It (A–Z)</h1>
-        <p className="mt-3 max-w-prose2 text-inkMuted">
-          Knew your way around the old members&rsquo; site? Look up the old subject name here and
-          it will tell you where that thing lives now.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="A to Z"
+        title={
+          <>
+            Find <em>it</em>
+          </>
+        }
+        lead="Look up a subject by the name you know it by, and this tells you where it lives."
+      />
 
       <div className="card mb-6 p-5">
         <label htmlFor="findit" className="mb-2 block font-medium text-navy">

@@ -11,15 +11,15 @@ import { Badge } from '@/components/ui';
  */
 export default function NewsArticle({ item }: { item: NewsItem }) {
   return (
-    <article className="card p-6">
-      <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-        <h3 className="text-xl font-semibold text-navy">{item.title}</h3>
+    <article className="story">
+      <time dateTime={item.date} className="block text-sm font-semibold uppercase tracking-[0.12em] text-slate2">
+        {item.displayDate}
+      </time>
+      <div className="mb-3 mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+        <h3 className="display text-[1.7rem] text-navy lg:text-3xl">{item.title}</h3>
         {item.from && <span className="text-sm italic text-inkMuted">from {item.from}</span>}
         {item.pinned && <Badge tone="warn">Worth knowing now</Badge>}
       </div>
-      <time dateTime={item.date} className="mb-3 block text-sm text-inkMuted">
-        {item.displayDate}
-      </time>
 
       <div className="prose-club">
         {item.body.map((p, i) => (
@@ -31,7 +31,7 @@ export default function NewsArticle({ item }: { item: NewsItem }) {
           member nothing. Named, bold and obvious here. Long labels wrap rather
           than pushing the page sideways on a phone. */}
       {item.links && item.links.length > 0 && (
-        <ul className="mt-4 flex flex-wrap gap-2 border-t border-skyLine pt-4">
+        <ul className="mt-4 flex flex-wrap gap-2">
           {item.links.map((l, i) => (
             <li key={`${l.href}-${i}`} className="min-w-0 max-w-full">
               <a

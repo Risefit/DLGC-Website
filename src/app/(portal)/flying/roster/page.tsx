@@ -8,7 +8,6 @@ import {
   swapGuidance,
   rotaDocs,
   winchDrivers,
-  rotaSource,
 } from '@/content/roster';
 
 export const metadata = { title: 'Duty Roster' };
@@ -149,14 +148,6 @@ export default function RosterPage() {
         </p>
       </Section>
 
-      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
-        Rebuilt from the club&rsquo;s duty rotas page.{' '}
-        <a href={rotaSource} target="_blank" rel="noopener noreferrer" className="link">
-          The original is still there
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
-        .
-      </p>
     </>
   );
 }

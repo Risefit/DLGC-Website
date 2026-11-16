@@ -17,6 +17,7 @@
  */
 
 import { file } from './documents';
+import { portalise } from '@/lib/files';
 
 const OLD = 'https://www.dlgc.org.uk/members';
 
@@ -39,7 +40,7 @@ export type ClubPage = {
   cardBlurb: string;
 };
 
-export const clubPages: ClubPage[] = [
+export const clubPages: ClubPage[] = portalise([
   // ── Groups and events ────────────────────────────────────────────────────
   {
     slug: 'vintage-rally',
@@ -325,7 +326,7 @@ export const clubPages: ClubPage[] = [
     ],
     source: `${OLD}/trophies%202025.asp`,
   },
-];
+]);
 
 export const clubPageGroups: ClubPage['group'][] = ['Groups and events', 'Competition', 'Read'];
 

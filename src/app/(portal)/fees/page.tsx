@@ -1,4 +1,4 @@
-import { PageHeader, Callout } from '@/components/ui';
+import { PageHeader } from '@/components/ui';
 import { feeGroups, feeNotes, feesMeta, partYearScale } from '@/content/site';
 import { aim } from '@/content/awareim';
 
@@ -18,28 +18,19 @@ export default function FeesPage() {
         lead="Membership, flying, hangarage, workshop and accommodation. Previous year shown alongside for comparison."
       />
 
-      <div className="mb-8 grid gap-4 lg:grid-cols-2">
-        <Callout tone="info" title="Paying">
-          <p>
-            Your flying account balance, statements and payments are in Members&rsquo; Admin.{' '}
-            <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="link">
-              Open Members&rsquo; Admin
-            </a>{' '}
-            (new tab)
-          </p>
-        </Callout>
-        <Callout tone="warn" title="Check the date">
-          <p>
-            This page was last updated {feesMeta.updated} for fees effective from{' '}
-            {feesMeta.effective}. If today&rsquo;s date is well past the start of a new club year,
-            check with the office before relying on it.
-          </p>
-        </Callout>
-      </div>
+      <p className="mb-8 max-w-prose2 text-inkMuted">
+        Effective from {feesMeta.effective}; last updated {feesMeta.updated}. Your flying account
+        balance, statements and payments are in Members&rsquo; Admin —{' '}
+        <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="link">
+          open Members&rsquo; Admin
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+        .
+      </p>
 
       {feeGroups.map((g) => (
         <section key={g.group} className="mb-8">
-          <h2 className="mb-3 text-2xl">{g.group}</h2>
+          <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">{g.group}</h2>
           <div className="card overflow-x-auto">
             <table className="w-full min-w-[36rem] border-collapse text-left">
               <caption className="sr-only">{g.group} fees</caption>
@@ -71,7 +62,7 @@ export default function FeesPage() {
       ))}
 
       <section className="mb-8">
-        <h2 className="mb-3 text-2xl">Part-year membership</h2>
+        <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">Part-year membership</h2>
         <p className="mb-3 max-w-prose2 text-sm text-inkMuted">
           Joining part way through the club year? Annual membership and rental fees are charged by
           month of joining, rounded to the nearest pound.
@@ -98,7 +89,7 @@ export default function FeesPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-2xl">Notes</h2>
+        <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">Notes</h2>
         <ul className="card space-y-3 p-6 text-sm text-inkMuted">
           {feeNotes.map((n) => (
             <li key={n} className="flex gap-3">

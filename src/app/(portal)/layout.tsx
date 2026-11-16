@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Nav from '@/components/Nav';
-import { previewOpen } from '@/lib/auth';
 import ClubNumbers from '@/components/ClubNumbers';
 import { contacts, club } from '@/content/site';
 import SocialButtons from '@/components/SocialButtons';
@@ -10,12 +9,6 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     <div className="flex min-h-screen flex-col overflow-x-clip">
       <Nav />
 
-      {previewOpen && (
-        <div className="bg-warnTint border-b border-warn/30 px-4 py-2.5 text-center text-xs text-warn no-print">
-          <strong>Preview mode</strong> — the login gate is switched off so the committee can
-          look around. Turn it on before any real member data goes in.
-        </div>
-      )}
 
       <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 lg:py-10">
         {children}
@@ -76,7 +69,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   <li><Link href="/documents" className="link">Club documents</Link></li>
                   <li><Link href="/fees" className="link">Fees and charges</Link></li>
                   <li><Link href="/flying/weather" className="link">Weather and webcam</Link></li>
-                  <li><Link href="/find-it" className="link">Find It (old site A–Z)</Link></li>
+                  <li><Link href="/find-it" className="link">Find It (A–Z)</Link></li>
                 </ul>
               </div>
 

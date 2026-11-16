@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PageHeader, Section, Callout, Badge } from '@/components/ui';
+import { PageHeader, Section, Badge } from '@/components/ui';
 import { archiveCollections, looseDocs, searchDocs, documents } from '@/content/documents';
 import { archivedNews, currentNewsYear } from '@/content/news';
 
@@ -50,21 +50,6 @@ export default async function ArchivePage({
         lead={`${totalArchived} historic documents — minutes back to 2003, newsletters back to 2004, past accident reviews and superseded guidance. Nothing has been deleted.`}
       />
 
-      <div className="mb-8">
-        <Callout tone="info" title="How the archive is organised">
-          <p>
-            Anything that forms a run — AGM minutes, committee minutes, newsletters — is grouped
-            into a <strong>collection</strong>. Open one and you get every document in it, newest
-            first. Documents that don&rsquo;t belong to a run are listed individually below.
-          </p>
-          <p>
-            {archivedInCollections} of the {totalArchived} archived documents are reachable
-            through {archiveCollections.length} collections, which is why this page is short and
-            the old Links Library was not. Collections show the whole run, including this
-            season&rsquo;s, so the count on a box always matches the page behind it.
-          </p>
-        </Callout>
-      </div>
 
       <form action="/archive" className="card mb-8 p-5">
         <label htmlFor="archive-q" className="mb-2 block font-medium text-navy">

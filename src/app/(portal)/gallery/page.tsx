@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { PageHeader, Section, Callout } from '@/components/ui';
+import { PageHeader, Section } from '@/components/ui';
 import SubmitForm from '@/components/SubmitForm';
 import GalleryBrowser from '@/components/GalleryBrowser';
 import { albums, totalPhotos } from '@/content/gallery';
-import { photoGalleries, photoGalleriesSource } from '@/content/photo-galleries';
-import { LEGACY_BASE, servedFromOldSite } from '@/content/documents';
+import { photoGalleries } from '@/content/photo-galleries';
+import { FILES_BASE } from '@/lib/files';
 import { contacts } from '@/content/site';
 
 export const metadata = { title: 'Gallery' };
@@ -78,36 +78,18 @@ export default function GalleryPage() {
           );
         })}
       </ul>
-        <p className="mt-4 text-sm text-inkMuted">
-          <a href={photoGalleriesSource} target="_blank" rel="noopener noreferrer" className="link">
-            The original index is still on the old site
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          .
-        </p>
       </Section>
 
       <Section
         id="albums"
         title={
           <>
-            Albums <em>from the old site</em>
+            The <em>albums</em>
           </>
         }
         description={`${totalPhotos} photographs in ${albums.length} albums. Choose an album to see its pictures.`}
       >
-        {servedFromOldSite && (
-          <div className="mb-6">
-            <Callout tone="warn" title="Photographs still load from the old site">
-              <p>
-                The images have not moved yet, so they load from the old members’ site and your
-                browser may ask for the members’ password the first time — after which the
-                thumbnails appear normally. That step disappears once the archive is hosted.
-              </p>
-            </Callout>
-          </div>
-        )}
-        <GalleryBrowser base={LEGACY_BASE} />
+        <GalleryBrowser base={FILES_BASE} />
       </Section>
 
       <Section

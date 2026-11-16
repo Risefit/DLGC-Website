@@ -5,6 +5,7 @@ import type { Doc } from '@/content/documents';
 import { flyingCards, flyingCardSummary, redCardTheoryTest } from '@/content/flying-cards';
 import { startHere, towardsSolo, onTheGround, simulator, medical, briefings, libraryCount } from '@/content/training';
 import FlyingCardPanel from '@/components/FlyingCardPanel';
+import { isPortalPage } from '@/lib/files';
 
 export const metadata = { title: 'Training' };
 
@@ -18,7 +19,7 @@ export default function TrainingPage() {
   const list = (docs: Doc[]) => (
     <ul className="card divide-y divide-skyLine overflow-hidden">
       {docs.map((d) => {
-        const external = !d.href.startsWith('/');
+        const external = !isPortalPage(d.href);
         return (
           <li key={d.id}>
             <a

@@ -9,7 +9,7 @@
  * Photo titles are derived from filenames with the date prefix stripped and
  * camelCase split, so "180825ShowerToSouth.jpg" reads "Shower To South".
  *
- * `src` goes through LEGACY_BASE like every other imported asset.
+ * `src` becomes a /files/… address like every other imported file (src/lib/files.ts).
  *
  * Album titles that were raw folder names ("Lngdy2017", "Camplanepics170817")
  * were given readable names by hand in November 2026. The `slug` still holds

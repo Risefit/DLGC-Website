@@ -24,11 +24,14 @@
  * silently accumulating withdrawn advice the way the old one did.
  *
  * ── Where the files are ─────────────────────────────────────────────────
- * Files are still served from the old members' site (LEGACY_BASE below).
- * Every page gets a file's address from here, so moving the files is one edit.
+ * A member signed in to the portal gets the club's own copy of a file; anyone
+ * else is sent to the old members' site (src/lib/files.ts). Every page gets a
+ * file's address from here.
  */
 
 import { importedDocuments } from './documents-imported';
+import { FILES_BASE } from '@/lib/files';
+import { previewOpen } from '@/lib/auth';
 
 export type Tier = 'live' | 'reference' | 'archive';
 
@@ -115,24 +118,17 @@ const curatedKept = curated;
 /**
  * WHERE THE FILES ARE SERVED FROM.
  *
- * The imported manifest stores every document as `/legacy/members/...`. Until the
- * ~1.4 GB of files is hosted somewhere (see README), those paths would 404 — so
- * they are rewritten to the old site, which is still up and still authenticated.
- * Members already have those credentials, so every link works today.
- *
- * TO SWITCH TO SELF-HOSTED FILES: set LEGACY_BASE to '' after running
- * `node scripts/import-mirror.mjs` (files land in /public/legacy), or to your
- * storage URL, e.g. 'https://xxx.supabase.co/storage/v1/object/public/legacy'.
- * That single line is the only change needed.
+ * The list stores every document as `/legacy/members/...`. Each becomes
+ * `/files/members/...`, and the route behind that address
+ * (src/app/files/[...path]/route.ts) sends a signed-in member to the club's
+ * own private copy, and everybody else to the old site as before. See
+ * src/lib/files.ts.
  */
-export const LEGACY_BASE = 'https://www.dlgc.org.uk';
-
-/** True while documents are still served from the old members' site. */
-export const servedFromOldSite = LEGACY_BASE.includes('dlgc.org.uk');
+export const servedFromOldSite = previewOpen;
 
 const rebased: Doc[] = importedDocuments.map((d) =>
   d.href.startsWith('/legacy/')
-    ? { ...d, href: LEGACY_BASE + d.href.slice('/legacy'.length) }
+    ? { ...d, href: FILES_BASE + d.href.slice('/legacy'.length) }
     : d
 );
 

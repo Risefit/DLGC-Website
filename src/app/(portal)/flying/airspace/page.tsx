@@ -10,8 +10,6 @@ import {
   notamIntro,
   notamTools,
   REBRIEF_RULE,
-  airspaceSource,
-  loaSource,
 } from '@/content/airspace';
 
 export const metadata = { title: 'Airspace and NOTAMs' };
@@ -135,17 +133,6 @@ export default function AirspacePage() {
         </Callout>
       </div>
 
-      <p className="border-t border-skyLine pt-6 text-sm text-inkMuted">
-        Rebuilt from the club&rsquo;s airspace pages —{' '}
-        <a href={airspaceSource} target="_blank" rel="noopener noreferrer" className="link">
-          Airspace and NOTAMS
-        </a>{' '}
-        and{' '}
-        <a href={loaSource} target="_blank" rel="noopener noreferrer" className="link">
-          Letters of Agreement
-        </a>
-        , both still on the old site.
-      </p>
     </>
   );
 }

@@ -64,7 +64,7 @@ export default function EmergencyPage() {
       </div>
 
       <section aria-labelledby="situations-h" className="mb-10">
-        <h2 id="situations-h" className="mb-1 text-2xl">Which situation?</h2>
+        <h2 id="situations-h" className="display mb-1 text-[1.7rem] lg:text-3xl">Which situation?</h2>
         <p className="mb-4 text-sm text-inkMuted">
           Open one procedure at a time, so it is always clear where it starts and ends.
         </p>
@@ -72,7 +72,7 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3 text-2xl">Hospitals</h2>
+        <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">Hospitals</h2>
         <p className="mb-4 max-w-prose2 text-sm text-inkMuted">{hospitals.note}</p>
         <div className="grid gap-4 lg:grid-cols-2">
           {[
@@ -104,7 +104,7 @@ export default function EmergencyPage() {
 
       <section className="mb-10 grid gap-4 lg:grid-cols-2">
         <div>
-          <h2 className="mb-3 text-2xl">Other numbers</h2>
+          <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">Other numbers</h2>
           <ul className="card divide-y divide-skyLine overflow-hidden">
             {emergencyContacts.map((c) => (
               <li key={c.label} className="px-5 py-3.5">
@@ -116,7 +116,7 @@ export default function EmergencyPage() {
           </ul>
         </div>
         <div>
-          <h2 className="mb-3 text-2xl">Club numbers</h2>
+          <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">Club numbers</h2>
           <ul className="card divide-y divide-skyLine overflow-hidden">
             {[
               ['Launch Point', contacts.launchPoint],

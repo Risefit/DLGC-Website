@@ -1,12 +1,10 @@
-import Link from 'next/link';
-import { PageHeader, Callout, ToMigrate, Section } from '@/components/ui';
+import { PageHeader, Section } from '@/components/ui';
 import SubmitForm from '@/components/SubmitForm';
 import { contacts } from '@/content/site';
 
 export const metadata = { title: 'Flying Blog' };
 
-/** Sample entries carried across so the page has real content and the voice is
- *  visible. The full archive imports with the mirror. */
+/** The entries carried across from the old site so far. Add new ones at the top. */
 const entries = [
   {
     date: '2024-11-29',
@@ -34,62 +32,47 @@ export default function BlogPage() {
   return (
     <>
       <PageHeader
+        back={{ href: '/club-life', label: 'Club Life' }}
         eyebrow="What the flying was like"
-        title="Flying Blog"
+        title={
+          <>
+            The flying <em>blog</em>
+          </>
+        }
         lead="Members' reports of flying days at Camphill. Any length is welcome — most contributors write the story of the day in 200 words or so."
       />
 
-      <div className="mb-8 rounded-card border-2 border-sky bg-skyTint px-5 py-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
-        <p className="font-medium text-navy">
-          Flown something worth telling people about?
-        </p>
-        <a
-          href="#write-one"
-          className="tap mt-3 gap-2 rounded-lg bg-sky px-5 py-3 font-semibold text-white
-                     hover:bg-skyDark transition-colors sm:mt-0 sm:shrink-0"
-        >
-          Write a story
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 4v14m0 0l-5-5m5 5l5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </a>
-      </div>
-
-      <div className="mb-8 grid gap-4 lg:grid-cols-2">
-        <Callout tone="info" title="Write one">
-          <p>
-            Anyone is welcome to send a report about the day to the website editor. The text is also
-            copied onto the club&rsquo;s public website as promotional material, so it&rsquo;s worth
-            bearing that in mind.
-          </p>
-        </Callout>
-        <Callout tone="warn" title="This needs restarting">
-          <p>
-            The blog&rsquo;s last entry was November 2024. It is one of the best things on the old
-            site and worth reviving — the wave day below is exactly the sort of thing that gets
-            people to the airfield.
-          </p>
-        </Callout>
-      </div>
-
-      <div className="space-y-6">
-        {entries.map((e) => (
-          <article key={e.date} className="card p-6">
-            <div className="mb-1 flex flex-wrap items-baseline gap-x-3">
-              <time dateTime={e.date} className="text-lg font-semibold text-navy">{e.display}</time>
-              <span className="text-sm italic text-inkMuted">from {e.from}</span>
-            </div>
-            <div className="prose-club mt-3">
-              {e.body.map((p, i) => <p key={i}>{p}</p>)}
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div id="write-one" className="scroll-mt-24" />
       <Section
-        title="Write one"
-        description="The blog only keeps going if members send things in. Two paragraphs is plenty."
+        title={
+          <>
+            From <em>the airfield</em>
+          </>
+        }
+        action={<a href="#write-one" className="pill-line">Write a story</a>}
+      >
+        <div className="max-w-4xl">
+          {entries.map((e) => (
+            <article key={e.date} className="story">
+              <time dateTime={e.date} className="block text-sm font-semibold uppercase tracking-[0.12em] text-slate2">
+                {e.display}
+              </time>
+              <p className="mt-1 text-sm italic text-inkMuted">from {e.from}</p>
+              <div className="prose-club mt-3">
+                {e.body.map((p, i) => <p key={i}>{p}</p>)}
+              </div>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        id="write-one"
+        title={
+          <>
+            Write <em>one</em>
+          </>
+        }
+        description="The blog only keeps going if members send things in. Two paragraphs is plenty. The text is also copied onto the club’s public website as promotional material, so it’s worth bearing that in mind."
       >
         <SubmitForm
           kind="blog"
@@ -100,13 +83,6 @@ export default function BlogPage() {
           editorEmail={contacts.websiteEditor.email}
         />
       </Section>
-
-      <div className="mt-8">
-        <ToMigrate what="The full Flying Blog archive (home and away), including the soaring week write-ups from 2013 to 2024." />
-        <p className="mt-3 text-sm text-inkMuted">
-          Everything imports into <Link href="/archive" className="link">the Archive</Link>, searchable by year.
-        </p>
-      </div>
     </>
   );
 }
