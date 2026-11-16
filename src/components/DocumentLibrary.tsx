@@ -84,14 +84,17 @@ export default function DocumentLibrary({
   initialQuery = '',
   initialTier = 'current',
   initialReview = '',
+  initialCategory = 'all',
 }: {
   initialQuery?: string;
   initialTier?: TierFilter;
   initialReview?: string;
+  /** Lets a section page link straight to its own slice of the library. */
+  initialCategory?: string;
 }) {
   const [q, setQ] = useState(initialQuery);
   const [tier, setTier] = useState<TierFilter>(initialTier);
-  const [category, setCategory] = useState<string>('all');
+  const [category, setCategory] = useState<string>(initialCategory);
   const [audience, setAudience] = useState<Audience | 'all'>('all');
   const [onlyOverdue, setOnlyOverdue] = useState(initialReview === 'overdue');
 

@@ -51,6 +51,30 @@ const plexMono = localFont({
   fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
 });
 
+/**
+ * DISPLAY FACE — Newsreader, self-hosted, for page titles and band headings only.
+ *
+ * Plex stays the working face for everything a member reads or presses.
+ * Newsreader is here for the few large lines that give a page its character,
+ * and for the italic phrase picked out in each title. It was chosen over more
+ * decorative faces because its italic stays easy to read and its figures are
+ * plain lining figures — "26Q4" and "20 Nov" have to read at a glance.
+ *
+ * Two fixed cuts taken from the variable font at its display optical size: a
+ * roman at weight 560 and an italic at 470. 50 KB for the pair. Never use it
+ * below 1.5rem.
+ */
+const display = localFont({
+  src: [
+    { path: './fonts/newsreader-latin-display-normal.woff2', weight: '560', style: 'normal' },
+    { path: './fonts/newsreader-latin-display-italic.woff2', weight: '470', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--font-display',
+  adjustFontFallback: 'Times New Roman',
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
+});
+
 export const metadata: Metadata = {
   title: {
     default: "DLGC Members' Portal",
@@ -71,7 +95,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${plexSans.variable} ${plexMono.variable}`}>
+    <html lang="en-GB" className={`${plexSans.variable} ${plexMono.variable} ${display.variable}`}>
       <body>{children}</body>
     </html>
   );

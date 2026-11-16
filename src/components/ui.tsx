@@ -152,6 +152,114 @@ export function ToMigrate({ what }: { what: string }) {
   );
 }
 
+/* ── Bands ─────────────────────────────────────────────────────────────────
+   Full-width bands of tone that open and divide a page. Styles are in
+   globals.css (.band-dark, .band-white, .band-cloud, .band-contour). */
+
+/**
+ * The dark contour band that opens a landing page. `title` takes JSX so one
+ * phrase can be picked out: <>Flying <em>from Camphill</em></>.
+ * `aside` sits to the right on a wide screen and underneath on a phone.
+ */
+export function Band({
+  eyebrow,
+  title,
+  lead,
+  children,
+  aside,
+  figures,
+}: {
+  eyebrow?: string;
+  title: ReactNode;
+  lead?: ReactNode;
+  children?: ReactNode;
+  aside?: ReactNode;
+  /** A <Figures> row, set across the full width under everything else. */
+  figures?: ReactNode;
+}) {
+  return (
+    <header className="band-dark -mt-8 pb-10 pt-9 lg:-mt-10 lg:pb-14 lg:pt-14">
+      <div className={aside ? 'grid items-center gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-12' : undefined}>
+        <div className="min-w-0">
+          {eyebrow && (
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#A9CFEA]">{eyebrow}</p>
+          )}
+          <h1 className="display text-[2.5rem] sm:text-5xl lg:text-[3.9rem]">{title}</h1>
+          {lead && <p className="mt-4 max-w-[52ch] text-lg leading-relaxed text-white/85">{lead}</p>}
+          {children}
+        </div>
+        {aside}
+      </div>
+      {figures}
+    </header>
+  );
+}
+
+/** A light band with a display heading. Alternate `white` and `cloud` down a page. */
+export function BandSection({
+  tone = 'white',
+  title,
+  description,
+  action,
+  children,
+  id,
+}: {
+  tone?: 'white' | 'cloud' | 'contour';
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  children: ReactNode;
+  id?: string;
+}) {
+  return (
+    <section id={id} className={`band-${tone} py-10 lg:py-14`}>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <h2 className="display text-3xl lg:text-[2.6rem]">{title}</h2>
+          {description && <p className="mt-2 max-w-prose2 text-inkMuted">{description}</p>}
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** Large figures with a small label under each — for the two or three numbers a page turns on. */
+export function Figures({
+  items,
+}: {
+  items: { value: string; label: string; note?: string; href?: string }[];
+}) {
+  return (
+    <dl className="mt-9 grid gap-x-10 gap-y-6 border-t border-white/25 pt-6 sm:grid-cols-3">
+      {items.map((it) => (
+        <div key={it.label} className="min-w-0">
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#A9CFEA]">{it.label}</dt>
+          <dd className="figure mt-1.5 text-[2.5rem] text-white lg:text-[3.1rem]">{it.value}</dd>
+          {it.note &&
+            (it.href ? (
+              <dd className="mt-1.5 text-sm">
+                <Link href={it.href} className="text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                  {it.note}
+                </Link>
+              </dd>
+            ) : (
+              <dd className="mt-1.5 text-sm text-white/85">{it.note}</dd>
+            ))}
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** The small arrow that marks a link leaving the portal. */
+export const outIcon = (
+  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0">
+    <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+  </svg>
+);
+
 export const icons = {
   plane: (
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">

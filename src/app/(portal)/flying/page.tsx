@@ -1,62 +1,90 @@
-import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
+import Link from 'next/link';
+import { Band, BandSection, Figures, ActionTile, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 import { manualGroups, flightManualCaveat } from '@/content/manuals';
+import { rotaQuarters } from '@/content/roster';
+import { currentCfiNotices } from '@/content/notices';
 
 export const metadata = { title: 'Flying' };
 
 export default function FlyingPage() {
   const ops = documents.filter((d) => d.category === 'Operational Notices');
+  // Rotas, airspace notices and the Blake-Robertshaw task graphics each have a
+  // page of their own, so they are not listed a second time here.
+  const elsewhere = new Set(['Duty Rotas', 'Airspace Notices', 'Blake-Robertshaw Task Graphics']);
+  const notices = ops.filter((d) => !elsewhere.has((d as { series?: string }).series ?? '') && d.tier !== 'archive');
+  const quarter = rotaQuarters[0];
 
   return (
     <>
-      <PageHeader
+      <Band
         eyebrow="Getting airborne"
-        title="Flying"
-        lead="Booking, duties, weather, airspace and the operational notices that govern how we fly at Camphill."
-      />
+        title={
+          <>
+            Flying <em>from Camphill</em>
+          </>
+        }
+        lead="Booking, duties, weather, airspace and the operational notices that govern how we fly here."
+        figures={
+          <Figures
+            items={[
+              { label: 'Duty rota', value: quarter.code, note: quarter.label, href: '/flying/roster' },
+              {
+                label: 'CFI’s current notices',
+                value: String(currentCfiNotices.length),
+                note: currentCfiNotices.map((n) => n.title.split(/[,(]/)[0].trim()).join(' · '),
+                href: '/flying/notices',
+              },
+              {
+                label: 'Airspace re-brief',
+                value: '12 months',
+                note: 'Wave Box agreement reissued 7 November 2026',
+                href: '/flying/airspace',
+              },
+            ]}
+          />
+        }
+      >
+        <nav aria-label="Book and check" className="mt-7 flex flex-wrap gap-3">
+          <a href={aim('flyingPlanner')} target="_blank" rel="noopener noreferrer" className="pill-accent">
+            Daily Flying Planner {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+          <a href={aim('flightsToday')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
+            Flights today {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+          <Link href="/flying/roster" className="pill-ghost">Duty roster</Link>
+          <Link href="/flying/weather" className="pill-ghost">Weather and webcam</Link>
+        </nav>
 
-      <Section title="Book and check">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionTile href={aim('flyingPlanner')} external label="Daily Flying Planner" hint="Book onto a flying day" icon={icons.plane} />
-          <ActionTile href={aim('flightsToday')} external label="Flights Today" hint="What is happening now" icon={icons.calendar} />
-          <ActionTile href="/flying/roster" label="Duty Roster" hint="Instructors and duties" icon={icons.people} />
-          <ActionTile href="/flying/weather" label="Weather" hint="Forecasts, station, webcam" icon={icons.cloud} />
-        </div>
-      </Section>
+      </Band>
 
-      <Section
-        title="Before you fly cross-country"
+      <BandSection
+        tone="white"
+        title={
+          <>
+            Before you fly <em>cross-country</em>
+          </>
+        }
         description="Airspace agreements, NOTAMs, and the notices that govern how we operate."
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <ActionTile
-            href="/flying/airspace"
-            label="Airspace and NOTAMs"
-            hint="Wave Box, L975, East Midlands, NSGAs"
-            icon={icons.cloud}
-          />
-          <ActionTile
-            href="/flying/notices"
-            label="CFI and Launch Marshal notices"
-            hint="How we check, launch and report"
-            icon={icons.book}
-          />
-          <ActionTile
-            href={aim('rebrief')}
-            external
-            label="Airspace re-brief"
-            hint="Due every 12 months"
-            icon={icons.calendar}
-          />
+          <ActionTile href="/flying/airspace" label="Airspace and NOTAMs" hint="Wave Box, L975, East Midlands, NSGAs" icon={icons.cloud} />
+          <ActionTile href="/flying/notices" label="CFI and Launch Marshal notices" hint="How we check, launch and report" icon={icons.book} />
+          <ActionTile href={aim('rebrief')} external label="Airspace re-brief" hint="Due every 12 months" icon={icons.calendar} />
         </div>
-      </Section>
+      </BandSection>
 
-      {/* Ported from the old manuals_webpage.asp. Three columns, in the club's
-          own groupings — the five that govern how we operate, the specialist
-          procedures, and the aircraft flight manuals. */}
-      <Section
-        title="Club manuals"
+      {/* Ported from the old manuals_webpage.asp, in the club's own three groups. */}
+      <BandSection
+        tone="contour"
+        title={
+          <>
+            Club <em>manuals</em>
+          </>
+        }
         description="How the club operates, written down. If you only read one, make it the Pilots Manual."
       >
         <div className="grid gap-4 lg:grid-cols-3">
@@ -69,12 +97,7 @@ export default function FlyingPage() {
               <ul className="flex-1 divide-y divide-skyLine">
                 {g.manuals.map((m) => (
                   <li key={m.href}>
-                    <a
-                      href={m.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-5 py-3.5 transition-colors hover:bg-sky50"
-                    >
+                    <a href={m.href} target="_blank" rel="noopener noreferrer" className="block px-5 py-3.5 transition-colors hover:bg-sky50">
                       <span className="font-medium text-navy">{m.title}</span>
                       {m.note && <span className="mt-0.5 block text-xs text-slate2">{m.note}</span>}
                       <span className="sr-only">(PDF, opens in a new tab)</span>
@@ -85,33 +108,44 @@ export default function FlyingPage() {
             </div>
           ))}
         </div>
-        <p className="mt-3 max-w-prose2 text-xs text-slate2">{flightManualCaveat}</p>
-      </Section>
+        <p className="mt-4 max-w-prose2 text-xs text-slate2">{flightManualCaveat}</p>
+      </BandSection>
 
-      <Section
-        title="Operational notices"
-        description="How we operate — mutual flying, launch marshalling, radios, field landings and more."
-      >
-        <ul className="card divide-y divide-skyLine overflow-hidden">
-          {ops.map((d) => {
+      <section className="band-white -mb-8 py-10 lg:-mb-10 lg:py-14">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <div className="min-w-0">
+            <h2 className="display text-3xl lg:text-[2.6rem]">
+              Operational <em>notices</em>
+            </h2>
+            <p className="mt-2 max-w-prose2 text-inkMuted">
+              Mutual flying, launch marshalling, radios, field landings and more. Duty rotas and
+              airspace notices are on their own pages above.
+            </p>
+          </div>
+          <Link href="/documents?category=Operational%20Notices" className="pill-line">
+            All {ops.length} in Documents
+          </Link>
+        </div>
+        <ul className="grid gap-x-10 border-t-2 border-navy sm:grid-cols-2">
+          {notices.map((d) => {
             const external = !d.href.startsWith('/');
             return (
-              <li key={d.id}>
+              <li key={d.id} className="border-b border-skyLine">
                 <a
                   href={d.href}
                   target={external ? '_blank' : undefined}
                   rel={external ? 'noopener noreferrer' : undefined}
-                  className="block px-5 py-4 hover:bg-sky50 transition-colors"
+                  className="tap w-full justify-between gap-3 py-3 font-medium text-navy hover:text-skyDark"
                 >
-                  <span className="font-medium text-navy">{d.title}</span>
-                  {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
-                  {d.owner && <span className="mt-1 block text-xs text-slate2">Owner: {d.owner}</span>}
+                  <span className="min-w-0 [overflow-wrap:anywhere]">{d.title}</span>
+                  {external && <span className="text-slate2">{outIcon}</span>}
+                  {external && <span className="sr-only">(opens in a new tab)</span>}
                 </a>
               </li>
             );
           })}
         </ul>
-      </Section>
+      </section>
     </>
   );
 }

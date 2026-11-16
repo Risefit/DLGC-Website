@@ -26,7 +26,17 @@ const config: Config = {
                              // reserved for genuine captions and metadata.
         slate2: '#4A5C6B',   // captions, timestamps, counts — 6.9:1
         navy: '#123A5C',     // headings, nav bar
-        sky: '#1F6FA8',      // primary interactive
+                sky: '#1F6FA8',      // primary interactive
+        /**
+         * THE BANDS. `deep` is the ground colour of the dark contour bands that
+         * open a page — a shade under navy so navy cards and the nav bar still
+         * read as separate from it. `windsock` is the one accent on the site and
+         * it lives ONLY on those dark bands (the italic phrase in a heading, a
+         * thin rule, one button). Never on white or cloud: there it would read as
+         * the `warn` colour, which means something. 6.98:1 on deep.
+         */
+        deep: '#0C2D49',
+        windsock: '#F2A65A',
         skyDark: '#155681',  // hover / active
         /**
          * SURFACE FILLS — what may sit on them:
@@ -67,6 +77,8 @@ const config: Config = {
         // For data read character by character: registrations, frequencies,
         // times, reference numbers.
         mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // Display face for page titles and band headings only. See layout.tsx.
+        display: ['var(--font-display)', 'Georgia', 'Times New Roman', 'serif'],
       },
       /**
        * TYPE SCALE. Base is 18px, not 16px — this membership skews older, and

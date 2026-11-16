@@ -117,6 +117,99 @@
   .prose-club a { @apply link; }
 }
 
+/* ── BANDS ────────────────────────────────────────────────────────────────
+   Pages are broken into full-width bands of tone instead of white cards on
+   grey. A band runs edge to edge; its content stays on the page's normal
+   column, so text lines up with everything above and below it.
+
+   .bleed does that with a margin/padding pair. It makes the element as wide
+   as the window, which is fractionally wider than the page when a scrollbar
+   is showing — the portal layout carries `overflow-x: clip` so that can never
+   become a horizontal scrollbar (CLAUDE.md rule 2). Do not remove either half. */
+@layer components {
+  .bleed {
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+  }
+
+  /* The dark opening band: deep navy, a glow low in the frame like first light
+     over the edge, and the contour drawing behind it all. The drawing is
+     decoration (tools/make-contours.mjs) — it is not a map of anywhere. */
+  .band-dark {
+    @apply bleed relative text-white;
+    isolation: isolate;
+    background-color: #0C2D49;
+    background-image:
+      radial-gradient(80% 110% at 88% 118%, rgba(217, 112, 43, 0.30), transparent 62%),
+      radial-gradient(70% 90% at 0% 0%, rgba(31, 111, 168, 0.45), transparent 65%);
+  }
+  .band-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/img/contours-dark.svg') center / cover no-repeat;
+    opacity: 0.26;
+    pointer-events: none;
+  }
+
+  /* Light bands. White and cloud alternate down a page; the contour variant
+     is for the one or two bands per page that deserve a little more. */
+  .band-white { @apply bleed bg-white; }
+  .band-cloud { @apply bleed bg-cloud; }
+  .band-contour {
+    @apply bleed relative bg-cloud;
+    isolation: isolate;
+  }
+  .band-contour::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/img/contours-light.svg') center / cover no-repeat;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* Display type: page titles and band headings. The <em> is the phrase picked
+     out in italic — windsock orange on a dark band, sky on a light one. */
+  .display {
+    @apply font-display;
+    font-weight: 560;
+    letter-spacing: -0.012em;
+    line-height: 1.06;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'lnum' 1;
+  }
+  .display em {
+    font-style: italic;
+    font-weight: 470;
+    @apply text-skyDark;
+  }
+  .band-dark .display { @apply text-white; }
+  .band-dark .display em { @apply text-windsock; }
+
+  /* Big figures with a small label under each. */
+  .figure {
+    @apply font-display;
+    font-weight: 560;
+    letter-spacing: -0.012em;
+    line-height: 1;
+    white-space: nowrap;
+    font-feature-settings: 'lnum' 1;
+  }
+
+  /* Pill buttons — the primary actions on a band. 48px tall for cold hands. */
+  .pill {
+    @apply inline-flex min-h-[48px] items-center gap-2 rounded-full px-5 py-2.5 font-semibold transition-colors;
+  }
+  .pill-accent { @apply pill bg-windsock text-deep hover:bg-white; }
+  .pill-ghost { @apply pill border border-white/55 text-white hover:border-white hover:bg-white/10; }
+  .pill-solid { @apply pill bg-navy text-white hover:bg-skyDark; }
+  .pill-line { @apply pill border border-navy/40 text-navy hover:border-navy hover:bg-white; }
+
+  .band-dark :focus-visible { outline-color: #F2A65A; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
