@@ -14,13 +14,9 @@ export default function NewsArchiveIndex() {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">News and Notices</span>
-      </nav>
 
       <PageHeader
+        back={{ href: '/archive', label: 'Archive' }}
         eyebrow={`${archivedNews.length} notices before ${currentNewsYear}`}
         title="News Archive"
         lead="Every notice the club has published since 2016, kept in full — including the photographs and documents each one linked to. Choose a year."
@@ -48,10 +44,10 @@ export default function NewsArchiveIndex() {
       </ul>
 
       <div className="mt-10 flex flex-wrap gap-4">
-        <Link href="/club-life/news" className="link">
+        <Link href="/club-life/news" className="link tap">
           &larr; This year&rsquo;s news
         </Link>
-        <Link href="/archive" className="link">
+        <Link href="/archive" className="link tap">
           All archive collections
         </Link>
       </div>

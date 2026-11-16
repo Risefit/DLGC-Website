@@ -38,7 +38,7 @@ export default function WeatherPage() {
               href={club.weatherStation}
               target="_blank"
               rel="noopener noreferrer"
-              className="link text-sm"
+              className="link tap text-sm"
             >
               Open the full station page
               <span className="sr-only"> (opens in a new tab)</span>

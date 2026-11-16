@@ -1,6 +1,7 @@
 import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui';
 import ClubNumbers from '@/components/ClubNumbers';
-import { contacts, roles } from '@/content/site';
+import { contacts } from '@/content/site';
+import RolesList from '@/components/RolesList';
 import { aim } from '@/content/awareim';
 
 export const metadata = { title: 'Directory' };
@@ -80,19 +81,16 @@ export default function DirectoryPage() {
         </div>
       </Section>
 
-      <Section title="Roles" description="Who holds which club role. Contact details are in the Member Directory.">
-        <ul className="card divide-y divide-skyLine overflow-hidden">
-          {roles.map((r) => (
-            <li key={r.role} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4">
-              <span className="font-medium text-navy">{r.role}</span>
-              <span className="text-inkMuted">{r.holder}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-3 text-xs text-slate2">
-          Role holders change. This list needs an owner and a review date like everything else —
-          see the note in the handover document.
-        </p>
+      <Section
+        id="roles"
+        title={
+          <>
+            Roles <em>and role holders</em>
+          </>
+        }
+        description="The jobs that keep Camphill running, and the members who volunteer to do them."
+      >
+        <RolesList />
       </Section>
     </>
   );

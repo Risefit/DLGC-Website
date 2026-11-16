@@ -272,6 +272,16 @@ export const calendar: { month: string; events: CalendarEvent[] }[] = [
  * 11" on a dashboard tells a member nothing — "Fri 11 September 2026" does.
  * A `when` that already names its month (a range spanning two) is left alone.
  */
+/** "Sat 17, 19:00" in "October 2026" → a real date. Null when it cannot be read. */
+export function eventDate(e: { when: string; month: string }): Date | null {
+  const day = e.when.match(/\d{1,2}/)?.[0];
+  const t = day ? Date.parse(`${day} ${e.month} UTC`) : NaN;
+  return Number.isNaN(t) ? null : new Date(t);
+}
+
+/** Midnight this morning, UTC — so an event stays listed for the whole of its own day. */
+export const startOfToday = () => new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z');
+
 export const upcomingEvents: (CalendarEvent & { displayWhen: string; month: string })[] =
   calendar.flatMap(({ month, events }) =>
     events.map((e) => {
@@ -391,15 +401,3 @@ export const findIt: { term: string; to: string; label: string }[] = [
 ];
 
 /** Role holders — names only, no personal contact details in source control. */
-export const roles = [
-  { role: 'Chairman', holder: 'Garry Lewis' },
-  { role: 'Chief Flying Instructor (CFI)', holder: 'See Directory' },
-  { role: 'Safety Officer', holder: 'See Directory' },
-  { role: 'Aircraft Officer', holder: 'Warwick Horne' },
-  { role: 'Chief Launch Marshal', holder: 'See Directory' },
-  { role: 'Treasurer', holder: 'See Directory' },
-  { role: 'Membership Secretary', holder: 'Peter Gill' },
-  { role: 'Secretary', holder: 'See Directory' },
-  { role: "Members' Admin (AwareIM)", holder: 'Mo Bent' },
-  { role: 'Website Editor', holder: 'Bob Bollom' },
-];

@@ -26,15 +26,9 @@ export default async function NewsYearPage({ params }: { params: Promise<{ year:
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <Link href="/archive/news" className="link">News and Notices</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">{y}</span>
-      </nav>
 
       <PageHeader
+        back={{ href: '/archive', label: 'Archive' }}
         eyebrow={`${items.length} ${items.length === 1 ? 'notice' : 'notices'}`}
         title={`News and Notices ${y}`}
         lead="Exactly as the club published them, newest first."
@@ -66,16 +60,16 @@ export default async function NewsYearPage({ params }: { params: Promise<{ year:
 
       <div className="mt-10 flex flex-wrap justify-between gap-4 border-t border-skyLine pt-6">
         {newer ? (
-          <Link href={`/archive/news/${newer.year}`} className="link">
+          <Link href={`/archive/news/${newer.year}`} className="link tap">
             &larr; {newer.year}
           </Link>
         ) : (
-          <Link href="/club-life/news" className="link">
+          <Link href="/club-life/news" className="link tap">
             &larr; This year&rsquo;s news
           </Link>
         )}
         {older && (
-          <Link href={`/archive/news/${older.year}`} className="link">
+          <Link href={`/archive/news/${older.year}`} className="link tap">
             {older.year} &rarr;
           </Link>
         )}

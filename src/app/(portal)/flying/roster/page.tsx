@@ -145,7 +145,7 @@ export default function RosterPage() {
         </ul>
         <p className="mt-3 text-sm text-inkMuted">
           Winch training is run by the Winch Master —{' '}
-          <Link href="/club-life/roles" className="link">see who holds that role</Link>.
+          <Link href="/directory#roles" className="link">see who holds that role</Link>.
         </p>
       </Section>
 

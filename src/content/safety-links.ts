@@ -11,8 +11,9 @@
  * trying to do. The old page was one column of nineteen "this link"s.
  */
 
+import { file } from './documents';
+
 const OLD = 'https://www.dlgc.org.uk/members';
-const S = `${OLD}/safety`;
 
 export type SafetyResource = { title: string; note: string; href: string };
 export type SafetyGroup = { group: string; blurb: string; items: SafetyResource[] };
@@ -30,12 +31,12 @@ export const safetyGroups: SafetyGroup[] = [
       {
         title: 'Acceleration and over-rotation',
         note: 'Some gliders over-rotate more easily than others early in the launch. For winch drivers and pilots both.',
-        href: `${OLD}/pdfs/Acceleration.pdf`,
+        href: file('pdfs-acceleration-pdf'),
       },
       {
         title: 'Too early rotation',
         note: 'The companion article to the above.',
-        href: `${S}/TooEarlyRotationArticle.pdf`,
+        href: file('safety-tooearlyrotationarticle-pdf'),
       },
     ],
   },
@@ -46,12 +47,12 @@ export const safetyGroups: SafetyGroup[] = [
       {
         title: 'Safety Lessons Log — briefing',
         note: 'What the log is for and how entries are written.',
-        href: `${OLD}/pdfs/SLL%20-%20Briefing%20v3.pdf`,
+        href: file('pdfs-sll-briefing-v3-pdf'),
       },
       {
         title: 'Incident reports at another gliding club',
         note: 'Actual reports from another club. An excellent example of learning from mistakes.',
-        href: `${S}/Another%20GC%20Incidents%20.pdf`,
+        href: file('safety-another-gc-incidents-pdf'),
       },
       {
         title: 'CHIRP — confidential incident reporting',
@@ -61,7 +62,7 @@ export const safetyGroups: SafetyGroup[] = [
       {
         title: 'Safety Officer — role and contact',
         note: 'Who holds the role and what it covers.',
-        href: `${S}/Safety%20Officer.pdf`,
+        href: file('safety-safety-officer-pdf'),
       },
       {
         title: 'BGA Club Safety Officer Toolkit',
@@ -82,7 +83,7 @@ export const safetyGroups: SafetyGroup[] = [
       {
         title: 'Distress and Diversion, 121.5 MHz',
         note: 'A three-fold handout you can print. How D&D can locate you if you are lost — say above cloud — and the fact that practice calls are welcome.',
-        href: `${OLD}/pdfs/DD-briefing-handout-1.pdf`,
+        href: file('pdfs-dd-briefing-handout-1-pdf'),
       },
       {
         title: 'Drones and mid-air conflict awareness',
@@ -108,7 +109,7 @@ export const safetyGroups: SafetyGroup[] = [
       {
         title: 'Back cushions',
         note: 'BGA note. It matters more than it sounds.',
-        href: `${S}/BGACushionsNoteJul2018.doc`,
+        href: file('safety-bgacushionsnotejul2018-doc'),
       },
       {
         title: 'Energy-absorbing seat cushions',
@@ -121,10 +122,10 @@ export const safetyGroups: SafetyGroup[] = [
     group: 'DLGC Safety Notes',
     blurb: 'The club’s own safety notes, kept in full.',
     items: [
-      { title: 'Safety Note 1 — May 2017', note: '', href: `${S}/SafetyNote(01)May2017.pdf` },
-      { title: 'Safety Note 2 — October 2017', note: '', href: `${S}/SafetyNote(02)Oct2017.pdf` },
-      { title: 'Safety Note 3 — June 2021', note: '', href: `${S}/SafetyNote(03)Jun2021.pdf` },
-      { title: 'Safety Note 3.1 — June 2021', note: '', href: `${S}/SafetyNote(03.1)Jun2021.pdf` },
+      { title: 'Safety Note 1 — May 2017', note: '', href: file('safety-safetynote-01-may2017-pdf') },
+      { title: 'Safety Note 2 — October 2017', note: '', href: file('safety-safetynote-02-oct2017-pdf') },
+      { title: 'Safety Note 3 — June 2021', note: '', href: file('safety-safetynote-03-jun2021-pdf') },
+      { title: 'Safety Note 3.1 — June 2021', note: '', href: file('safety-safetynote-03-1-jun2021-pdf') },
     ],
   },
 ];
@@ -146,7 +147,7 @@ export const accidentReviews: { year: number; href: string }[] = [
   { year: 2012, href: 'http://www.gliding.co.uk/bgainfo/documents/accidentreview2012web.pdf' },
   { year: 2011, href: 'http://www.gliding.co.uk/bgainfo/documents/accidentreview2011web.pdf' },
   { year: 2010, href: 'http://www.gliding.co.uk/bgainfo/safety/documents/summary2010.pdf' },
-  { year: 2008, href: `${OLD}/pdfs/Accidents%20to%20Gliders%202008.pdf` },
+  { year: 2008, href: file('pdfs-accidents-to-gliders-2008-pdf') },
 ];
 
 /** Soaring Society of America safety extracts, kept from the old page. */

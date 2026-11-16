@@ -37,7 +37,7 @@ export default function FlyingCardPanel({ cards }: { cards: FlyingCard[] }) {
                   <span className="block text-lg font-semibold text-navy">{c.name}</span>
                   <span className="block text-sm text-inkMuted">{c.who}</span>
                 </span>
-                <span className="shrink-0 pr-5 text-sm font-medium text-sky">
+                <span className="hidden shrink-0 pr-5 text-sm font-medium text-sky sm:inline">
                   {isOpen ? 'Close' : 'What it means'}
                 </span>
                 <svg

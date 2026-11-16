@@ -27,7 +27,7 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function SocialButtons() {
   return (
     <div>
-      <h2 className="mb-3 text-base">Follow the club</h2>
+      <h2 className="display mb-3 text-xl">Follow the club</h2>
       <ul className="flex flex-wrap gap-2.5">
         {socials.map((s) => {
           const icon = (

@@ -153,37 +153,11 @@ export default async function ArchivePage({
 
       <Section
         title="Individual documents"
-        description="Historic items that don't belong to a run."
+        description="Historic items that do not belong to a run are in the document library, under its Archive filter, where they can be searched with everything else."
       >
-        {loose.length === 0 ? (
-          <p className="text-sm text-inkMuted">Nothing here matches that search.</p>
-        ) : (
-          <ul className="card divide-y divide-skyLine overflow-hidden">
-            {loose.map((d) => {
-              const external = !d.href.startsWith('/');
-              return (
-                <li key={d.id}>
-                  <a
-                    href={d.href}
-                    target={external ? '_blank' : undefined}
-                    rel={external ? 'noopener noreferrer' : undefined}
-                    className="block px-5 py-4 hover:bg-sky50 transition-colors"
-                  >
-                    <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                      <span className={`font-medium ${d.superseded ? 'text-inkMuted' : 'text-navy'}`}>
-                        {d.title}
-                      </span>
-                      {d.superseded && <Badge tone="warn">No longer in force</Badge>}
-                      {d.version && <span className="text-xs text-slate2">{d.version}</span>}
-                    </span>
-                    {d.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
-                    <span className="mt-1 block text-xs text-slate2">{d.category}</span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        <Link href="/documents?tier=archive" className="pill-solid">
+          Open all {totalArchived} archived documents
+        </Link>
       </Section>
 
       <p className="text-sm text-inkMuted">

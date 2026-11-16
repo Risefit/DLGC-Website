@@ -8,6 +8,8 @@
  * greyed-out placeholders rather than dead links — add the URL here and the
  * button becomes live. Nothing else needs changing.
  */
+import { file } from './documents';
+
 export type Social = {
   name: string;
   href: string | null;
@@ -58,7 +60,7 @@ export const safetySpot: SafetyLink[] = [
   {
     label: 'Low overflight? Here’s the action',
     sub: 'How to report a low overflight',
-    href: 'https://dlgc.org.uk/members/pdfs/Low%20Overflights%20Reportingl%20V1.pdf',
+    href: file('pdfs-low-overflights-reportingl-v1-pdf'),
   },
   {
     label: 'Keep winch launching safe',
@@ -68,7 +70,7 @@ export const safetySpot: SafetyLink[] = [
   {
     label: 'Paying attention when rigging',
     sub: 'Glider integrity briefing',
-    href: 'https://www.dlgc.org.uk/members/safety/Glider%20Integrity%20Briefing%20Published.pdf',
+    href: file('safety-glider-integrity-briefing-published-pdf'),
   },
   {
     label: 'Using the Safe Rigging Toolbox',
@@ -83,7 +85,7 @@ export const safetySpot: SafetyLink[] = [
   {
     label: 'About CHIRP and its help',
     sub: 'Confidential incident reporting',
-    href: 'https://www.dlgc.org.uk/members/safety/About%20CHIRP.pdf',
+    href: file('safety-about-chirp-pdf'),
   },
   {
     label: 'Safety Briefing Documents',

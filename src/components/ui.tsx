@@ -1,43 +1,72 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+/**
+ * The header of an inner page: a compact version of the dark contour band.
+ * Landing pages use <Band> instead, which adds buttons and figures.
+ * `back` replaces the old breadcrumb — one link up to the section the page
+ * belongs to, set inside the band.
+ */
 export function PageHeader({
   eyebrow,
   title,
   lead,
+  back,
 }: {
   eyebrow?: string;
-  title: string;
-  lead?: string;
+  title: ReactNode;
+  lead?: ReactNode;
+  back?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-8">
-      {eyebrow && (
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-sky">{eyebrow}</p>
+    <header className="band-dark page-head -mt-8 pb-9 pt-7 lg:-mt-10 lg:pb-11 lg:pt-9">
+      {back && (
+        <p className="mb-2 text-sm">
+          <Link
+            href={back.href}
+            className="tap gap-1.5 text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white"
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {back.label}
+          </Link>
+        </p>
       )}
-      <h1 className="text-3xl lg:text-4xl">{title}</h1>
-      {lead && <p className="mt-3 max-w-prose2 text-inkMuted">{lead}</p>}
-    </div>
+      {eyebrow && (
+        <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#A9CFEA]">{eyebrow}</p>
+      )}
+      <h1 className="display text-[2.3rem] sm:text-[2.8rem] lg:text-[3.3rem]">{title}</h1>
+      {lead && <p className="mt-3 max-w-[60ch] text-lg leading-relaxed text-white/85">{lead}</p>}
+    </header>
   );
 }
 
+/**
+ * A titled section. Directly inside a page it becomes a full-width band, and
+ * the bands alternate white and cloud down the page by themselves (see `.sec`
+ * in globals.css) — there is nothing to set. Inside a grid or a card it is an
+ * ordinary block.
+ */
 export function Section({
   title,
   description,
   children,
   action,
+  id,
 }: {
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   children: ReactNode;
   action?: ReactNode;
+  id?: string;
 }) {
   return (
-    <section className="mb-10">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-2xl">{title}</h2>
-          {description && <p className="mt-1 max-w-prose2 text-sm text-inkMuted">{description}</p>}
+    <section id={id} className="sec">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <h2 className="display text-[1.9rem] lg:text-[2.3rem]">{title}</h2>
+          {description && <p className="mt-1.5 max-w-prose2 text-inkMuted">{description}</p>}
         </div>
         {action}
       </div>
@@ -151,6 +180,114 @@ export function ToMigrate({ what }: { what: string }) {
     </div>
   );
 }
+
+/* ── Bands ─────────────────────────────────────────────────────────────────
+   Full-width bands of tone that open and divide a page. Styles are in
+   globals.css (.band-dark, .band-white, .band-cloud, .band-contour). */
+
+/**
+ * The dark contour band that opens a landing page. `title` takes JSX so one
+ * phrase can be picked out: <>Flying <em>from Camphill</em></>.
+ * `aside` sits to the right on a wide screen and underneath on a phone.
+ */
+export function Band({
+  eyebrow,
+  title,
+  lead,
+  children,
+  aside,
+  figures,
+}: {
+  eyebrow?: string;
+  title: ReactNode;
+  lead?: ReactNode;
+  children?: ReactNode;
+  aside?: ReactNode;
+  /** A <Figures> row, set across the full width under everything else. */
+  figures?: ReactNode;
+}) {
+  return (
+    <header className="band-dark -mt-8 pb-10 pt-9 lg:-mt-10 lg:pb-14 lg:pt-14">
+      <div className={aside ? 'grid items-center gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-12' : undefined}>
+        <div className="min-w-0">
+          {eyebrow && (
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#A9CFEA]">{eyebrow}</p>
+          )}
+          <h1 className="display text-[2.5rem] sm:text-5xl lg:text-[3.9rem]">{title}</h1>
+          {lead && <p className="mt-4 max-w-[52ch] text-lg leading-relaxed text-white/85">{lead}</p>}
+          {children}
+        </div>
+        {aside}
+      </div>
+      {figures}
+    </header>
+  );
+}
+
+/** A light band with a display heading. Alternate `white` and `cloud` down a page. */
+export function BandSection({
+  tone = 'white',
+  title,
+  description,
+  action,
+  children,
+  id,
+}: {
+  tone?: 'white' | 'cloud' | 'contour';
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  children: ReactNode;
+  id?: string;
+}) {
+  return (
+    <section id={id} className={`band-${tone} py-10 lg:py-14`}>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <h2 className="display text-3xl lg:text-[2.6rem]">{title}</h2>
+          {description && <p className="mt-2 max-w-prose2 text-inkMuted">{description}</p>}
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** Large figures with a small label under each — for the two or three numbers a page turns on. */
+export function Figures({
+  items,
+}: {
+  items: { value: string; label: string; note?: string; href?: string }[];
+}) {
+  return (
+    <dl className="mt-7 grid gap-x-10 gap-y-5 border-t border-white/25 pt-5 sm:mt-9 sm:grid-cols-3 sm:gap-y-6 sm:pt-6">
+      {items.map((it) => (
+        <div key={it.label} className="min-w-0">
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#A9CFEA]">{it.label}</dt>
+          <dd className="figure mt-1 text-[2.1rem] text-white sm:mt-1.5 sm:text-[2.5rem] lg:text-[3.1rem]">{it.value}</dd>
+          {it.note &&
+            (it.href ? (
+              <dd className="mt-1.5 text-sm">
+                <Link href={it.href} className="text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                  {it.note}
+                </Link>
+              </dd>
+            ) : (
+              <dd className="mt-1.5 text-sm text-white/85">{it.note}</dd>
+            ))}
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** The small arrow that marks a link leaving the portal. */
+export const outIcon = (
+  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0">
+    <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+  </svg>
+);
 
 export const icons = {
   plane: (

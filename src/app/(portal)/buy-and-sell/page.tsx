@@ -99,7 +99,7 @@ export default function BuyAndSellPage() {
               Sold it, or found what you were after? Tell the editor and the advert comes down —
               nobody enjoys ringing about something that went weeks ago.
             </p>
-            <a href={`mailto:${contacts.websiteEditor.email}`} className="link mt-2 inline-block text-sm">
+            <a href={`mailto:${contacts.websiteEditor.email}`} className="link tap mt-1 text-sm">
               Email the website editor
             </a>
           </div>

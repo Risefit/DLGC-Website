@@ -1,287 +1,273 @@
 import Link from 'next/link';
-import { ActionTile, Section, Badge, icons, Callout } from '@/components/ui';
+import Image from 'next/image';
+import { Band, BandSection, Figures, Badge, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { news } from '@/content/news';
 import { documents, isOverdue } from '@/content/documents';
-import { upcomingEvents } from '@/content/site';
+import { upcomingEvents, eventDate, startOfToday } from '@/content/site';
+import { rotaQuarters } from '@/content/roster';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
 
 export const metadata = { title: 'Dashboard' };
 
+/** Re-rendered hourly, so "next up" moves on by itself when a date passes. */
+export const revalidate = 3600;
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const shortDate = (d: Date) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+const newsDate = (iso: string) => {
+  const d = new Date(iso + 'T00:00:00Z');
+  return `${DAYS[d.getUTCDay()]} ${shortDate(d)} ${d.getUTCFullYear()}`;
+};
+
 /**
  * THE SCREEN THAT MATTERS.
  * Purpose: answer, in under five seconds on a phone at the launch point —
- * Is flying on? Am I needed? What do I owe? What's changed?
+ * Is flying on? Am I needed? What has changed?
+ *
+ * Everything on this page appears once. The opening band carries the four
+ * things members do most; pinned notices are marked in the news list rather
+ * than repeated above it.
  */
 export default function Dashboard() {
-  const pinned = news.filter((n) => n.pinned).slice(0, 2);
-  const latest = news.slice(0, 4);
+  const today = startOfToday();
+  const upcoming = upcomingEvents
+    .map((e) => ({ ...e, date: eventDate(e) }))
+    .filter((e) => e.date && e.date >= today);
+  const next = upcoming[0];
+  const latest = news.slice(0, 5);
+  const newest = news[0];
+  const quarter = rotaQuarters[0];
   const liveDocs = documents.filter((d) => d.tier === 'live');
   const overdue = documents.filter((d) => isOverdue(d));
-  const nextEvents = upcomingEvents.slice(0, 4);
 
   return (
     <>
-      {/* ── Status strip: one glance ─────────────────────────────────────── */}
-      <section aria-labelledby="status-h" className="mb-8">
-        <h1 id="status-h" className="sr-only">Members&rsquo; dashboard</h1>
-        <div className="overflow-hidden rounded-card border border-skyLine bg-gradient-to-br from-navy to-sky text-white shadow-card">
-          <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4">
-            <div className="p-5">
-              <p className="text-xs uppercase tracking-widest text-white/90">Today at Camphill</p>
-              <p className="mt-1 text-2xl font-semibold">Check the DFP</p>
-              <p className="mt-1 text-sm text-white/90">
-                Flying status is set on the Daily Flying Planner
-              </p>
-            </div>
-            <div className="p-5 sm:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/90">Wind</p>
-              <p className="mt-1 text-2xl font-semibold">
-                <span className="text-white/90">—</span>
-              </p>
-              <p className="mt-1 text-sm text-white/90">
-                <Link href="/flying/weather" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
-                  Camphill weather station
-                </Link>
-              </p>
-            </div>
-            <div className="p-5 lg:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/90">Season</p>
-              <p className="mt-1 text-2xl font-semibold">Summer</p>
-              <p className="mt-1 text-sm text-white/90">Last day Fri 11 September</p>
-            </div>
-            <div className="p-5 sm:border-l border-white/20">
-              <p className="text-xs uppercase tracking-widest text-white/90">Webcam</p>
-              <p className="mt-1 text-2xl font-semibold">Live view</p>
-              <p className="mt-1 text-sm text-white/90">
-                <Link href="/flying/weather" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
-                  Looking north across the hangar
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Primary actions: four big tiles ─────────────────────────────── */}
-      <Section
-        title="What do you need?"
-        description="The four things members do most. Everything else is in the menu above."
+      <Band
+        eyebrow="Members’ portal"
+        title={
+          <>
+            Camphill, <em>above the Hope Valley</em>
+          </>
+        }
+        lead="Is flying on, am I needed, what has changed? Start here."
+        figures={
+          <Figures
+            items={[
+              next && next.date
+                ? { label: 'Next up', value: shortDate(next.date), note: next.what, href: '/calendar' }
+                : { label: 'Next up', value: '—', note: 'Nothing in the calendar yet', href: '/calendar' },
+              { label: 'Duty rota', value: quarter.code, note: quarter.label, href: '/flying/roster' },
+              {
+                label: 'Latest notice',
+                value: shortDate(new Date(newest.date + 'T00:00:00Z')),
+                note: newest.title,
+                href: '/club-life/news',
+              },
+            ]}
+          />
+        }
+        aside={
+          <figure className="lg:justify-self-end">
+            <Image
+              src="/img/camphill-windsock.jpg"
+              alt="A single-seat glider on the grass at Camphill, with the windsock flying behind it."
+              width={1080}
+              height={720}
+              priority
+              sizes="(min-width: 1024px) 520px, 100vw"
+              className="aspect-[2/1] w-full sm:aspect-[16/10] rounded-card border border-white/20 object-cover shadow-panel lg:aspect-[4/3]"
+            />
+            <figcaption className="mt-2 text-xs text-white/75">On the field at Camphill.</figcaption>
+          </figure>
+        }
       >
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionTile
-            href={aim('flyingPlanner')}
-            external
-            label="Daily Flying Planner"
-            hint="Book onto a flying day"
-            icon={icons.plane}
-          />
-          <ActionTile href="/flying/roster" label="Duty Roster" hint="Who is on duty when" icon={icons.calendar} />
-          <ActionTile
-            href={aim('account')}
-            external
-            label="My Flying Account"
-            hint="My Account, in Members’ Admin"
-            icon={icons.wallet}
-          />
-          <ActionTile href="/flying/weather" label="Weather" hint="Forecasts and webcam" icon={icons.cloud} />
-        </div>
-        <p className="mt-3 text-xs text-slate2">
-          The Daily Flying Planner and your flying account live in Members&rsquo; Admin, a separate
-          system with its own login. Those two tiles open it in a new tab.
+        <nav aria-label="Most used" className="mt-7 flex flex-wrap gap-3">
+          <a href={aim('flyingPlanner')} target="_blank" rel="noopener noreferrer" className="pill-accent">
+            Daily Flying Planner {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+          <Link href="/flying/roster" className="pill-ghost">Duty roster</Link>
+          <Link href="/flying/weather" className="pill-ghost">Weather and webcam</Link>
+          <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
+            My flying account {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+        </nav>
+        <p className="mt-3 max-w-[52ch] text-xs text-white/75">
+          The Daily Flying Planner and your flying account are in Members’ Admin, which has its own
+          sign-in and opens in a new tab.
         </p>
-      </Section>
 
-      {/* ── Needs attention ──────────────────────────────────────────────── */}
-      {pinned.length > 0 && (
-        <Section title="Worth knowing now">
-          <div className="grid gap-4 lg:grid-cols-2">
-            {pinned.map((n) => (
-              <Callout key={n.title} tone="warn" title={n.title}>
-                <p>{n.body[0]}</p>
-                <p className="text-xs text-slate2">
-                  {n.displayDate}
-                  {n.from && ` · from ${n.from}`}
-                </p>
-              </Callout>
-            ))}
-          </div>
-        </Section>
-      )}
+      </Band>
 
-      <div className="grid gap-10 lg:grid-cols-3">
-        {/* ── News: preserve the dated, attributed house style ──────────── */}
-        <div className="lg:col-span-2">
-          <Section
-            title="News and Notices"
-            action={<Link href="/club-life/news" className="link text-sm">All news</Link>}
-          >
-            <div className="space-y-4">
-              {latest.map((n, i) => (
-                <article key={`${n.date}-${i}`} className="card p-5">
-                  <div className="mb-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <h3 className="text-lg">{n.title}</h3>
-                    {n.from && <span className="text-sm italic text-inkMuted">from {n.from}</span>}
-                  </div>
-                  <time dateTime={n.date} className="mb-2 block text-xs text-slate2">
-                    {n.displayDate}
-                  </time>
-                  <p className="prose-club text-sm">{n.body[0]}</p>
+      {/* ── News, with what is coming up beside it ───────────────────────── */}
+      <BandSection
+        tone="white"
+        title={
+          <>
+            News <em>and notices</em>
+          </>
+        }
+        action={<Link href="/club-life/news" className="pill-line">All news</Link>}
+      >
+        <div className="grid gap-x-14 gap-y-10 lg:grid-cols-[2fr_1fr]">
+          <div>
+            {latest.map((n, i) => (
+              <article
+                key={`${n.date}-${i}`}
+                className="grid gap-x-6 gap-y-1 border-t border-skyLine py-5 first:border-t-2 first:border-navy sm:grid-cols-[9rem_1fr]"
+              >
+                <time dateTime={n.date} className="pt-1 text-sm font-semibold text-slate2">
+                  {newsDate(n.date)}
+                </time>
+                <div className="min-w-0">
+                  <h3 className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xl">
+                    {n.title}
+                    {n.pinned && <Badge tone="warn">Worth knowing</Badge>}
+                  </h3>
+                  {n.from && <p className="text-sm italic text-inkMuted">from {n.from}</p>}
+                  <p className="prose-club mt-1.5">{n.body[0]}</p>
                   {n.body.length > 1 && (
-                    <Link href="/club-life/news" className="link mt-2 inline-block text-sm">
-                      Read the rest
+                    <Link href="/club-life/news" className="link tap text-sm">
+                      Read the rest<span className="sr-only"> of {n.title}</span>
                     </Link>
                   )}
-                </article>
-              ))}
-            </div>
-          </Section>
-        </div>
+                </div>
+              </article>
+            ))}
+          </div>
 
-        {/* ── Sidebar ──────────────────────────────────────────────────────── */}
-        <div>
-          <Section title="This season" description="Changes during the year — check before you rely on it.">
-            <ul className="card divide-y divide-skyLine">
-              {liveDocs.slice(0, 7).map((d) => (
-                <li key={d.id}>
-                  <a
-                    href={d.href}
-                    target={d.href.startsWith('/') ? undefined : '_blank'}
-                    rel={d.href.startsWith('/') ? undefined : 'noopener noreferrer'}
-                    className="tap w-full flex-col items-start px-5 py-3.5 hover:bg-sky50 transition-colors"
-                  >
-                    <span className="font-medium text-navy">{d.title}</span>
-                    {d.version && <span className="text-xs text-slate2">{d.version}</span>}
+          <div className="space-y-10">
+            <section aria-labelledby="coming-h">
+              <div className="mb-1 flex items-center justify-between gap-3 border-b-2 border-navy">
+                <h3 id="coming-h" className="text-xl">Coming up</h3>
+                <Link href="/calendar" className="link tap text-sm">Calendar</Link>
+              </div>
+              <ul className="divide-y divide-skyLine">
+                {upcoming.slice(0, 4).map((e) => (
+                  <li key={`${e.displayWhen}-${e.what}`} className="grid grid-cols-[5.6rem_1fr] items-baseline gap-x-4 py-3.5">
+                    <span className="figure text-2xl text-navy">{e.date ? shortDate(e.date) : ''}</span>
+                    <span>
+                      <span className="block font-medium text-navy">{e.what}</span>
+                      <span className="block text-sm text-inkMuted">{e.displayWhen}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section aria-labelledby="season-h">
+              <div className="mb-1 flex items-center justify-between gap-3 border-b-2 border-navy">
+                <h3 id="season-h" className="text-xl">This season</h3>
+                <Link href="/documents?tier=live" className="link tap text-sm">All current</Link>
+              </div>
+              <ul className="divide-y divide-skyLine">
+                {liveDocs.slice(0, 5).map((d) => (
+                  <li key={d.id}>
+                    <a
+                      href={d.href}
+                      target={d.href.startsWith('/') ? undefined : '_blank'}
+                      rel={d.href.startsWith('/') ? undefined : 'noopener noreferrer'}
+                      className="tap w-full justify-between gap-3 py-2.5 font-medium text-navy hover:text-skyDark"
+                    >
+                      {d.title}
+                      {!d.href.startsWith('/') && <span className="text-slate2">{outIcon}</span>}
+                      {!d.href.startsWith('/') && <span className="sr-only">(opens in a new tab)</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {overdue.length > 0 && (
+                <p className="mt-4 rounded-card border-l-4 border-warn bg-warnTint px-4 py-3 text-sm">
+                  <strong>{overdue.length}</strong>{' '}
+                  {overdue.length === 1 ? 'document is' : 'documents are'} past the review date.{' '}
+                  <Link href="/documents?review=overdue" className="link">Show them</Link>
+                </p>
+              )}
+            </section>
+          </div>
+        </div>
+      </BandSection>
+
+      {/* ── Safety Spot: red-edged, unmistakably its own thing ───────────── */}
+      <section aria-labelledby="safety-spot-h" className="bleed border-y-2 border-bad/50 bg-badTint py-10 lg:py-14">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <div>
+            <h2 id="safety-spot-h" className="display text-3xl !text-bad lg:text-[2.6rem]">The Safety Spot</h2>
+            <p className="mt-2 max-w-prose2 text-ink/85">{safetySpotIntro}</p>
+          </div>
+          <Link href="/safety" className="pill border border-bad/50 text-bad hover:bg-white">
+            Loads of other safety material
+          </Link>
+        </div>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {safetySpot.map((l) => {
+            // Two of these live in the portal — the emergency procedures and the
+            // lessons log. Those must not open in a new tab.
+            const internal = l.href.startsWith('/');
+            const body = (
+              <>
+                <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>{l.label}</span>
+                {l.sub && <span className="mt-1 text-sm text-inkMuted">{l.sub}</span>}
+                {!internal && <span className="sr-only">(opens in a new tab)</span>}
+              </>
+            );
+            const cls = `flex h-full flex-col rounded-card border bg-white px-5 py-4 transition-colors hover:border-bad ${
+              l.strong ? 'border-l-4 border-bad/60' : 'border-bad/20'
+            }`;
+            return (
+              <li key={l.label}>
+                {internal ? (
+                  <Link href={l.href} className={cls}>{body}</Link>
+                ) : (
+                  <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>{body}</a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {/* ── Find something · charities ───────────────────────────────────── */}
+      <section className="band-contour -mb-8 py-10 lg:-mb-10 lg:py-14">
+        <div className="grid gap-x-14 gap-y-10 lg:grid-cols-2">
+          <div>
+            <h2 className="display text-3xl lg:text-[2.6rem]">
+              Looking for <em>something?</em>
+            </h2>
+            <p className="mt-3 max-w-[46ch] text-inkMuted">
+              Search every manual, policy, set of minutes and notice the club holds, including the
+              full archive.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/documents" className="pill-solid">
+                <span aria-hidden="true">{icons.search}</span>
+                Search documents
+              </Link>
+              <Link href="/find-it" className="pill-line">The old A–Z</Link>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="display text-3xl lg:text-[2.6rem]">Charities we support</h2>
+            <ul className="mt-4 divide-y divide-skyLine border-y border-skyLine">
+              {charities.map((c) => (
+                <li key={c.name}>
+                  <a href={c.href} target="_blank" rel="noopener noreferrer" className="group block py-3.5">
+                    <span className="flex items-center gap-2 font-semibold text-navy group-hover:text-skyDark">
+                      {c.name} <span className="text-slate2">{outIcon}</span>
+                    </span>
+                    <span className="mt-0.5 block text-sm text-inkMuted">{c.why}</span>
+                    <span className="sr-only">(opens in a new tab)</span>
                   </a>
                 </li>
               ))}
             </ul>
-            <Link href="/documents?tier=live" className="link mt-3 inline-block text-sm">
-              All current documents
-            </Link>
-          </Section>
-
-          <Section title="Coming up" action={<Link href="/calendar" className="link text-sm">Calendar</Link>}>
-            <ul className="card divide-y divide-skyLine">
-              {nextEvents.map((e) => (
-                <li key={`${e.displayWhen}-${e.what}`} className="px-5 py-3.5">
-                  <p className="text-sm font-medium text-navy">{e.displayWhen}</p>
-                  <p className="text-sm text-inkMuted">{e.what}</p>
-                </li>
-              ))}
-            </ul>
-          </Section>
-
-          {overdue.length > 0 && (
-            <Section title="Housekeeping" description="Visible to all members deliberately — it keeps the library honest.">
-              <Callout tone="warn">
-                <p>
-                  <strong>{overdue.length}</strong>{' '}
-                  {overdue.length === 1 ? 'document is' : 'documents are'} past their review date.
-                </p>
-                <Link href="/documents?review=overdue" className="link text-sm">
-                  Show them
-                </Link>
-              </Callout>
-            </Section>
-          )}
-
-        </div>
-      </div>
-
-      {/* ── Safety Spot: full width, red-edged, unmistakably its own thing ── */}
-      <section aria-labelledby="safety-spot-h" className="mt-10">
-        <div className="overflow-hidden rounded-card border-2 border-bad/60 bg-badTint/40 shadow-panel">
-          <div className="border-b-2 border-bad/40 bg-bad/10 px-6 py-4">
-            <h2 id="safety-spot-h" className="text-2xl text-bad">The Safety Spot</h2>
-            <p className="mt-1 text-sm text-ink/80">{safetySpotIntro}</p>
-          </div>
-          <ul className="grid gap-px bg-bad/15 sm:grid-cols-2 lg:grid-cols-3">
-            {safetySpot.map((l) => {
-              // Two of these now live in the portal — the emergency procedures
-              // and the lessons log. Those must not open in a new tab.
-              const internal = l.href.startsWith('/');
-              const body = (
-                <>
-                  <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>
-                    {l.label}
-                  </span>
-                  {l.sub && <span className="mt-1 text-sm text-inkMuted">{l.sub}</span>}
-                  {!internal && <span className="sr-only">(opens in a new tab)</span>}
-                </>
-              );
-              const cls = 'flex h-full flex-col px-5 py-4 transition-colors hover:bg-badTint';
-              return (
-                <li key={l.label} className="bg-white">
-                  {internal ? (
-                    <Link href={l.href} className={cls}>{body}</Link>
-                  ) : (
-                    <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>
-                      {body}
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <div className="border-t-2 border-bad/40 bg-bad/5 px-6 py-3">
-            <Link href="/safety" className="link font-medium">
-              Loads of other safety material
-            </Link>
           </div>
         </div>
       </section>
-
-      {/* ── Two balanced columns beneath the Safety Spot ─────────────────── */}
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <Section title="Looking for something?">
-          <div className="card p-5">
-            <p className="mb-3 text-sm text-inkMuted">
-              Search every manual, policy, set of minutes and notice the club holds — including
-              the full archive.
-            </p>
-            <Link
-              href="/documents"
-              className="tap gap-2 rounded-lg bg-sky px-5 py-3 font-medium text-white hover:bg-skyDark transition-colors"
-            >
-              <span aria-hidden="true">{icons.search}</span>
-              Search documents
-            </Link>
-            <p className="mt-3 text-xs text-slate2">
-              Knew the old site well?{' '}
-              <Link href="/find-it" className="link">The old A–Z still works</Link>.
-            </p>
-          </div>
-        </Section>
-
-        <Section
-          title="Charities we support"
-          description="Causes with a real connection to Camphill."
-        >
-          <ul className="card divide-y divide-skyLine overflow-hidden">
-            {charities.map((c) => (
-              <li key={c.name}>
-                <a
-                  href={c.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-5 py-4 hover:bg-sky50 transition-colors"
-                >
-                  <span className="block font-semibold text-navy">{c.name}</span>
-                  <span className="mt-0.5 block text-sm text-inkMuted">{c.why}</span>
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      </div>
-
-      <p className="mt-8 text-xs text-slate2">
-        <Badge tone="live">Live</Badge> changes within a season ·{' '}
-        <Badge tone="reference">Reference</Badge> current, consult when needed ·{' '}
-        <Badge tone="archive">Archive</Badge> historic, kept forever
-      </p>
     </>
   );
 }

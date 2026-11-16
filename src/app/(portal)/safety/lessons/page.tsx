@@ -21,13 +21,9 @@ export const metadata = { title: 'Safety Lessons Log' };
 export default function SafetyLessonsPage() {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/safety" className="link">Safety</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">Safety Lessons Log</span>
-      </nav>
 
       <PageHeader
+        back={{ href: '/safety', label: 'Safety' }}
         eyebrow="Learn from what has happened to others"
         title="Safety Lessons Log"
         lead={`Every occurrence the club has recorded and what was learned from it — ${safetyLessons.length} entries from ${safetyLessonYears[safetyLessonYears.length - 1]} to ${safetyLessonYears[0]}.`}

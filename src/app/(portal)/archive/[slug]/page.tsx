@@ -49,13 +49,9 @@ export default async function CollectionPage({
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/archive" className="link">Archive</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">{c.title}</span>
-      </nav>
 
       <PageHeader
+        back={{ href: '/archive', label: 'Archive' }}
         eyebrow={c.span ? `${c.span} · ${c.count} documents` : `${c.count} documents`}
         title={c.title}
         lead="Newest first. Every document in this collection, complete — nothing has been left on the old site."
@@ -121,8 +117,8 @@ export default async function CollectionPage({
       ))}
 
       <div className="mt-8 flex flex-wrap gap-4">
-        <Link href="/archive" className="link">← All collections</Link>
-        <Link href="/documents" className="link">Search all documents</Link>
+        <Link href="/archive" className="link tap">← All collections</Link>
+        <Link href="/documents" className="link tap">Search all documents</Link>
       </div>
     </>
   );

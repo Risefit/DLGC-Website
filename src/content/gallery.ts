@@ -10,6 +10,11 @@
  * camelCase split, so "180825ShowerToSouth.jpg" reads "Shower To South".
  *
  * `src` goes through LEGACY_BASE like every other imported asset.
+ *
+ * Album titles that were raw folder names ("Lngdy2017", "Camplanepics170817")
+ * were given readable names by hand in November 2026. The `slug` still holds
+ * the original folder name. A few are a best reading of the folder name —
+ * correct any that someone who was there knows better.
  */
 
 export type Photo = { src: string; name: string; bytes: number };
@@ -3424,7 +3429,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow-january-2010",
-  "title": "Snow — January 2010",
+  "title": "Snow — 3 January 2010",
   "span": "",
   "photos": [
    {
@@ -3518,7 +3523,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "dlgcaboyne2016",
-  "title": "Dlgcaboyne2016",
+  "title": "DLGC at Aboyne, 2016",
   "span": "",
   "photos": [
    {
@@ -3560,7 +3565,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "mapics",
-  "title": "Mapics",
+  "title": "Mike Armstrong Collection — 2012",
   "span": "2012",
   "photos": [
    {
@@ -3602,7 +3607,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "photos-2feb19",
-  "title": "Photos 2Feb19",
+  "title": "Snow — 2 February 2019",
   "span": "2019",
   "photos": [
    {
@@ -3728,7 +3733,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "itv-day",
-  "title": "Itv-Day",
+  "title": "ITV filming day",
   "span": "",
   "photos": [
    {
@@ -3765,7 +3770,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "ma-pics",
-  "title": "Ma Pics",
+  "title": "Mike Armstrong Collection — 2007",
   "span": "2007",
   "photos": [
    {
@@ -3802,7 +3807,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow2015jan",
-  "title": "Snow2015Jan",
+  "title": "Snow — January 2015",
   "span": "",
   "photos": [
    {
@@ -3839,7 +3844,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow080110",
-  "title": "Snow080110",
+  "title": "Snow — 8 January 2010",
   "span": "",
   "photos": [
    {
@@ -3876,7 +3881,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snowjan10",
-  "title": "Snowjan10",
+  "title": "Snow — January 2010",
   "span": "",
   "photos": [
    {
@@ -3913,7 +3918,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "150118",
-  "title": "150118",
+  "title": "18 January 2015",
   "span": "",
   "photos": [
    {
@@ -3977,7 +3982,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "70snite",
-  "title": "70Snite",
+  "title": "Seventies Night",
   "span": "",
   "photos": [
    {
@@ -4009,7 +4014,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "camplane170801",
-  "title": "Camplane170801",
+  "title": "Camphill Lane — 1 August 2017",
   "span": "",
   "photos": [
    {
@@ -4041,7 +4046,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "camplanepics170817",
-  "title": "Camplanepics170817",
+  "title": "Camphill Lane — 17 August 2017",
   "span": "",
   "photos": [
    {
@@ -4073,7 +4078,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "krbflies",
-  "title": "Krbflies",
+  "title": "KRB flies",
   "span": "",
   "photos": [
    {
@@ -4137,7 +4142,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "s-92",
-  "title": "S-92",
+  "title": "S-92 helicopter",
   "span": "",
   "photos": [
    {
@@ -4169,7 +4174,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "eden",
-  "title": "Eden",
+  "title": "Eden Soaring",
   "span": "",
   "photos": [
    {
@@ -4201,7 +4206,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "ridgescircuuit",
-  "title": "Ridgescircuuit",
+  "title": "Ridges circuit",
   "span": "",
   "photos": [
    {
@@ -4233,7 +4238,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow060110",
-  "title": "Snow060110",
+  "title": "Snow — 6 January 2010",
   "span": "",
   "photos": [
    {
@@ -4319,7 +4324,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "4jan2015",
-  "title": "4Jan2015",
+  "title": "4 January 2015",
   "span": "",
   "photos": [
    {
@@ -4346,7 +4351,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "fibreproject",
-  "title": "Fibreproject",
+  "title": "Fibre cable project",
   "span": "",
   "photos": [
    {
@@ -4373,7 +4378,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "krb-refurb",
-  "title": "Krb Refurb",
+  "title": "KRB refurbishment",
   "span": "",
   "photos": [
    {
@@ -4400,7 +4405,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "lngdy2017",
-  "title": "Lngdy2017",
+  "title": "Longest Day 2017",
   "span": "",
   "photos": [
    {
@@ -4454,7 +4459,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "nnite2009",
-  "title": "Nnite2009",
+  "title": "Neighbours’ Night 2009",
   "span": "",
   "photos": [
    {
@@ -4481,7 +4486,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "nghbrsnite2011",
-  "title": "Nghbrsnite2011",
+  "title": "Neighbours’ Night 2011",
   "span": "",
   "photos": [
    {
@@ -4508,7 +4513,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "nghsnite",
-  "title": "Nghsnite",
+  "title": "Neighbours’ Night",
   "span": "",
   "photos": [
    {
@@ -4535,7 +4540,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "rf100km",
-  "title": "Rf100Km",
+  "title": "RF — 100 km flight",
   "span": "",
   "photos": [
    {
@@ -4589,7 +4594,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "matlocko-r",
-  "title": "Matlocko-R",
+  "title": "Matlock out-and-return",
   "span": "",
   "photos": [
    {
@@ -4616,7 +4621,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "shipleyaeros",
-  "title": "Shipleyaeros",
+  "title": "Shipley aerobatics",
   "span": "",
   "photos": [
    {
@@ -4643,7 +4648,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow2009-2",
-  "title": "Snow2009-2",
+  "title": "Snow — 2009 (second set)",
   "span": "",
   "photos": [
    {
@@ -4670,7 +4675,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "snow-dec09",
-  "title": "Snow Dec09",
+  "title": "Snow — December 2009",
   "span": "",
   "photos": [
    {
@@ -4697,7 +4702,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "120102",
-  "title": "120102",
+  "title": "2 January 2012",
   "span": "",
   "photos": [
    {
@@ -4741,7 +4746,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "asperitasclouds170313",
-  "title": "Asperitasclouds170313",
+  "title": "Asperitas clouds — 13 March 2017",
   "span": "",
   "photos": [
    {
@@ -4763,7 +4768,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "derig180120",
-  "title": "Derig180120",
+  "title": "De-rigging — 20 January 2018",
   "span": "",
   "photos": [
    {
@@ -4785,7 +4790,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "fog161126",
-  "title": "Fog161126",
+  "title": "Fog — 26 November 2016",
   "span": "2016",
   "photos": [
    {
@@ -4807,7 +4812,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "krbpaint",
-  "title": "Krbpaint",
+  "title": "KRB repaint",
   "span": "",
   "photos": [
    {
@@ -4851,7 +4856,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "newoffice",
-  "title": "Newoffice",
+  "title": "New office",
   "span": "",
   "photos": [
    {
@@ -4873,7 +4878,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "spcleffcts",
-  "title": "Spcleffcts",
+  "title": "Special effects",
   "span": "",
   "photos": [
    {
@@ -4895,7 +4900,7 @@ export const albums: Album[] = [
  },
  {
   "slug": "sosspics",
-  "title": "Sosspics",
+  "title": "Silver Seekers pictures",
   "span": "",
   "photos": [
    {

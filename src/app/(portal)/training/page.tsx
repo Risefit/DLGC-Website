@@ -1,18 +1,21 @@
-import { PageHeader, Section, ActionTile, icons, Callout } from '@/components/ui';
+import Link from 'next/link';
+import { Band, Figures, Section, Callout, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
-import { documents } from '@/content/documents';
+import type { Doc } from '@/content/documents';
 import { flyingCards, flyingCardSummary, redCardTheoryTest } from '@/content/flying-cards';
+import { startHere, towardsSolo, onTheGround, simulator, medical, briefings, libraryCount } from '@/content/training';
 import FlyingCardPanel from '@/components/FlyingCardPanel';
 
 export const metadata = { title: 'Training' };
 
+/**
+ * This page shows a student what they need, not everything the club holds.
+ * The full set is in the document library; each section ends with a button
+ * that opens the library already filtered. The lists are in
+ * src/content/training.ts.
+ */
 export default function TrainingPage() {
-  const flight = documents.filter((d) => d.category === 'Flight Training');
-  const ground = documents.filter((d) => d.category === 'Ground Training');
-  const medicals = documents.filter((d) => d.category === 'Medicals');
-  const sim = documents.filter((d) => d.category === 'Simulator');
-
-  const list = (docs: typeof documents) => (
+  const list = (docs: Doc[]) => (
     <ul className="card divide-y divide-skyLine overflow-hidden">
       {docs.map((d) => {
         const external = !d.href.startsWith('/');
@@ -22,11 +25,12 @@ export default function TrainingPage() {
               href={d.href}
               target={external ? '_blank' : undefined}
               rel={external ? 'noopener noreferrer' : undefined}
-              className="block px-5 py-4 hover:bg-sky50 transition-colors"
+              className="block px-5 py-4 transition-colors hover:bg-sky50"
             >
               <span className="font-medium text-navy">{d.title}</span>
+              {d.version && <span className="ml-2 text-sm text-slate2">{d.version}</span>}
               {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
-              <span className="mt-1 block text-xs text-slate2">{d.audience.join(' · ')}</span>
+              {external && <span className="sr-only"> (opens in a new tab)</span>}
             </a>
           </li>
         );
@@ -34,23 +38,70 @@ export default function TrainingPage() {
     </ul>
   );
 
+  const more = (category: Doc['category'], label: string) => (
+    <Link href={`/documents?category=${encodeURIComponent(category)}`} className="pill-line">
+      All {libraryCount(category)} {label}
+    </Link>
+  );
+
   return (
     <>
-      <PageHeader
+      <Band
         eyebrow="Learning to fly, and getting better at it"
-        title="Training"
-        lead="Your progress, the flying card system, the SPL syllabus, theory tests and medicals."
-      />
-
-      <Section title="Your record">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ActionTile href={aim('splReport')} external label="My SPL Rolling Report" hint="Your licence currency, in Members’ Admin" icon={icons.graduation} />
-          <ActionTile href={aim('logbook')} external label="My Log Book" hint="Your recorded flights" icon={icons.book} />
-        </div>
-      </Section>
+        title={
+          <>
+            Training <em>at Camphill</em>
+          </>
+        }
+        lead="Your progress, the flying card system, the SPL syllabus, theory briefings and medicals."
+        figures={
+          <Figures
+            items={[
+              {
+                label: 'Flying cards',
+                value: String(flyingCards.length),
+                note: flyingCards.map((c) => c.name.replace(' Card', '')).join(' · '),
+                href: '#flying-cards',
+              },
+              briefings
+                ? {
+                    label: 'Classroom briefings',
+                    value: briefings.code,
+                    note: `Schedule for ${briefings.label}`,
+                    href: '/flying/roster',
+                  }
+                : { label: 'Classroom briefings', value: '—', note: 'No schedule published yet' },
+              {
+                label: 'In the library',
+                value: String(libraryCount('Flight Training') + libraryCount('Ground Training')),
+                note: 'Training documents, searchable',
+                href: '/documents?category=Flight%20Training',
+              },
+            ]}
+          />
+        }
+      >
+        <nav aria-label="Your record" className="mt-7 flex flex-wrap gap-3">
+          <a href={aim('splReport')} target="_blank" rel="noopener noreferrer" className="pill-accent">
+            My SPL Rolling Report {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+          <a href={aim('logbook')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
+            My Log Book {outIcon}
+            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+          </a>
+          <a href="#flying-cards" className="pill-ghost">Flying cards</a>
+          <a href="#start-here" className="pill-ghost">New to the club</a>
+        </nav>
+      </Band>
 
       <Section
-        title="The flying card system"
+        id="flying-cards"
+        title={
+          <>
+            The flying <em>card system</em>
+          </>
+        }
         description="Your card colour decides what you may fly and in what conditions. Open a card to see what it takes to hold it, and what it lets you do."
       >
         <FlyingCardPanel cards={flyingCards} />
@@ -95,20 +146,67 @@ export default function TrainingPage() {
         </div>
       </Section>
 
-      <Section title="Flight training" description="SPL syllabus, progress cards, theory tests and instructor material.">
-        {list(flight)}
+      <Section
+        id="start-here"
+        title={
+          <>
+            New to the club? <em>Start here</em>
+          </>
+        }
+        description="Four things to read before your first few days on the airfield."
+      >
+        {list(startHere)}
       </Section>
 
-      <Section title="Ground training" description="What every member should know about handling gliders and looking after the airfield.">
-        {list(ground)}
+      <Section
+        title={
+          <>
+            Towards solo <em>and the SPL</em>
+          </>
+        }
+        description="The progress cards your instructor signs, the pre-solo theory briefings, and the forms you will meet on the way."
+        action={more('Flight Training', 'flight training documents')}
+      >
+        {list(towardsSolo)}
+        {briefings?.briefings && (
+          <p className="mt-4 text-inkMuted">
+            Classroom briefings for {briefings.label}:{' '}
+            <a href={briefings.briefings.href} target="_blank" rel="noopener noreferrer" className="link">
+              topics and schedule
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+            . Instructors&rsquo; briefing notes, the Bronze theory presentations and the mentor
+            material are all in the library.
+          </p>
+        )}
       </Section>
 
-      <Section title="Simulator" description="Access, guidance and instruction at home.">
-        {list(sim)}
-      </Section>
-
-      <Section title="Medicals" description="Declarations, procedures and guidance you can hand to your GP.">
-        {list(medicals)}
+      <Section
+        title={
+          <>
+            On the ground <em>and in the simulator</em>
+          </>
+        }
+        description="What every member should know about handling gliders and looking after the airfield."
+        action={more('Ground Training', 'ground training documents')}
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div>
+            <h3 className="mb-3 text-lg">Ground handling</h3>
+            {list(onTheGround)}
+          </div>
+          <div>
+            <h3 className="mb-3 text-lg">Simulator</h3>
+            {list(simulator)}
+            <h3 className="mb-3 mt-6 text-lg">Medicals</h3>
+            {list([medical])}
+            <p className="mt-3 text-sm text-inkMuted">
+              <Link href="/documents?category=Medicals" className="link">Every medical document</Link>
+              {' · '}
+              <Link href="/documents?category=Simulator" className="link">Every simulator document</Link>
+            </p>
+          </div>
+        </div>
       </Section>
     </>
   );

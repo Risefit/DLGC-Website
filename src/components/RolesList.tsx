@@ -1,33 +1,18 @@
-import Link from 'next/link';
-import { PageHeader, Callout } from '@/components/ui';
+import { Callout } from '@/components/ui';
 import { roles, vacantRoles, rolesUpdated, rolesSource, committeeSource } from '@/content/roles';
 
-export const metadata = { title: 'Roles and Role Holders' };
-
 /**
- * PORTED FROM job&roles.asp — who does what at Camphill.
+ * WHO DOES WHAT AT CAMPHILL — from job&roles.asp, shown on the Directory page.
  *
  * NAMES ONLY. No telephone numbers, no email addresses (CLAUDE.md rule 6).
- * The point of this page is knowing who to ask, not how to reach them at home.
+ * The point is knowing who to ask, not how to reach them at home.
  *
- * The VACANT rows are the most useful part of the page and are surfaced first:
- * that is how the club advertises that it needs somebody.
+ * The VACANT rows are the most useful part and are surfaced first: that is how
+ * the club advertises that it needs somebody.
  */
-export default function RolesPage() {
+export default function RolesList() {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/club-life" className="link">Club Life</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">Roles and Role Holders</span>
-      </nav>
-
-      <PageHeader
-        eyebrow="Who to ask"
-        title="Roles and Role Holders"
-        lead="The jobs that keep Camphill running, and the members who volunteer to do them. Committee roles are listed separately."
-      />
-
       {vacantRoles.length > 0 && (
         <div className="mb-8">
           <Callout tone="warn" title={`${vacantRoles.length} roles are vacant`}>
@@ -75,8 +60,7 @@ export default function RolesPage() {
           })}
         </ul>
       </div>
-
-      <p className="mt-8 border-t border-skyLine pt-6 text-sm text-inkMuted">
+      <p className="mt-6 text-sm text-inkMuted">
         Contact details are not published here — they are in Members&rsquo; Admin, or ask the
         office. Committee roles are on{' '}
         <a href={committeeSource} target="_blank" rel="noopener noreferrer" className="link">

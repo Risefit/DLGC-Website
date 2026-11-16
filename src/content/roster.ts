@@ -7,12 +7,15 @@
  * named card with its two rotas, and the guidance that sat underneath is kept
  * because duty swapping is the thing members actually need help with.
  *
- * WHEN A NEW QUARTER IS PUBLISHED: add it to the TOP of `rotaQuarters`. The
- * page marks the first entry as current, so nothing else needs changing.
+ * WHEN A NEW QUARTER IS PUBLISHED: add its files to the TOP of
+ * documents-imported.ts, titled exactly "27Q1 Instructors Rota" and "27Q1
+ * Ground Crew Rota" (and "SPL Theory Briefings - Schedule for 2027 Q1"). The
+ * card appears here by itself and becomes the current one. Nothing to edit in
+ * this file.
  */
 
-const L = 'https://www.dlgc.org.uk/members/lists';
-const T = 'https://www.dlgc.org.uk/members/trainingdocs';
+import { file, documents } from './documents';
+
 const OLD = 'https://www.dlgc.org.uk/members';
 
 export type RotaSheet = { label: string; href: string };
@@ -30,53 +33,48 @@ export type RotaQuarter = {
 export const rotaPreparedBy = 'Steve Pearce';
 export const briefingsPreparedBy = 'Simon Stannard';
 
-export const rotaQuarters: RotaQuarter[] = [
-  {
-    code: '26Q4',
-    label: 'October, November, December 2026',
-    covers: 'Saturdays, Sundays and Bank Holidays',
-    sheets: [
-      { label: 'Instructors rota', href: `${L}/26Q4%20Instructors%20Rota.pdf` },
-      { label: 'Ground crews rota', href: `${L}/26Q4%20Ground%20Crew%20Rota.pdf` },
-    ],
-    briefings: {
-      label: 'SPL classroom briefings — topics and schedule',
-      href: `${T}/SPL%20Theory%20Briefings%20-%20Schedule%20for%202026%20Q4.pdf`,
-    },
-  },
-  {
-    code: '26Q3',
-    label: 'July, August, September 2026',
-    covers: 'Saturdays, Sundays and Bank Holidays',
-    sheets: [
-      { label: 'Instructors rota', href: `${L}/26Q3%20Instructors%20Rota.pdf` },
-      { label: 'Ground crews rota', href: `${L}/26Q3%20Ground%20Crew%20Rota.pdf` },
-    ],
-    briefings: {
-      label: 'SPL classroom briefings — topics and schedule',
-      href: `${T}/SPL%20Theory%20Briefings%20-%202026%20Q3.pdf`,
-    },
-  },
-  {
-    code: '26Q2',
-    label: 'April, May, June 2026',
-    covers: 'Saturdays, Sundays and Bank Holidays',
-    sheets: [
-      { label: 'Instructors rota', href: `${L}/26Q2%20Instructors%20Rota.pdf` },
-      { label: 'Ground crews rota', href: `${L}/26Q2%20Ground%20Crew%20Rota.pdf` },
-    ],
-    briefings: {
-      label: 'SPL classroom briefings — topics and schedule',
-      href: `${T}/SPL%20Theory%20Briefings%20-%20Schedule%20for%202026%20Q2.pdf`,
-    },
-  },
-  {
-    code: '25Q4',
-    label: 'October, November, December 2025',
-    covers: 'Saturdays, Sundays and Bank Holidays',
-    sheets: [{ label: 'Instructors rota', href: `${L}/25Q4%20Instructors%20Rota.pdf` }],
-  },
+const QUARTER_MONTHS = [
+  'January, February, March',
+  'April, May, June',
+  'July, August, September',
+  'October, November, December',
 ];
+
+/**
+ * Built from the document list, not typed here. Any row in
+ * documents-imported.ts titled "26Q4 Instructors Rota" or "26Q4 Ground Crew
+ * Rota" becomes a sheet on that quarter's card, and "SPL Theory Briefings …
+ * 2026 Q4" becomes its briefing schedule. Newest quarter first; the page marks
+ * the first one as current.
+ */
+export const rotaQuarters: RotaQuarter[] = (() => {
+  const by = new Map<string, RotaQuarter>();
+  for (const d of documents) {
+    const m = d.title.match(/^(\d\d)Q([1-4]) (Instructors|Ground Crew) Rota$/);
+    if (!m) continue;
+    const code = `${m[1]}Q${m[2]}`;
+    if (!by.has(code)) {
+      by.set(code, {
+        code,
+        label: `${QUARTER_MONTHS[Number(m[2]) - 1]} 20${m[1]}`,
+        covers: 'Saturdays, Sundays and Bank Holidays',
+        sheets: [],
+      });
+    }
+    by.get(code)!.sheets.push({
+      label: m[3] === 'Instructors' ? 'Instructors rota' : 'Ground crews rota',
+      href: d.href,
+    });
+  }
+  for (const d of documents) {
+    const m = d.title.match(/^SPL Theory Briefings.*\b20(\d\d) Q([1-4])$/);
+    const q = m && by.get(`${m[1]}Q${m[2]}`);
+    if (q) q.briefings = { label: 'SPL classroom briefings — topics and schedule', href: d.href };
+  }
+  return [...by.values()]
+    .map((q) => ({ ...q, sheets: [...q.sheets].sort((x, y) => x.label.localeCompare(y.label)).reverse() }))
+    .sort((x, y) => y.code.localeCompare(x.code));
+})();
 
 /**
  * PRESERVED FROM THE OLD SITE. Swapping a duty is the single most common thing
@@ -90,8 +88,8 @@ export const swapGuidance = [
 ];
 
 export const rotaDocs: RotaSheet[] = [
-  { label: 'Duty swapping guidance', href: `${OLD}/misc_pages/Duty%20Swapping.pdf` },
-  { label: 'How to use the Daily Flying Planner', href: `${OLD}/pdfs/DFP%20guidance.pdf` },
+  { label: 'Duty swapping guidance', href: file('misc-pages-duty-swapping-pdf') },
+  { label: 'How to use the Daily Flying Planner', href: file('pdfs-dfp-guidance-pdf') },
 ];
 
 /**

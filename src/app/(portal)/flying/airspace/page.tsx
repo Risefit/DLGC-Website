@@ -47,13 +47,9 @@ function DocList({ docs }: { docs: { title: string; note?: string; href: string 
 export default function AirspacePage() {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/flying" className="link">Flying</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">Airspace and NOTAMs</span>
-      </nav>
 
       <PageHeader
+        back={{ href: '/flying', label: 'Flying' }}
         eyebrow="Check before every cross-country flight"
         title="Airspace and NOTAMs"
         lead="Flying in controlled and uncontrolled airspace around Camphill — the Wave Box, the L975 crossing, East Midlands, transponder areas and where to get NOTAMs."
@@ -134,7 +130,7 @@ export default function AirspacePage() {
         <Callout tone="info" title="If you are not sure">
           <p>
             The Airspace role holders are the people to ask — they handle NATS and BGA liaison for
-            the club. <Link href="/club-life/roles" className="link">See who they are</Link>.
+            the club. <Link href="/directory#roles" className="link">See who they are</Link>.
           </p>
         </Callout>
       </div>

@@ -6,6 +6,12 @@ import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
 
+/**
+ * SIX ITEMS, ON PURPOSE. The old site failed with forty flat links; ten was
+ * still too many for a phone. Gallery, Buy and Sell, Archive and Directory are
+ * used least, so they live on the Club Life page and in the footer — and under
+ * "Also" in the phone menu, where there is room for them.
+ */
 const NAV = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/flying', label: 'Flying' },
@@ -13,11 +19,20 @@ const NAV = [
   { href: '/safety', label: 'Safety' },
   { href: '/documents', label: 'Documents' },
   { href: '/club-life', label: 'Club Life' },
-  { href: '/buy-and-sell', label: 'Buy & Sell' },
-  { href: '/gallery', label: 'Gallery' },
-  { href: '/archive', label: 'Archive' },
-  { href: '/directory', label: 'Directory' },
 ];
+
+const ALSO = [
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/directory', label: 'Directory' },
+  { href: '/archive', label: 'Archive' },
+  { href: '/buy-and-sell', label: 'Buy and Sell' },
+];
+
+/** Pages that belong to a menu item without sharing its address. */
+const UNDER: Record<string, string[]> = {
+  '/club-life': ['/gallery', '/directory', '/archive', '/buy-and-sell', '/calendar'],
+  '/flying': ['/fees'],
+};
 
 /**
  * Members' Admin dropdown.
@@ -121,7 +136,9 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) =>
-    pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+    pathname === href ||
+    (href !== '/dashboard' && pathname.startsWith(href)) ||
+    (UNDER[href] ?? []).some((p) => pathname.startsWith(p));
 
   return (
     <header className="bg-navy text-white no-print">
@@ -212,6 +229,21 @@ export default function Nav() {
                   onClick={() => setMobileOpen(false)}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                   className={`tap w-full py-4 text-lg ${isActive(item.href) ? 'font-semibold text-white' : 'text-white/85'}`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mx-auto mt-4 max-w-7xl px-4 text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Also</p>
+          <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 px-4">
+            {ALSO.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
+                  className="tap w-full py-2.5 text-white/85"
                 >
                   {item.label}
                 </Link>

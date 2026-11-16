@@ -68,7 +68,7 @@ export default function GalleryBrowser({ base }: { base: string }) {
                 }`}
               >
                 {a.title}{' '}
-                <span className={on ? 'text-white/80' : 'text-slate2'}>{a.photos.length}</span>
+                <span className={`ml-1.5 ${on ? 'text-white/80' : 'text-slate2'}`}>{a.photos.length}</span>
                 {on && <span aria-hidden="true" className="ml-2">✕</span>}
               </button>
             );

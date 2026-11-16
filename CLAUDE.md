@@ -96,23 +96,55 @@ Keep the house style — it is the best thing the old site had, and it is delibe
 - Set `pinned: true` to surface it in "Worth knowing now" on the dashboard. Use sparingly — two at most.
 
 ### Add or update a document
-Edit `src/content/documents.ts`. One entry per document. The important fields:
+Edit `src/content/documents-imported.ts`. **This is the one list** — one row per document,
+and every page that links to a file gets the address from here. Add new rows at the **top**.
+
+The important fields:
 
 - `tier` — `'live'` (changes during the season), `'reference'` (current, in force), `'archive'` (historic)
 - `audience` — who it is for. Drives the "Who it's for" filter
-- `reviewDue` — **set this on anything that goes stale.** Past dates automatically show an
-  "Overdue for review" flag on the Documents page and a count on the dashboard. This is the
-  mechanism that stops the library silently filling up with withdrawn advice, which is exactly
-  what happened to the old Links Library
 - `superseded: true` — for anything kept for the record but no longer in force. It stays
   searchable and is clearly labelled
+- `slot` — see "Re-issue a manual" below
+
+Titles, owners and review dates that were added by hand sit in the `ENRICH` table in
+`src/content/documents.ts`, keyed by the row's `id`, so they survive if the list is ever
+regenerated. Set `reviewDue` there on anything that goes stale: past dates automatically show
+an "Overdue for review" flag on the Documents page and a count on the dashboard. That is the
+mechanism that stops the library silently filling up with withdrawn advice, which is exactly
+what happened to the old Links Library.
+
+**Never paste a file's address into a page or another content file.** Use `file('row-id')`
+from `documents.ts`. If the id is wrong the build stops and says so, which is how a dead link
+is caught before a member finds it. Until November 2026 there were two lists and every manual
+was written out a second time in `manuals.ts`; an edit to one silently did nothing.
+
+### Re-issue a manual (a new version under a new file name)
+The Pilots Manual, Winch Operating Manual, Ground Training Manual, Launch Marshals Manual,
+Student Pilots Guide, Launch Speeds and the Wave Box Letter of Agreement each carry a `slot`.
+To publish a new version:
+
+1. Copy the current row to the top of `documents-imported.ts`.
+2. Change `id`, `title`, `href` and `version` on the new row. Leave `slot` alone.
+3. On the old row, delete `slot` and set `tier: 'archive', superseded: true`.
+
+The first row with a given slot is the current one. The Manuals box, the Training page, the
+Airspace page and the figure on the Flying page all follow it — nothing else to edit.
 
 ### Retire a document
 Do **not** delete it. Set `tier: 'archive'` and `superseded: true`, and put why in `note`.
 Club history is not recoverable once deleted; storage is free.
 
-### Change fees, calendar, weather links, roles
-All in `src/content/site.ts`.
+### Retired content
+`src/content/retired/` holds things taken out of use but kept: the 143 rows of the first
+hand-written document list that no page ever showed, and the short roles list that the full
+one replaced. Nothing imports them. Leave them there.
+
+### Change fees, calendar, weather links
+All in `src/content/site.ts`. (Roles are in `src/content/roles.ts` — see below.)
+
+Calendar dates that have passed move under "Earlier this season" by themselves; nothing to
+tidy by hand.
 
 **Weather links must stay location-specific.** `weatherGroups` holds the club's own curated
 deep links — Bretton Youth Hostel rather than "Met Office", Abney rather than "Meteoblue".
@@ -137,12 +169,27 @@ reword to read better. The printed card a member carries is what counts.
 
 ### Manuals
 `src/content/manuals.ts`, ported from `manuals_webpage.asp`, in the club's own three groups.
-Keep the flight-manual caveat — it is the club's wording and it matters.
+It holds the grouping and the order only; every address comes from the document list via
+`file()` or a slot. Keep the flight-manual caveat — it is the club's wording and it matters.
+
+### The Training page
+`src/content/training.ts` is the short hand-picked list a student sees (start here, towards
+solo, on the ground, simulator, medicals). Everything else is one button away in the
+library. The page used to list all 56 training documents. **The CFI should review the
+choice** — it was first made by the website editor.
+
+### The Safety page
+Each file appears once. Anything already linked from a group higher up the page is left out
+of "More safety reading" automatically, and the historic material is a button into the
+library. Do not add a second list.
 
 ### Duty rotas
-`src/content/roster.ts`. When a new quarter is published, add it to the TOP of
-`rotaQuarters` — the page marks the first entry as current and nothing else changes. The
-winch drivers list is in the same file; add new names at the top.
+Nothing to edit on the roster page. Add the new quarter's rota PDFs to
+`documents-imported.ts` with the titles the club already uses — `26Q4 Instructors Rota`,
+`26Q4 Ground Crew Rota` — and the roster page, the dashboard and the Flying page pick the
+newest quarter up from there. The classroom-briefing schedule is matched the same way, from
+a title ending `2026 Q4`. The winch drivers list is in `src/content/roster.ts`; add new names
+at the top.
 
 The Daily Flying Planner tile is deliberately NOT on the roster page. It is on the dashboard
 and the Flying page already, and a third copy on the page about duties only sent members to
@@ -155,7 +202,8 @@ them, and if one contradicts another page of this site, the notice wins and the 
 needs fixing.
 
 ### Roles and role holders
-`src/content/roles.ts`, generated by `tools/parse-roles.mjs`. **Names only — no telephone
+Shown in full on the Directory page (`/directory#roles`); the old `/club-life/roles` address
+redirects there. `src/content/roles.ts`, generated by `tools/parse-roles.mjs`. **Names only — no telephone
 numbers and no email addresses** (rule 6). The VACANT rows are the most useful part of the
 page: that is how the club advertises that it needs somebody. Do not tidy them away.
 
@@ -193,6 +241,13 @@ All in `src/content/community.ts`.
   gives an entry the red left border (Safe Start and Crash/Emergency have it).
 - **Charities:** name, link and one line on why the club supports it.
 
+### The gallery
+One page, `/gallery`, in this order: the club's own six hand-kept galleries
+(`src/content/photo-galleries.ts`), the albums recovered from the old site
+(`src/content/gallery.ts`), then the form for sending a photograph in. The old
+`/club-life/photo-galleries` address redirects there. Album titles were tidied by hand from
+folder names in November 2026; the `slug` still holds the original folder name.
+
 ### Member submissions (flying blog stories, gallery photos)
 Members submit via forms on `/club-life/blog` and `/gallery`. **Nothing publishes
 automatically** — everything lands in the Supabase `submissions` table with status
@@ -204,6 +259,40 @@ an open publish button would lose it.
 Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
 email the editor instead — it never fails silently.
+
+### The menu — six items, and it stays six
+Dashboard, Flying, Training, Safety, Documents, Club Life. Gallery, Directory, Archive and
+Buy and Sell are reached from the Club Life page, the footer, and the "Also" group in the
+phone menu (`ALSO` in `src/components/Nav.tsx`). The old site had about forty menu items
+and needed a hand-kept A–Z because of it. **A new page goes under one of the six**, and gets
+an entry in `UNDER` in `Nav.tsx` so its parent lights up.
+
+**When a page is merged or moved, add a redirect** in `next.config.mjs` so old bookmarks
+and links in old emails still work. Never leave an address dead.
+
+### The look — bands, not boxes
+Agreed with Phil in November 2026. Pages are built from full-width bands of tone:
+
+- **The opening band** is dark (`deep`) with the contour drawing behind it. Landing pages
+  (Dashboard, Flying, Training, Safety, Club Life) use `<Band>` with a title, a few pill
+  buttons and up to three `<Figures>`. Every other page uses `<PageHeader>`, which is the
+  same band, shorter, with an optional `back` link in place of breadcrumbs.
+- **`<Section>`** placed directly in a page is a full-width band; white and pale blue
+  alternate automatically. `<BandSection tone="contour">` is the textured variant — one or
+  two per page at most.
+- **Three figures at most** in a band. They are the numbers a page turns on, not decoration.
+
+The contour drawing is made by `tools/make-contours.mjs` and is an invented hillside, not a
+map of anywhere. Re-run the script to change it; do not hand-edit the SVG.
+
+`.bleed` in `globals.css` is what lets a band run edge to edge, and the portal layout
+carries `overflow-x-clip` so it can never cause a horizontal scrollbar (rule 2). **Do not
+remove either half.**
+
+### The accent — windsock orange, and only one job
+`windsock` (#F2A65A) appears **only on dark bands**: the italic phrase in a title and the
+one primary pill button. It fails contrast on white, so it is never text or a button on a
+light band. One accent pill per band — if everything is orange, nothing is.
 
 ### Colour — the tonal ladder
 `tailwind.config.ts`. The palette is one hue plus three semantic colours, in graded steps:
@@ -237,6 +326,11 @@ registrations, frequencies, times.
 Self-hosted on purpose: no member's browser calls Google to read a club notice, and the
 build does not depend on a third party. 80 KB for the whole site. To change it, swap the
 file and the `src` in `layout.tsx` — everything else keys off `font-sans` / `font-mono`.
+
+**Newsreader** is the display face — page titles, band headings and the big figures, via
+the `.display` and `.figure` classes. Two static cuts (roman and italic), 49 KB, self-hosted
+the same way. It is for headings only: never body text, never anything under about 20px.
+Wrap the phrase to pick out in `<em>` and it is set in italic.
 
 - **Body copy is 400. Headings are 700.** The site previously ran on 500/600 only, so
   headings barely outranked labels.
@@ -285,7 +379,7 @@ These come from the audit of the old site. Each one fixes a specific, observed f
    Safety page used "this link" about twenty times.
 4. **Never rely on colour alone.** The flying card system is White/Red/Yellow/Green — always
    pair the colour with the word.
-5. **Emergency Procedures stays one tap from every page** (it is in the footer of the portal layout).
+5. **Emergency Procedures stays one tap from every page** (the red strip above the footer, in the portal layout).
 6. **No member personal data in this repository.** Phone numbers and email addresses live in
    Members' Admin. If a directory is ever added here it must be opt-in per field.
 7. **Touch targets at least 44×44px** with real spacing. `.tap` in `globals.css` enforces the minimum.
@@ -313,17 +407,23 @@ src/
 ├── app/
 │   ├── (portal)/          Every signed-in page. layout.tsx has the nav + footer
 │   ├── login/             Sign-in (email + password, Supabase)
-│   └── globals.css        Base type, focus rings, .card/.link/.tap helpers
+│   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
 ├── components/
-│   ├── Nav.tsx            Top nav + Members' Admin dropdown
-│   ├── ui.tsx             Shared building blocks — use these, don't reinvent
-│   └── DocumentLibrary.tsx  Search + filter for the document manifest
+│   ├── Nav.tsx            The six-item menu, the "Also" group, Members' Admin dropdown
+│   ├── ui.tsx             Band, PageHeader, Section, Figures, tiles — use these
+│   └── DocumentLibrary.tsx  Search + filter for the document list
 ├── content/               ← MOST EDITS HAPPEN HERE. Plain data, no React
 │   ├── news.ts            News and Notices
-│   ├── documents.ts       The document manifest (the heart of the site)
-│   ├── site.ts            Fees, calendar, weather links, contacts, roles, Find It A–Z
-│   └── awareim.ts         The ONLY place AwareIM URLs appear
+│   ├── documents-imported.ts  THE document list. One row per file
+│   ├── documents.ts       file() / current() helpers, ENRICH titles and review dates
+│   ├── training.ts        What the Training page features
+│   ├── roles.ts           Roles and role holders
+│   ├── site.ts            Fees, calendar, weather links, contacts, Find It A–Z
+│   ├── awareim.ts         The ONLY place AwareIM URLs appear
+│   └── retired/           Kept, not used
 └── lib/                   Supabase clients and auth config
+next.config.mjs            Redirects for merged and moved pages
+tools/make-contours.mjs    Draws the contour background
 ```
 
 **Rule of thumb:** content changes go in `src/content/`. If you find yourself editing a page
@@ -374,3 +474,13 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
       reports above) and set the three variables if so
 - [ ] Restart the Flying Blog (last entry November 2024)
 - [ ] Decide who owns each document category and set real `reviewDue` dates
+- [ ] **Photographs for the Flying, Training, Safety and Club Life bands** — landscape, at
+      least 1600px wide. Only the dashboard has one so far
+- [ ] CFI to review `src/content/training.ts` (what a student is shown first), and to say
+      which of the 28 earlier CFI notices still apply
+- [ ] Proper titles for the documents still named after their files ("833TrnscvrOps",
+      "BR01"…). Add them to `ENRICH` in `documents.ts`
+- [ ] Camphill Catering's two mobile numbers are in `site.ts` and shown on the Directory.
+      Rule 6 says no personal numbers without consent — confirm, or remove them
+- [ ] Check the album names in `gallery.ts` that were a best reading of a folder name
+      (Longest Day, Neighbours' Night, RF 100 km, Shipley aerobatics, KRB)

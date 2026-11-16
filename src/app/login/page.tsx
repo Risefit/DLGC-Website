@@ -54,7 +54,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-navy to-sky">
+    <div className="ground-dark flex min-h-screen flex-col">
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12">
         <div className="mb-6 text-center text-white">
           <span aria-hidden="true" className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-white/15">
@@ -62,8 +62,10 @@ export default function LoginPage() {
               <path d="M2 14l20-7-9 9-3-2-2 4-1-3-5-1z" fill="currentColor" />
             </svg>
           </span>
-          <h1 className="text-2xl text-white">DLGC Members&rsquo; Portal</h1>
-          <p className="mt-1 text-sm text-white/90">
+          <h1 className="display text-4xl">
+            Members&rsquo; <em>Portal</em>
+          </h1>
+          <p className="mt-2 text-sm text-white/90">
             Gliding at Camphill since {club.founded}
           </p>
         </div>
@@ -124,7 +126,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={busy}
-              className="tap w-full justify-center rounded-lg bg-sky px-5 py-4 text-lg font-semibold
+              className="tap w-full justify-center rounded-full bg-navy px-5 py-4 text-lg font-semibold
                          text-white hover:bg-skyDark disabled:opacity-60 transition-colors"
             >
               {busy ? 'Signing in…' : 'Sign in'}

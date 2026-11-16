@@ -5,9 +5,23 @@
  *
  * The caveat on the flight manuals is the club's own wording and matters — do
  * not drop it.
+ *
+ * No file addresses are typed here. Each manual points at its record in the
+ * document list (documents-imported.ts), by id or by slot.
  */
 
-const M = 'https://www.dlgc.org.uk/members/manuals';
+import { file, current } from './documents';
+
+/**
+ * The six manuals that get re-issued. Each follows whichever row in
+ * documents-imported.ts currently holds its slot, and shows that row's
+ * `version` underneath — so a new edition is one edit, over there.
+ */
+const latest = (slot: string) => {
+  const d = current(slot);
+  return { href: d.href, note: d.version };
+};
+
 
 export type Manual = { title: string; note?: string; href: string };
 export type ManualGroup = { group: string; blurb: string; manuals: Manual[] };
@@ -17,26 +31,26 @@ export const manualGroups: ManualGroup[] = [
     group: 'Main manuals',
     blurb: 'The five that govern how we operate. Read the Pilots Manual at least once.',
     manuals: [
-      { title: 'Pilots Manual', note: 'August 2026', href: `${M}/Pilots%20Manual%20Aug%202026.pdf` },
-      { title: 'Winch Operating Manual', note: '2024', href: `${M}/Winch%20Operating%20Manual_2024.pdf` },
-      { title: 'Ground Training Manual', note: 'Amended June 2025', href: `${M}/DLGC%20GTM%20-%20080623,%20Amended%20030625.pdf` },
-      { title: 'Launch Marshals Manual', note: 'V5.9, August 2026', href: `${M}/Launch%20Marshal%20Manual%20V5.9%20Aug%202026_.pdf` },
-      { title: 'Student Pilots Guide', note: 'v9.02 final', href: `${M}/Student%20Pilots%20Guide%20v9.02%20Final.pdf` },
+      { title: 'Pilots Manual', ...latest('pilots-manual') },
+      { title: 'Winch Operating Manual', ...latest('winch-operating-manual') },
+      { title: 'Ground Training Manual', ...latest('ground-training-manual') },
+      { title: 'Launch Marshals Manual', ...latest('launch-marshals-manual') },
+      { title: 'Student Pilots Guide', ...latest('student-pilots-guide') },
     ],
   },
   {
     group: 'Other manuals',
     blurb: 'Specialist procedures — duty clerk, parachutes, cables and strops.',
     manuals: [
-      { title: 'Duty Clerks Manual', note: '2018', href: `${M}/DutyClerkManual2018.pdf` },
-      { title: 'Duty Clerks Trainees Guide', href: `${M}/Duty%20Clerks%20Trainees%20Update.pdf` },
-      { title: 'Launch Speeds', note: 'V8', href: `${M}/LaunchSpeedsV8.pdf` },
-      { title: 'Parachute Manual', note: '2019 v2', href: `${M}/Parachute%20manual%202019v2.pdf` },
-      { title: 'Air-Pol SK-94 Parachute Manual', href: `${M}/Air-Pol%20SK-94%20Manual.pdf` },
-      { title: 'Splicing 3-Strand Rope and Cable', href: `${M}/Splicing%203-Strand%20Rope.pdf` },
-      { title: 'Splicing Dyneema', note: 'with video', href: `${M}/Splicing%20Dyneema%20(with%20Video).pdf` },
-      { title: 'Steel Core Strop Assembly', href: `${M}/Steel-CoreStropAssembly_DLGC.pdf` },
-      { title: 'Training (Pre-solo) Exercises', note: 'v1', href: `${M}/Training%20Exercises%20v1.pdf` },
+      { title: 'Duty Clerks Manual', note: '2018', href: file('manuals-dutyclerkmanual2018-pdf') },
+      { title: 'Duty Clerks Trainees Guide', href: file('manuals-duty-clerks-trainees-update-pdf') },
+      { title: 'Launch Speeds', ...latest('launch-speeds') },
+      { title: 'Parachute Manual', note: '2019 v2', href: file('manuals-parachute-manual-2019v2-pdf') },
+      { title: 'Air-Pol SK-94 Parachute Manual', href: file('manuals-air-pol-sk-94-manual-pdf') },
+      { title: 'Splicing 3-Strand Rope and Cable', href: file('manuals-splicing-3-strand-rope-pdf') },
+      { title: 'Splicing Dyneema', note: 'with video', href: file('manuals-splicing-dyneema-with-video-pdf') },
+      { title: 'Steel Core Strop Assembly', href: file('manuals-steel-corestropassembly-dlgc-pdf') },
+      { title: 'Training (Pre-solo) Exercises', note: 'v1', href: file('manuals-training-exercises-v1-pdf') },
     ],
   },
   {
@@ -44,11 +58,11 @@ export const manualGroups: ManualGroup[] = [
     blurb:
       'Each flight manual belongs to the specific glider serial number it came with. The flying guidance and general information are generic, but if in doubt refer to the manual kept with the aircraft.',
     manuals: [
-      { title: 'K8', href: `${M}/Glider%20Manuals/Ka8-manuel-de-vol-en-anglais.pdf` },
-      { title: 'ASK 13', href: `${M}/Glider%20Manuals/ask13_dsgc_manual_2013.pdf` },
-      { title: 'ASK 18', href: `${M}/Glider%20Manuals/K18%20KNM%20Flight%20Manual.pdf` },
-      { title: 'ASW 15B', href: `${M}/Glider%20Manuals/ASW15B%20Flight%20Manual.pdf` },
-      { title: 'Puchacz', href: `${M}/Glider%20Manuals/szd50-3_puchacz_g-chep_flight_manual.pdf` },
+      { title: 'K8', href: file('manuals-glider-manuals-ka8-manuel-de-vol-en-anglais-pdf') },
+      { title: 'ASK 13', href: file('manuals-glider-manuals-ask13-dsgc-manual-2013-pdf') },
+      { title: 'ASK 18', href: file('manuals-glider-manuals-k18-knm-flight-manual-pdf') },
+      { title: 'ASW 15B', href: file('manuals-glider-manuals-asw15b-flight-manual-pdf') },
+      { title: 'Puchacz', href: file('manuals-glider-manuals-szd50-3-puchacz-g-chep-flight-manual-pdf') },
     ],
   },
 ];

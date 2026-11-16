@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { PageHeader, Section, ActionTile, icons } from '@/components/ui';
+import { Band, Figures, Section, ActionTile, icons } from '@/components/ui';
+import { roles, vacantRoles } from '@/content/roles';
 import { news } from '@/content/news';
 import { clubPages, clubPageGroups } from '@/content/club-life';
-import { adverts } from '@/content/adverts';
+import { adverts, isAdvertExpired } from '@/content/adverts';
+import { totalPhotos } from '@/content/gallery';
 
 export const metadata = { title: 'Club Life' };
 
@@ -12,21 +14,68 @@ export const metadata = { title: 'Club Life' };
  * it was a fair one.
  */
 export default function ClubLifePage() {
+  const liveAdverts = adverts.filter((a) => !isAdvertExpired(a)).length;
+  const latest = news[0];
+
   return (
     <>
-      <PageHeader
+      <Band
         eyebrow="More than flying"
-        title="Club Life"
+        title={
+          <>
+            Club <em>life</em>
+          </>
+        }
         lead="News, flying reports, the calendar, competitions, the vintage rally and everything else that makes Camphill a club rather than an airfield."
-      />
+        figures={
+          <Figures
+            items={[
+              {
+                label: 'Latest notice',
+                value: latest
+                  ? new Date(latest.date + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+                  : '—',
+                note: latest?.title ?? 'Nothing posted yet',
+                href: '/club-life/news',
+              },
+              {
+                label: 'Photographs',
+                value: String(totalPhotos),
+                note: 'The gallery, and how to add to it',
+                href: '/gallery',
+              },
+              {
+                label: 'Roles',
+                value: String(roles.length),
+                note:
+                  vacantRoles.length > 0
+                    ? `${vacantRoles.length} vacant — could one be yours?`
+                    : 'Who does what',
+                href: '/directory#roles',
+              },
+            ]}
+          />
+        }
+      >
+        <nav aria-label="What is happening" className="mt-7 flex flex-wrap gap-3">
+          <Link href="/club-life/news" className="pill-accent">News and Notices</Link>
+          <Link href="/calendar" className="pill-ghost">Calendar</Link>
+          <Link href="/gallery" className="pill-ghost">Gallery</Link>
+          <Link href="/directory" className="pill-ghost">Directory</Link>
+        </nav>
+      </Band>
 
       <Section title="What is happening">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ActionTile href="/club-life/news" label="News and Notices" hint={`${news.length} notices, 2016 to date`} icon={icons.book} />
           <ActionTile href="/club-life/blog" label="Flying Blog" hint="Reports of flying days" icon={icons.plane} />
           <ActionTile href="/calendar" label="Calendar" hint="Courses, meetings, events" icon={icons.calendar} />
-          <ActionTile href="/buy-and-sell" label="Buy and Sell" hint={`${adverts.length} member adverts`} icon={icons.people} />
-          <ActionTile href="/club-life/roles" label="Roles and Role Holders" hint="Who does what, and what is vacant" icon={icons.people} />
+          <ActionTile
+            href="/buy-and-sell"
+            label="Buy and Sell"
+            hint={liveAdverts === 0 ? 'Nothing advertised at the moment' : `${liveAdverts} member advert${liveAdverts === 1 ? '' : 's'}`}
+            icon={icons.people}
+          />
         </div>
       </Section>
 
@@ -59,26 +108,12 @@ export default function ClubLifePage() {
         );
       })}
 
-      <Section title="Photographs">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <ActionTile
-            href="/club-life/photo-galleries"
-            label="Photo Galleries"
-            hint="The club's six curated galleries"
-            icon={icons.archive}
-          />
-          <ActionTile
-            href="/gallery"
-            label="Photo Gallery"
-            hint="881 photographs across 67 albums"
-            icon={icons.archive}
-          />
-          <ActionTile
-            href="/gallery#send-us-your-best"
-            label="Send us a photograph"
-            hint="Your best shots, for the gallery"
-            icon={icons.people}
-          />
+      <Section title="People, pictures and the record">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ActionTile href="/gallery" label="Gallery" hint={`${totalPhotos} photographs, and the club’s own galleries`} icon={icons.archive} />
+          <ActionTile href="/directory" label="Directory" hint="Club numbers, roles and who holds them" icon={icons.people} />
+          <ActionTile href="/archive" label="Archive" hint="Minutes, newsletters and past news" icon={icons.book} />
+          <ActionTile href="/gallery#send-us-your-best" label="Send us a photograph" hint="Your best shots, for the gallery" icon={icons.people} />
         </div>
       </Section>
     </>

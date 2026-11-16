@@ -47,7 +47,7 @@ const RISK_STYLE: Record<string, string> = {
   low: 'bg-goodTint text-good hover:bg-good hover:text-white',
   medium: 'bg-warnTint text-warn hover:bg-warn hover:text-white',
   high: 'bg-badTint text-bad hover:bg-bad hover:text-white',
-  extreme: 'bg-bad/25 text-bad hover:bg-bad hover:text-white',
+  extreme: 'bg-bad/20 text-bad hover:bg-bad hover:text-white',
 };
 
 const WHERE = [
@@ -142,7 +142,7 @@ export default function SafetyReportForm({
         </p>
         <p className="mt-2 text-sm text-ink/70">
           Goes to {safetyOfficerName ? `${safetyOfficerName}, ` : ''}the Safety Officer
-          {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link">{safetyOfficerEmail}</a>).
+          {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link text-skyDark">{safetyOfficerEmail}</a>).
           Not published, and not seen by the website editor.
         </p>
       </div>

@@ -59,13 +59,8 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <Link href="/club-life" className="link">Club Life</Link>
-        <span className="mx-2 text-inkMuted" aria-hidden="true">/</span>
-        <span className="text-inkMuted">{page.title}</span>
-      </nav>
 
-      <PageHeader eyebrow={page.eyebrow} title={page.title} lead={page.lead} />
+      <PageHeader back={{ href: '/club-life', label: 'Club Life' }} eyebrow={page.eyebrow} title={page.title} lead={page.lead} />
 
       {page.steward && (
         <div className="mb-8 rounded-card border-l-4 border-sky bg-skyTint px-5 py-4">
@@ -101,6 +96,7 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
           .
         </p>
         {siblings.length > 0 && (
+          <div className="mt-8">
           <Section title={`More under ${page.group}`}>
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {siblings.map((p) => (
@@ -116,6 +112,7 @@ export default async function ClubLifeDetail({ params }: { params: Promise<{ slu
               ))}
             </ul>
           </Section>
+          </div>
         )}
       </div>
     </>
