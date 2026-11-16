@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Band, Figures, Section, ActionTile, icons } from '@/components/ui';
+import { Band, BandPhoto, Figures, Section, ActionTile, icons } from '@/components/ui';
 import { roles, vacantRoles } from '@/content/roles';
 import { news } from '@/content/news';
 import { clubPages, clubPageGroups } from '@/content/club-life';
@@ -27,6 +27,17 @@ export default function ClubLifePage() {
           </>
         }
         lead="News, flying reports, the calendar, competitions, the vintage rally and everything else that makes Camphill a club rather than an airfield."
+        aside={
+          <BandPhoto
+            src="/img/camphill-launch-point-from-above.jpg"
+            alt="The launch point seen from above on a sunny day: gliders in several colours, parked cars, the launch-point bus and members on the grass."
+            caption="A busy launch point, from above."
+            width={984}
+            height={606}
+            shape="wide"
+            priority
+          />
+        }
         figures={
           <Figures
             items={[

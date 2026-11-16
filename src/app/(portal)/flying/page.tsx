@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Band, BandSection, Figures, ActionTile, icons, outIcon } from '@/components/ui';
+import { Band, BandPhoto, BandSection, Figures, ActionTile, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { documents } from '@/content/documents';
 import { manualGroups, flightManualCaveat } from '@/content/manuals';
@@ -28,6 +28,17 @@ export default function FlyingPage() {
           </>
         }
         lead="Booking, duties, weather, airspace and the operational notices that govern how we fly here."
+        aside={
+          <BandPhoto
+            src="/img/camphill-windsock-approach.jpg"
+            alt="A glider flying past the orange windsock at Camphill, with a yellow airfield vehicle and a member watching from the grass below."
+            caption="Past the windsock, with the hills beyond."
+            width={1280}
+            height={960}
+            focus="center 35%"
+            priority
+          />
+        }
         figures={
           <Figures
             items={[

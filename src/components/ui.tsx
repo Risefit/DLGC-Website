@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 
 /**
@@ -221,6 +222,56 @@ export function Band({
       </div>
       {figures}
     </header>
+  );
+}
+
+/**
+ * The photograph beside a landing page's title. Pass it to <Band aside={…}>.
+ *
+ * `shape="wide"` is for a picture whose point is its width (a rainbow, a view
+ * from above); the default suits most photographs. On a phone every picture is
+ * cropped to a 2:1 strip so the band stays short — `focus` says which part to
+ * keep ("center 70%" keeps the lower part of the frame).
+ *
+ * The files live in public/img. Keep them under about 250 KB and 1280px wide;
+ * re-save anything straight off a phone first, which also removes the location
+ * data a phone writes into a photograph.
+ */
+export function BandPhoto({
+  src,
+  alt,
+  caption,
+  width,
+  height,
+  shape = 'standard',
+  focus,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  width: number;
+  height: number;
+  shape?: 'standard' | 'wide';
+  focus?: string;
+  priority?: boolean;
+}) {
+  const aspect =
+    shape === 'wide' ? 'aspect-[2/1] sm:aspect-[16/9]' : 'aspect-[2/1] sm:aspect-[16/10] lg:aspect-[4/3]';
+  return (
+    <figure className="w-full lg:justify-self-end">
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        priority={priority}
+        sizes="(min-width: 1024px) 560px, 100vw"
+        className={`${aspect} w-full rounded-card border border-white/20 object-cover shadow-panel`}
+        style={focus ? { objectPosition: focus } : undefined}
+      />
+      {caption && <figcaption className="mt-2 text-xs text-white/75">{caption}</figcaption>}
+    </figure>
   );
 }
 

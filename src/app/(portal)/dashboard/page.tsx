@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { Band, BandSection, Figures, Badge, icons, outIcon } from '@/components/ui';
+import { Band, BandPhoto, BandSection, Figures, Badge, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import { news } from '@/content/news';
 import { documents } from '@/content/documents';
@@ -69,18 +68,15 @@ export default function Dashboard() {
           />
         }
         aside={
-          <figure className="lg:justify-self-end">
-            <Image
-              src="/img/camphill-windsock.jpg"
-              alt="A single-seat glider on the grass at Camphill, with the windsock flying behind it."
-              width={1080}
-              height={720}
-              priority
-              sizes="(min-width: 1024px) 520px, 100vw"
-              className="aspect-[2/1] w-full sm:aspect-[16/10] rounded-card border border-white/20 object-cover shadow-panel lg:aspect-[4/3]"
-            />
-            <figcaption className="mt-2 text-xs text-white/75">On the field at Camphill.</figcaption>
-          </figure>
+          <BandPhoto
+            src="/img/camphill-rainbow.jpg"
+            alt="A full rainbow over the launch-point bus and the windsock, with the club’s Puchacz two-seater in the foreground."
+            caption="A rainbow over the launch point."
+            width={1024}
+            height={568}
+            shape="wide"
+            priority
+          />
         }
       >
         <nav aria-label="Most used" className="mt-7 flex flex-wrap gap-3">

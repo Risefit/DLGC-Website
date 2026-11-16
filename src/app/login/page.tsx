@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -24,7 +25,11 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
-    if (previewOpen) {
+    // While the login gate is off, pressing Sign in with the boxes empty just
+    // goes in — the site is open anyway. Somebody who HAS an account and fills
+    // the boxes in is signed in properly, which is what lets documents open
+    // from the club's own copy.
+    if (previewOpen && (!email || !password)) {
       router.push('/dashboard');
       return;
     }
@@ -32,6 +37,10 @@ export default function LoginPage() {
     setBusy(true);
     const supabase = createClient();
     if (!supabase) {
+      if (previewOpen) {
+        router.push('/dashboard');
+        return;
+      }
       setError('Sign-in is not configured yet. Contact the website editor.');
       setBusy(false);
       return;
@@ -54,8 +63,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="ground-dark flex min-h-screen flex-col">
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12">
+    <div className="ground-dark min-h-screen lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]">
+      <figure className="relative h-44 sm:h-56 lg:h-auto lg:min-h-screen">
+        <Image
+          src="/img/camphill-last-light.jpg"
+          alt="A glider and its pilot on the airfield at sunset, under a sky of gold-edged cloud."
+          fill
+          priority
+          sizes="(min-width: 1024px) 48vw, 100vw"
+          className="object-cover object-[center_86%] lg:object-center"
+        />
+        <figcaption className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/60 to-transparent px-6 pb-4 pt-10 text-sm text-white lg:block">
+          Last light at Camphill.
+        </figcaption>
+      </figure>
+
+      <div className="flex flex-col lg:min-h-screen">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10 lg:py-12">
         <div className="mb-6 text-center text-white">
           <span aria-hidden="true" className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-white/15">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
@@ -147,6 +171,7 @@ export default function LoginPage() {
           </Link>
         </p>
       </main>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Band, Figures, Section, Callout, outIcon } from '@/components/ui';
+import { Band, BandPhoto, Figures, Section, Callout, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import type { Doc } from '@/content/documents';
 import { flyingCards, flyingCardSummary, redCardTheoryTest } from '@/content/flying-cards';
@@ -55,6 +55,17 @@ export default function TrainingPage() {
           </>
         }
         lead="Your progress, the flying card system, the SPL syllabus, theory briefings and medicals."
+        aside={
+          <BandPhoto
+            src="/img/camphill-puchacz-briefing.jpg"
+            alt="Members gathered round the club’s Puchacz two-seater at the launch point on a sunny day, a red parasol shading the cockpit."
+            caption="The club’s Puchacz two-seater, between flights."
+            width={1280}
+            height={960}
+            focus="center 55%"
+            priority
+          />
+        }
         figures={
           <Figures
             items={[

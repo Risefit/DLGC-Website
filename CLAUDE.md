@@ -280,6 +280,17 @@ Three rules:
 To copy files across, see README ("The old site's files"). After adding documents, run
 `npx tsx --tsconfig tsconfig.json tools/list-wanted-files.ts` so the uploader knows about them.
 
+### Signing in to the portal
+The menu carries "Portal sign in" (and "Sign in to the portal" in the phone menu), which
+becomes the member's address and "Sign out" once they are in — `PortalAccount` in
+`src/components/Nav.tsx`. **It always says "portal"**, because the Members' Admin button
+sits beside it and is a different system with a different password.
+
+While the login gate is off, pressing Sign in with the boxes empty simply goes in; filling
+them in signs in properly, which is what makes documents open from the club's own copy.
+Accounts are created in Supabase → Authentication → Users. Nobody can register themselves
+as long as "Allow new users to sign up" is off there — check that it is.
+
 ### No preview notes or hint boxes on the pages
 Phil's instruction, November 2026: pages carry the club's content, not commentary about
 the website. The "Preview mode" banner, the "still on the old site" boxes, the "how this
@@ -320,6 +331,28 @@ map of anywhere. Re-run the script to change it; do not hand-edit the SVG.
 `.bleed` in `globals.css` is what lets a band run edge to edge, and the portal layout
 carries `overflow-x-clip` so it can never cause a horizontal scrollbar (rule 2). **Do not
 remove either half.**
+
+### Photographs in the bands
+Each landing page has one photograph beside its title, and the sign-in page has one beside
+the form. Phil supplied them in November 2026:
+
+| Page | File in `public/img` |
+|---|---|
+| Dashboard | `camphill-rainbow.jpg` |
+| Flying | `camphill-windsock-approach.jpg` |
+| Training | `camphill-puchacz-briefing.jpg` |
+| Safety | `camphill-wing-walk.jpg` |
+| Club Life | `camphill-launch-point-from-above.jpg` |
+| Sign-in | `camphill-last-light.jpg` |
+
+To change one, drop the new file in `public/img` and edit the `<BandPhoto …>` on that page
+(`src`, `alt`, `caption`, `width`, `height`). Write a real `alt` — say what is in the
+picture. Re-save anything straight off a phone before adding it (under about 250 KB, 1280px
+wide): that also strips the location a phone writes into a photograph. One photograph per
+band; `camphill-windsock.jpg`, the first dashboard picture, is still in the folder.
+
+Some of these show members who can be recognised. That is fine on a members' site, but it
+is one more reason the GitHub repository should be private.
 
 ### The accent — windsock orange, and only one job
 `windsock` (#F2A65A) appears **only on dark bands**: the italic phrase in a title and the
@@ -513,8 +546,6 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
       reports above) and set the three variables if so
 - [ ] Restart the Flying Blog (last entry November 2024)
 - [ ] Decide who owns each document category and set real `reviewDue` dates
-- [ ] **Photographs for the Flying, Training, Safety and Club Life bands** — landscape, at
-      least 1600px wide. Only the dashboard has one so far
 - [ ] CFI to review `src/content/training.ts` (what a student is shown first), and to say
       which of the 28 earlier CFI notices still apply
 - [ ] Proper titles for the documents still named after their files ("833TrnscvrOps",

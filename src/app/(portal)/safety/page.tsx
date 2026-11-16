@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Band, Figures, Section } from '@/components/ui';
+import { Band, BandPhoto, Figures, Section } from '@/components/ui';
 import { safetyCulture, contacts } from '@/content/site';
 import { documents } from '@/content/documents';
 import { safetyLessons } from '@/content/safety-log';
@@ -34,6 +34,16 @@ export default function SafetyPage() {
           </>
         }
         lead="Reporting, procedures, and learning from what has gone wrong elsewhere."
+        aside={
+          <BandPhoto
+            src="/img/camphill-wing-walk.jpg"
+            alt="A club member walking a glider’s wingtip across the airfield, silhouetted against an orange sunset."
+            caption="Walking the wing in at the end of the day."
+            width={1280}
+            height={960}
+            priority
+          />
+        }
         figures={
           <Figures
             items={[
@@ -62,7 +72,7 @@ export default function SafetyPage() {
         {/* PRESERVED FROM THE OLD SITE — four clear principles, word for word.
             Given more prominence here, not less. */}
         <h2 className="sr-only">Our safety culture</h2>
-        <ul className="mt-7 grid max-w-4xl gap-x-8 gap-y-3 sm:grid-cols-2">
+        <ul className="mt-7 grid max-w-[60ch] gap-y-3">
           {safetyCulture.map((line) => (
             <li key={line} className="flex gap-3">
               <span aria-hidden="true" className="mt-1 shrink-0 text-windsock">

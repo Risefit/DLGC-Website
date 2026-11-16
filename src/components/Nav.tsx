@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
 
@@ -131,6 +132,75 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
+/**
+ * SIGNING IN TO THE PORTAL ITSELF — not Members' Admin, which is the dropdown
+ * beside it and a different system with a different password. The wording says
+ * "portal" every time so nobody types the wrong password into the wrong box.
+ *
+ * Signed out: a link to the sign-in page. Signed in: the address you signed in
+ * with, and a way out. It reads the session this browser already holds; it
+ * never asks the server who you are, so it costs nothing on each page.
+ */
+function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; wide?: boolean }) {
+  const [email, setEmail] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) {
+      setReady(true);
+      return;
+    }
+    let live = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!live) return;
+      setEmail(data.session?.user?.email ?? null);
+      setReady(true);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setEmail(session?.user?.email ?? null);
+    });
+    return () => {
+      live = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  async function signOut() {
+    const supabase = createClient();
+    await supabase?.auth.signOut();
+    onNavigate?.();
+    // A full reload, so nothing from the signed-in session is left on screen.
+    window.location.assign('/login');
+  }
+
+  if (!ready) return null;
+
+  const button = `tap rounded-lg border border-white/40 px-4 py-2.5 font-medium text-white transition-colors hover:border-white hover:bg-white/10 ${
+    wide ? 'w-full justify-center' : ''
+  }`;
+
+  if (!email) {
+    return (
+      <Link href="/login" onClick={onNavigate} className={button}>
+        {wide ? 'Sign in to the portal' : 'Portal sign in'}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={wide ? 'space-y-2' : 'flex items-center gap-3'}>
+      <span className={`block truncate text-sm text-white/80 ${wide ? '' : 'hidden max-w-[15rem] xl:block'}`}>
+        <span className="sr-only">Signed in to the portal as </span>
+        {email}
+      </span>
+      <button type="button" onClick={signOut} className={button}>
+        {wide ? 'Sign out of the portal' : 'Sign out'}
+      </button>
+    </div>
+  );
+}
+
 export default function Nav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -174,7 +244,8 @@ export default function Nav() {
           </Link>
 
           <div className="flex shrink-0 items-center gap-2">
-            <div className="hidden lg:block">
+            <div className="hidden items-center gap-3 lg:flex">
+              <PortalAccount />
               <AwareIMMenu />
             </div>
             <button
@@ -250,7 +321,8 @@ export default function Nav() {
               </li>
             ))}
           </ul>
-          <div className="mx-auto mt-4 max-w-7xl px-4">
+          <div className="mx-auto mt-4 max-w-7xl space-y-3 px-4">
+            <PortalAccount wide onNavigate={() => setMobileOpen(false)} />
             <AwareIMMenu onNavigate={() => setMobileOpen(false)} />
           </div>
         </nav>
