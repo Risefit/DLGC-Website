@@ -280,6 +280,25 @@ Three rules:
 To copy files across, see README ("The old site's files"). After adding documents, run
 `npx tsx --tsconfig tsconfig.json tools/list-wanted-files.ts` so the uploader knows about them.
 
+### Required reading — open it, then tick
+At the top of the Documents page. The list is `src/content/required-reading.ts`; the
+component is `src/components/RequiredReading.tsx`; confirmations are rows in the Supabase
+table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sql`).
+
+- **The list was a first draft by the website editor.** The CFI and committee decide what
+  is mandatory. Edit the groups in `required-reading.ts`.
+- A member must open a document from the list before its tick box becomes live, and a
+  confirmation cannot be un-ticked — it is a record. The database refuses changes too, and
+  stamps who and when itself rather than trusting the browser.
+- **A confirmation belongs to one version.** Re-issue a manual the usual way (new row, same
+  `slot`) and every member is asked again automatically. For a portal page in the list,
+  change its `issue` value. The CFI's notices reset themselves when a notice is added.
+- A member sees only their own ticks. **Who has confirmed what** is read in Supabase →
+  Table Editor → `reading_confirmations` (it shows each member's sign-in address, the
+  document, its version and the date). That table holds members' addresses, so only the
+  people the committee nominates should have the Supabase login.
+- Needs a signed-in member. Signed out, it is a plain reading list with a link to sign in.
+
 ### Signing in to the portal
 The menu carries "Portal sign in" (and "Sign in to the portal" in the phone menu), which
 becomes the member's address and "Sign out" once they are in — `PortalAccount` in
@@ -523,6 +542,8 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 
 - [ ] **Copy the old site's files into private storage** — run migration 003, then
       `scripts/upload-legacy.mjs` on the computer that has the mirror (README)
+- [ ] Run `supabase/migrations/004_reading_confirmations.sql` so required-reading ticks can
+      be saved, and have the CFI correct the list in `src/content/required-reading.ts`
 - [ ] **Before switching the login gate on:** in Supabase → Authentication, turn OFF
       "Allow new users to sign up". Otherwise anybody can register themselves and is then
       "signed in" as far as the portal and the file store are concerned

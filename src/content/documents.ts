@@ -169,7 +169,7 @@ const RECATEGORISE: Record<string, Doc['category']> = {
  */
 const ENRICH: Record<string, Partial<Doc>> = {
   'manuals-pilots-manual-aug-2026-pdf': { title: 'Pilots Manual', note: 'The core operational manual for flying at Camphill.', owner: 'CFI', reviewDue: '2026-11-30' },
-  'manuals-winch-operating-manual-2024-pdf': { owner: 'Winch Master' },
+  'manuals-winch-operating-manual-2024-pdf': { title: 'Winch Operating Manual', owner: 'Winch Master' },
   'pdfs-flying-cards-summary-1-pdf': { title: 'Flying Cards — all colours explained', note: 'White, Red, Yellow and Green card privileges and requirements on one page.', owner: 'CFI' },
   'pdfs-reciprocal-membership-4-8-26-pdf': { title: 'Reciprocal Membership — list of clubs', note: 'Clubs with which DLGC has day-membership agreements.', owner: 'Membership Secretary', reviewDue: '2026-11-01' },
   'pdfs-generalrules-f2-pdf': { title: 'General Club Rules', owner: 'Secretary' },
@@ -184,6 +184,10 @@ const ENRICH: Record<string, Partial<Doc>> = {
   'pdfs-caravans-list-latest-pdf': { title: 'Caravan Sites — Holders and Waiting List', reviewDue: '2026-10-01' },
   'pdfs-clm-bulletin-launch-point-pocedures-jul-2023-pdf': { owner: 'Chief Launch Marshal' },
   // File names tidied into titles (November 2026). The files are untouched.
+  'manuals-launch-marshal-manual-v5-9-aug-2026-pdf': { title: 'Launch Marshals Manual' },
+  'manuals-launchspeedsv8-pdf': { title: 'Launch Speeds' },
+  'manuals-dutyclerkmanual2018-pdf': { title: 'Duty Clerks Manual', version: '2018' },
+  'pdfs-members-code-of-conduct-pdf': { title: 'Members’ Code of Conduct' },
   'manuals-student-pilots-guide-v9-02-final-pdf': { title: 'Student Pilots Guide' },
   'manuals-dlgc-gtm-080623-amended-030625-pdf': { title: 'Ground Training Manual' },
   'trainingdocs-dlgc-solo-authorisation-form-pdf': { title: 'Solo Authorisation Form' },

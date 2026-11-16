@@ -30,7 +30,12 @@ export const socials: Social[] = [
     handle: 'Members group',
     note: 'Members-only discussion group',
   },
-  { name: 'Instagram', href: null, note: 'Not set up yet' },
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/dlgc_glidingclub1/',
+    handle: '@dlgc_glidingclub1',
+    note: 'Photographs from the airfield',
+  },
   { name: 'TikTok', href: null, note: 'Not set up yet' },
   { name: 'X', href: null, note: 'Not set up yet' },
 ];

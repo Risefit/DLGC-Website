@@ -126,7 +126,7 @@ export default function DocumentLibrary({
 
   return (
     <>
-      <section className="band-contour -mt-0 py-8 lg:py-10" aria-label="Search and filter">
+      <section id="library" className="band-contour scroll-mt-4 py-8 lg:py-10" aria-label="Search and filter">
       {/* Search */}
       <div className="card-panel mb-5 p-5">
         <label htmlFor="doc-search" className="mb-2 block font-medium text-navy">

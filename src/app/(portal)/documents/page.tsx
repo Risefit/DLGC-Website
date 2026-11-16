@@ -1,4 +1,6 @@
-import { PageHeader } from '@/components/ui';
+import { PageHeader, BandSection } from '@/components/ui';
+import RequiredReading from '@/components/RequiredReading';
+import { requiredReading, requiredOfEveryone } from '@/content/required-reading';
 import DocumentLibrary from '@/components/DocumentLibrary';
 import { type Tier } from '@/content/documents';
 
@@ -25,6 +27,20 @@ export default async function DocumentsPage({
         }
         lead="Every manual, rule, policy, briefing and notice the club holds."
       />
+
+      <BandSection
+        tone="white"
+        id="required-reading"
+        title={
+          <>
+            Required <em>reading</em>
+          </>
+        }
+        description="The manuals, rules and procedures members are asked to read. Open each one, then tick to confirm you have read it. When one is re-issued you will be asked again."
+        action={<a href="#library" className="pill-line">Search all documents</a>}
+      >
+        <RequiredReading groups={requiredReading} everyoneKeys={requiredOfEveryone.map((i) => i.key)} />
+      </BandSection>
 
       <DocumentLibrary
         initialQuery={sp.q ?? ''}
