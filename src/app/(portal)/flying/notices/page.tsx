@@ -3,6 +3,8 @@ import { PageHeader, Section, Callout } from '@/components/ui';
 import NoticeBrowser from '@/components/NoticeBrowser';
 import {
   cfiNotices,
+  currentCfiNotices,
+  currentCfiNoticesIntro,
   clmBulletins,
   clmIntro,
   cfiNoticesSource,
@@ -12,7 +14,8 @@ import {
 export const metadata = { title: 'CFI and Launch Marshal Notices' };
 
 /**
- * PORTED FROM CFI_Notices.asp and CLM_Notices.asp.
+ * PORTED FROM cfis_notices_new.asp (the CFI's current notices), the earlier
+ * CFI_Notices.asp (the 28 notices to 2019) and CLM_Notices.asp.
  *
  * These are instructions, not advice — how we check, how we launch, how we
  * report. The old site had them on two separate pages, each one long scroll.
@@ -42,7 +45,39 @@ export default function NoticesPage() {
         </Callout>
       </div>
 
-      <Section title={`CFI's Notices`} description={`${cfiNotices.length} notices, newest first.`}>
+      <Section title={`CFI's current notices`} description={currentCfiNoticesIntro}>
+        <div className="space-y-5">
+          {currentCfiNotices.map((n) => (
+            <article key={n.num} className="card p-5 sm:p-6" aria-labelledby={`cfi-current-${n.num}`}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-skyDark">Notice No. {n.num}</p>
+              <h3 id={`cfi-current-${n.num}`} className="mt-1 text-xl text-navy">{n.title}</h3>
+              {n.subtitle && <p className="mt-1 text-inkMuted">{n.subtitle}</p>}
+              <div className="mt-4 space-y-3">
+                {n.blocks.map((b, i) =>
+                  b.kind === 'p' ? (
+                    <p key={i}>{b.text}</p>
+                  ) : (
+                    <div key={i}>
+                      <h4 className="text-base text-navy">{b.heading}</h4>
+                      <ul className="mt-1 list-disc space-y-1 pl-6">
+                        {b.items.map((it) => (
+                          <li key={it}>{it}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ),
+                )}
+              </div>
+              <p className="mt-4 border-t border-skyLine pt-3 text-sm text-inkMuted">{n.signed}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        title={`Earlier CFI's notices`}
+        description={`${cfiNotices.length} notices from 2011 to 2019, newest first. The old site's current page now lists only the two above — ask the CFI if you are unsure whether an earlier notice still applies.`}
+      >
         <NoticeBrowser notices={cfiNotices} />
       </Section>
 

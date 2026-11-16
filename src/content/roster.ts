@@ -32,6 +32,19 @@ export const briefingsPreparedBy = 'Simon Stannard';
 
 export const rotaQuarters: RotaQuarter[] = [
   {
+    code: '26Q4',
+    label: 'October, November, December 2026',
+    covers: 'Saturdays, Sundays and Bank Holidays',
+    sheets: [
+      { label: 'Instructors rota', href: `${L}/26Q4%20Instructors%20Rota.pdf` },
+      { label: 'Ground crews rota', href: `${L}/26Q4%20Ground%20Crew%20Rota.pdf` },
+    ],
+    briefings: {
+      label: 'SPL classroom briefings — topics and schedule',
+      href: `${T}/SPL%20Theory%20Briefings%20-%20Schedule%20for%202026%20Q4.pdf`,
+    },
+  },
+  {
     code: '26Q3',
     label: 'July, August, September 2026',
     covers: 'Saturdays, Sundays and Bank Holidays',

@@ -53,6 +53,79 @@ export const cfiNotices: CfiNotice[] = [
   { num: 1, date: "", title: "Distraction", body: "CFI's notice 21/4/11 One of the significant activities where there has been a number of incidents over the last year, most of which should have resulted in a fatality but only one did, is the rigging and inspection of gliders before flight. Haste and distraction are major causes of incomplete preparation for anything let alone flight so I'm announcing a zero tolerance attitude to chattering away at pilots who are rigging, DI-ing or doing their cockpit checks. It reads like this - \"Pilots engaged in rigging or performing a DI or their cockpit checks will not be engaged in conversation\" . The principle's not new but it is time it became so engrained in our culture that such restraint is second nature. Don't leave it to the instructors to do the admonishing because learning a group discipline is a mutual effort. Have a dig at the instructors if they deserve it and be altogether uninhibited about telling somebody to go away whilst you are busy. It's pretty distracting being surrounded by gossiping gas-bags even when the conversation is not directed at you specifically. I hesitate to suggest we all take a Trappist vow of silence airside but if the golfing fraternity can demand silence within sixty feet of the player I think a pilot, trying to focus his mind, deserves similar consideration. Peter Gray", links: [] },
 ];
 
+/**
+ * THE CFI'S CURRENT NOTICES — from cfis_notices_new.asp.
+ *
+ * The old site describes these as notices "that have the status of future
+ * content of the Pilot's Manual". They are the only two on the old site's
+ * current CFI's Notices page (checked 16 November 2026); the 28 above came from
+ * the earlier page, cfis_notices.asp, which the old site's menu no longer links to.
+ *
+ * SAFETY-CRITICAL. Wording is exactly as published. Do not reword.
+ */
+export type NoticeBlock =
+  | { kind: 'p'; text: string }
+  | { kind: 'list'; heading: string; items: string[] };
+
+export type CurrentCfiNotice = {
+  num: number;
+  title: string;
+  subtitle?: string;
+  /** As signed on the notice. */
+  signed: string;
+  blocks: NoticeBlock[];
+};
+
+export const currentCfiNoticesIntro =
+  "Notices issued from time to time by the CFI that have the status of future content of the Pilot's Manual.";
+
+export const currentCfiNotices: CurrentCfiNotice[] = [
+  {
+    num: 1,
+    title: 'West Wind Circuits, Approaches and Landings',
+    subtitle: '(with special reference to the end of the landing run)',
+    signed: 'John McKenzie, CFI, 10.10.23',
+    blocks: [
+      { kind: 'p', text: 'There are two quite different approaches and landings to the West at Camphill.' },
+      { kind: 'p', text: '1. The strong soarable West wind approach. 2. The light wind approach.' },
+      { kind: 'p', text: 'There is plenty of advice in the Pilots Manual about how to handle the first of these, but not so much about the second. However, a common factor that is starting to be noticeable is the tendency of pilots to stop the ground run quite close to the peri track.' },
+      { kind: 'p', text: 'This is not good practice because a slight misjudgement could mean going over the edge. There is certainly no club requirement to stop near the peri track and any such idea must be dispelled.' },
+      { kind: 'p', text: 'This advice is given for approaches anywhere in the sector from ENE through to ESE. In both strong or light winds, the reference point should be the start of the uphill slope and the aim should be to stop 30-50m (paces) from the peri track. This sounds like a long way from the peri track. The concern might be that the glider will be in the way of the launches from the North or the South. In fact the glider will not be in the way and the standard works well. Try pacing it out yourself and you’ll see.' },
+      { kind: 'p', text: 'The same outcome is achieved with the different recommended approach speeds for the conditions. Even in strong winds there will be little headwind low down in the middle of the field. There may even be wind reversal. In the light wind conditions, the final turn should be well behind the East wall, the circuit is flown as for a flat site, or doing a field landing.' },
+    ],
+  },
+  {
+    num: 2,
+    title: 'Occurrence (accident or incident) Reporting',
+    signed: 'John McKenzie, CFI, 10.10.23',
+    blocks: [
+      { kind: 'p', text: 'This is a reminder of every member’s responsibility to make a confidential report as described in the DLGC, Safety Lessons Log – Briefing. This is to be found on the DLGC Members Website, via the Links Library.' },
+      { kind: 'p', text: 'Reportable occurrences are events or situations within or relating to flying operations which did result, or could have resulted, in injury or damage.' },
+      { kind: 'p', text: 'All such occurrences must be reported to the Club Safety Officer (CSO) and copied to the Chief Flying Officer (CFI).' },
+      { kind: 'p', text: 'The following are examples of occurrences that must be reported. This is not an exhaustive set of examples and that by definition, no occurrence within or relating to flying operations should be excluded from reporting.' },
+      { kind: 'list', heading: 'Preparation for flight', items: ['Rigging errors; glider incorrectly configured for flight'] },
+      { kind: 'list', heading: 'Technical', items: ['An aircraft component broke or did not operate correctly'] },
+      { kind: 'list', heading: 'Launch failures', items: ['Unusual failures; for instance glider on winch launch hits its own cable, frequent cable/launch equipment failures,'] },
+      { kind: 'list', heading: 'In flight', items: ['Inadvertent stall/spin, near collision with glider or other aircraft, undershot airfield, uncontrolled or heavy landing, exceeded VNE, airbrake/undercarriage control confusion, lost above cloud, unusual weather/canopy misting, death from natural causes in a 2-seat glider'] },
+      { kind: 'list', heading: 'On ground', items: [
+        'Winch cable dropping outside the airfield',
+        'Un-supervised canopy left open',
+        'Un-supervised glider improperly parked',
+        'Inadequate DI',
+        'Potential collision taking off or landing',
+        'Hazardous circuit or approach',
+        'Poor handling',
+        'Ground-loop without damage',
+        'Poor parking/ ground collision risk',
+        'Hangar rash',
+        'Pedestrians on the airfield',
+        'Out of date or incomplete paperwork',
+        'Airmanship issues',
+      ] },
+    ],
+  },
+];
+
 export type ClmBulletin = { kind: string; title: string; when: string; href: string };
 
 /** What the Chief Launch Marshal says about running the airfield. */
@@ -70,5 +143,5 @@ export const clmBulletins: ClmBulletin[] = [
   { kind: "Notice", title: "Preventing Hangar Rash", when: "Feb 2019", href: "https://www.dlgc.org.uk/members/pdfs/CLM%20Prevent%20Hangar%20Rash%20February%202019.pdf" },
 ];
 
-export const cfiNoticesSource = 'https://www.dlgc.org.uk/members/CFI_Notices.asp';
+export const cfiNoticesSource = 'https://www.dlgc.org.uk/members/cfis_notices_new.asp';
 export const clmNoticesSource = 'https://www.dlgc.org.uk/members/CLM_Notices.asp';

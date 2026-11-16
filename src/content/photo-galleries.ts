@@ -23,8 +23,8 @@ export const photoGalleries: PhotoGallery[] = [
   {
     name: 'First (and re-) solos',
     blurb: 'The handshake photograph, every time somebody goes solo at Camphill. The best thing on the old site.',
-    count: 118,
-    href: `${OLD}/galleries/solos/Solos(118).htm`,
+    count: 123,
+    href: `${OLD}/galleries/solos/Solos(123).htm`,
   },
   {
     name: 'Snippets',

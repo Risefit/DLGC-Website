@@ -17,10 +17,10 @@ export const manualGroups: ManualGroup[] = [
     group: 'Main manuals',
     blurb: 'The five that govern how we operate. Read the Pilots Manual at least once.',
     manuals: [
-      { title: 'Pilots Manual', note: 'November 2025', href: `${M}/Pilots%20Manual%20Nov%202025.pdf` },
+      { title: 'Pilots Manual', note: 'August 2026', href: `${M}/Pilots%20Manual%20Aug%202026.pdf` },
       { title: 'Winch Operating Manual', note: '2024', href: `${M}/Winch%20Operating%20Manual_2024.pdf` },
       { title: 'Ground Training Manual', note: 'Amended June 2025', href: `${M}/DLGC%20GTM%20-%20080623,%20Amended%20030625.pdf` },
-      { title: 'Launch Marshals Manual', note: 'V5.8, March 2026', href: `${M}/Launch%20Marshal%20Manual%20V5.8%20Mar%202026.pdf` },
+      { title: 'Launch Marshals Manual', note: 'V5.9, August 2026', href: `${M}/Launch%20Marshal%20Manual%20V5.9%20Aug%202026_.pdf` },
       { title: 'Student Pilots Guide', note: 'v9.02 final', href: `${M}/Student%20Pilots%20Guide%20v9.02%20Final.pdf` },
     ],
   },

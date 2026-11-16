@@ -256,19 +256,13 @@ export type CalendarEvent = {
 };
 
 export const calendar: { month: string; events: CalendarEvent[] }[] = [
-  { month: 'August 2026', events: [
-    { when: 'Mon 10 – Fri 14', what: 'Public Course', kind: 'course' },
-    { when: 'Fri 14, 18:30', what: 'Committee Meeting (Zoom) — or TBC 19:30 face-to-face at Camphill', kind: 'committee' },
-    { when: 'Sat 15 – Mon 17', what: 'Duke of Edinburgh Camping', kind: 'social' },
-    { when: 'Sun 23 – Fri 28', what: 'HCAP Course', kind: 'course' },
-    { when: 'Mon 31', what: 'Sheffield Venture Scouts Flying Day', kind: 'social' },
+  // As the old site's Calendar page stood on 16 November 2026 (it says "last updated 20 Oct 2026").
+  { month: 'October 2026', events: [
+    { when: 'Sat 17, 19:00', what: 'Instructors Meeting', kind: 'committee' },
+    { when: 'Fri 23, 19:00', what: 'Committee Meeting (Zoom)', kind: 'committee' },
   ]},
-  { month: 'September 2026', events: [
-    { when: 'Fri 11', what: 'Summer Season — last day', kind: 'season' },
-    { when: 'Fri 11, 19:00', what: 'Committee Meeting (face-to-face at Camphill) — Flying Staff End of Season Reports', kind: 'committee' },
-  ]},
-  { month: 'October 2026', events: [{ when: 'Fri 23, 19:00', what: 'Committee Meeting (Zoom)', kind: 'committee' }] },
   { month: 'November 2026', events: [{ when: 'Fri 20, 19:00', what: 'Committee Meeting (face-to-face at Camphill)', kind: 'committee' }] },
+  { month: 'December 2026', events: [{ when: 'Sat 5, 19:00', what: 'Christmas Dinner — bar from 18:00', kind: 'social' }] },
   { month: 'January 2027', events: [{ when: 'Fri 15, 19:00', what: 'Committee Meeting (Zoom)', kind: 'committee' }] },
   { month: 'February 2027', events: [{ when: 'Sat 13, 17:00', what: 'Annual General Meeting', kind: 'committee' }] },
 ];

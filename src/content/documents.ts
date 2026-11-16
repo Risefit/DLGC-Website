@@ -99,7 +99,7 @@ const curated: Doc[] = [
   { id: 'airfield-condition', title: 'Airfield Condition Notice — deep holes, north rough patch', category: 'Operational Notices', tier: 'live', audience: ['All members'], href: `${OLD}/links-library.asp`, note: 'Notice from Belle Tyler, July 2026. Affects long landings to the north.', version: 'July 2026', format: 'PDF' },
 
   // ── REFERENCE: Manuals ──────────────────────────────────────────────────
-  { id: 'man-pilots', title: 'Pilots Manual', category: 'Manuals', tier: 'reference', audience: ['All members'], href: `${OLD}/manuals/Pilots%20Manual%20Nov%202025.pdf`, note: 'The core operational manual for flying at Camphill.', version: 'November 2025', owner: 'CFI', reviewDue: '2026-11-30', format: 'PDF' },
+  { id: 'man-pilots', title: 'Pilots Manual', category: 'Manuals', tier: 'reference', audience: ['All members'], href: `${OLD}/manuals/Pilots%20Manual%20Aug%202026.pdf`, note: 'The core operational manual for flying at Camphill.', version: 'August 2026', owner: 'CFI', reviewDue: '2026-11-30', format: 'PDF' },
   { id: 'man-winch', title: 'Winch Operating Manual', category: 'Manuals', tier: 'reference', audience: ['Winch drivers', 'Instructors'], href: `${OLD}/manuals/Winch%20Operating%20Manual_2024.pdf`, version: '2024', owner: 'Winch Master', format: 'PDF' },
   { id: 'man-ground', title: 'Ground Training Manual', category: 'Manuals', tier: 'reference', audience: ['Students', 'Instructors'], href: `${OLD}/manuals_webpage.asp`, format: 'PDF' },
   { id: 'man-launch', title: 'Launch Marshals Manual', category: 'Manuals', tier: 'reference', audience: ['Launch marshals'], href: `${OLD}/manuals_webpage.asp`, format: 'PDF' },

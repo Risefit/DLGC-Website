@@ -28,8 +28,8 @@ export const airspaceIntro = [
 export const loaDocs: AirspaceDoc[] = [
   {
     title: 'LoA for the Wave Box and Airway Crossing',
-    note: 'The full formal Letter of Agreement',
-    href: `${A}/Scottish-BGA-DLGC%20LoA%20Rev.pdf`,
+    note: 'The full formal Letter of Agreement, reissued 7 November 2026',
+    href: `${A}/Scottish-BGA-DLGC%20LoA%20071126.pdf`,
   },
   {
     title: 'LoA for East Midlands',

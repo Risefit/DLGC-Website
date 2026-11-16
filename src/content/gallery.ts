@@ -1389,6 +1389,26 @@ export const albums: Album[] = [
   "span": "",
   "photos": [
    {
+    "src": "/legacy/members/photos/Peter%20Smith%20Solo.jpg",
+    "name": "Peter Smith Solo",
+    "bytes": 37808
+   },
+   {
+    "src": "/legacy/members/photos/Ollie%20Gregory%20Solo.jpg",
+    "name": "Ollie Gregory Solo",
+    "bytes": 62511
+   },
+   {
+    "src": "/legacy/members/photos/Coilin%20Fray%20Solo.jpg",
+    "name": "Colin Fray Solo",
+    "bytes": 44103
+   },
+   {
+    "src": "/legacy/members/photos/Sophiie%20Gairdner%20Solo.jpg",
+    "name": "Sophie Gairdner Solo",
+    "bytes": 47232
+   },
+   {
     "src": "/legacy/members/photos/AChappellSolo.jpg",
     "name": "AChappell Solo",
     "bytes": 77121
@@ -2705,6 +2725,11 @@ export const albums: Album[] = [
   "title": "Members",
   "span": "",
   "photos": [
+   {
+    "src": "/legacy/members/photos/Syed%20Hasan%20and%20Stuart%20Dodson.jpg",
+    "name": "Syed Hasan and Stuart Dodson — first training flight, first instructing flight",
+    "bytes": 472279
+   },
    {
     "src": "/legacy/members/clip_image002.jpg",
     "name": "Clip image002",

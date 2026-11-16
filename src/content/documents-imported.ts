@@ -2,6 +2,7 @@
  * IMPORTED DOCUMENT MANIFEST — generated from the old site's full mirror.
  *
  * 571 documents recovered from dlgc.org.uk/members (mirror taken 17 Aug 2026),
+ * plus 16 published there between then and 16 Nov 2026 (added by hand),
  * deduplicated across the dlgc.org.uk and www.dlgc.org.uk copies. Nothing was
  * discarded — every file the old site held appears here exactly once.
  *
@@ -24,6 +25,23 @@
 import type { Doc } from './documents';
 
 export const importedDocuments: (Doc & { bytes?: number; series?: string })[] = [
+  // ── Added 16 November 2026: files published on the old site since the August mirror ──
+  { id: 'minutes-2026-10-p-pdf', title: 'Committee Minutes — October 2026 ((P))', category: 'Minutes & AGM', tier: 'reference', audience: ['All members'], href: '/legacy/members/minutes/2026_10%28P%29.pdf', series: 'Committee Meeting Minutes', version: '2026', format: 'PDF', bytes: 267297 },
+  { id: 'minutes-2026-09-pdf', title: 'Committee Minutes — September 2026', category: 'Minutes & AGM', tier: 'reference', audience: ['All members'], href: '/legacy/members/minutes/2026_09.pdf', series: 'Committee Meeting Minutes', version: '2026', format: 'PDF', bytes: 282108 },
+  { id: 'instrct-mtgs-instructors-2026-10-oct-pdf', title: 'Instructors Meeting Minutes — October 2026', category: 'Minutes & AGM', tier: 'archive', audience: ['Instructors'], href: '/legacy/members/instrct-mtgs/Instructors%202026_10%20%28Oct%29.pdf', series: 'Instructors Meeting Minutes', version: '2026', format: 'PDF', bytes: 195433 },
+  { id: 'airspace-scottish-bga-dlgc-loa-071126-pdf', title: 'Scottish-BGA-DLGC LoA 7 November 2026', category: 'Operational Notices', tier: 'reference', audience: ['Solo pilots'], href: '/legacy/members/airspace/Scottish-BGA-DLGC%20LoA%20071126.pdf', series: 'Airspace Notices', note: 'The current Letter of Agreement for the Wave Box and airway crossing.', version: '2026', format: 'PDF', bytes: 545135 },
+  { id: 'manuals-pilots-manual-aug-2026-pdf', title: 'Pilots Manual Aug 2026', category: 'Manuals', tier: 'reference', audience: ['All members'], href: '/legacy/members/manuals/Pilots%20Manual%20Aug%202026.pdf', series: 'Club Manuals', version: '2026', format: 'PDF', bytes: 1061102 },
+  { id: 'manuals-launch-marshal-manual-v5-9-aug-2026-pdf', title: 'Launch Marshal Manual V5.9 Aug 2026', category: 'Manuals', tier: 'reference', audience: ['Launch marshals'], href: '/legacy/members/manuals/Launch%20Marshal%20Manual%20V5.9%20Aug%202026_.pdf', series: 'Club Manuals', version: '2026', format: 'PDF', bytes: 489725 },
+  { id: 'pdfs-dlgc-spl-passenger-carrying-policy-pdf', title: 'DLGC SPL Passenger Carrying Policy', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/pdfs/DLGC%20SPL%20Passenger%20Carrying%20Policy.pdf', version: '2026', format: 'PDF', bytes: 92754 },
+  { id: 'pdfs-dlgc-passenger-carrying-training-record-pdf', title: 'DLGC Passenger Carrying training record', category: 'Flight Training', tier: 'reference', audience: ['Solo pilots', 'Instructors'], href: '/legacy/members/pdfs/DLGC%20Passenger%20Carrying%20training%20record.pdf', version: '2026', format: 'PDF', bytes: 152563 },
+  { id: 'pdfs-dlgc-medical-procedure-v2-2-pdf', title: 'DLGC Medical procedure V2.2', category: 'Medicals', tier: 'reference', audience: ['All members'], href: '/legacy/members/pdfs/DLGC%20Medical%20procedure%20V2.2.pdf', format: 'PDF', bytes: 200039 },
+  { id: 'pdfs-dlgc-health-and-safety-policy-v5-jan2026-pdf', title: 'DLGC Health and Safety Policy V5 Jan2026', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/pdfs/DLGC%20Health%20and%20Safety%20Policy%20V5%20Jan2026.pdf', version: '2026', format: 'PDF', bytes: 376675 },
+  { id: 'pdfs-dp-policy-v4-august-2026-pdf', title: 'Data Protection Policy V4 August 2026', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/pdfs/DP%20Policy%20V4%20August%202026.pdf', version: '2026', format: 'PDF', bytes: 118473 },
+  { id: 'pdfs-fi-s-matrix-29-9-2026-pdf', title: 'FI(S) Matrix 29.9.2026', category: 'Administrative', tier: 'reference', audience: ['All members'], href: '/legacy/members/pdfs/FI%28S%29%20Matrix%2029.9.2026.pdf', version: '2026', format: 'PDF', bytes: 251488 },
+  { id: 'pdfs-august-2026-club-update-pdf', title: 'August 2026 Club Update', category: 'Administrative', tier: 'live', audience: ['All members'], href: '/legacy/members/pdfs/August%202026%20Club%20Update.pdf', note: 'From the Chairman.', version: '2026', format: 'PDF', bytes: 122590 },
+  { id: 'lists-26q4-instructors-rota-pdf', title: '26Q4 Instructors Rota', category: 'Operational Notices', tier: 'live', audience: ['All members'], href: '/legacy/members/lists/26Q4%20Instructors%20Rota.pdf', series: 'Duty Rotas', note: 'Duty rota.', version: '2026', format: 'PDF', bytes: 196003 },
+  { id: 'lists-26q4-ground-crew-rota-pdf', title: '26Q4 Ground Crew Rota', category: 'Operational Notices', tier: 'live', audience: ['All members'], href: '/legacy/members/lists/26Q4%20Ground%20Crew%20Rota.pdf', series: 'Duty Rotas', note: 'Duty rota.', version: '2026', format: 'PDF', bytes: 217263 },
+  { id: 'trainingdocs-spl-theory-briefings-schedule-for-2026-q4-pdf', title: 'SPL Theory Briefings - Schedule for 2026 Q4', category: 'Flight Training', tier: 'reference', audience: ['Students', 'Instructors'], href: '/legacy/members/trainingdocs/SPL%20Theory%20Briefings%20-%20Schedule%20for%202026%20Q4.pdf', series: 'Training Documents', version: '2026', format: 'PDF', bytes: 72479 },
   { id: 'pdfs-reciprocal-membership-july-2026-pdf', title: 'Reciprocal Membership July 2026', category: 'Administrative', tier: 'live', audience: ['All members'], href: '/legacy/members/pdfs/Reciprocal%20Membership%20July%202026.pdf', version: '2026', format: 'PDF', bytes: 97210 },
   { id: 'rally-rota-2026-pdf', title: 'Rota 2026', category: 'Administrative', tier: 'live', audience: ['All members'], href: '/legacy/members/rally/Rota%202026.pdf', version: '2026', format: 'PDF', bytes: 143901 },
   { id: 'pdfs-caravans-list-latest-pdf', title: 'Caravans List Latest', category: 'Administrative', tier: 'live', audience: ['All members'], href: '/legacy/members/pdfs/Caravans%20List%20Latest.pdf', format: 'PDF', bytes: 128788 },
