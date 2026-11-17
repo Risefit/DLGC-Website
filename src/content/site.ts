@@ -36,6 +36,12 @@ export const contacts = {
   office: { tel: '01298 871270', email: 'dlgc@glidingclub.org.uk' },
   /** Safety occurrence reports go here, not to the website editor. */
   safetyOfficer: { name: 'Bob Bollom', email: 'rsbollom@gmail.com' },
+  /**
+   * Who else is sent every safety report, by name. The form tells the member,
+   * because they are entitled to know who will read what they write. Their
+   * addresses are NOT here — see src/lib/safety-mail.ts.
+   */
+  safetyReportsAlso: ['Alex Sariban'],
   /** The website editor — blog stories, gallery photographs, adverts. */
   websiteEditor: { name: 'Bob Bollom', email: 'rsbollom@gmail.com' },
   officeHours:

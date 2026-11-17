@@ -100,6 +100,7 @@ export default function SafetyPage() {
         <SafetyReportForm
           safetyOfficerEmail={contacts.safetyOfficer.email}
           safetyOfficerName={contacts.safetyOfficer.name}
+          alsoTo={contacts.safetyReportsAlso}
         />
       </section>
 

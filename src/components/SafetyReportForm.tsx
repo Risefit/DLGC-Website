@@ -65,9 +65,12 @@ const WHERE = [
 export default function SafetyReportForm({
   safetyOfficerEmail,
   safetyOfficerName,
+  alsoTo = [],
 }: {
   safetyOfficerEmail: string;
   safetyOfficerName?: string;
+  /** Names of anyone else who is sent every report. Shown, so the member knows who will read it. */
+  alsoTo?: string[];
 }) {
   const [anonymous, setAnonymous] = useState(false);
   const [risk, setRisk] = useState<{ l: number; c: number } | null>(null);
@@ -142,8 +145,9 @@ export default function SafetyReportForm({
         </p>
         <p className="mt-2 text-sm text-ink/70">
           Goes to {safetyOfficerName ? `${safetyOfficerName}, ` : ''}the Safety Officer
-          {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link text-skyDark">{safetyOfficerEmail}</a>).
-          Not published, and not seen by the website editor.
+          {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link text-skyDark">{safetyOfficerEmail}</a>)
+          {alsoTo.length > 0 && <>, and to {alsoTo.join(' and ')}</>}. Not published, and not seen by
+          the website editor.
         </p>
       </div>
 
@@ -386,8 +390,9 @@ export default function SafetyReportForm({
           {state === 'sending' ? 'Sending…' : 'Send to the Safety Officer'}
         </button>
         <p className="mt-3 max-w-prose2 text-xs text-slate2">
-          This goes to the Safety Officer. It is not published. If it needs to become a Safety
-          Lessons Log entry, they will write it up with identifying detail removed.
+          This goes to the Safety Officer{alsoTo.length > 0 && <> and {alsoTo.join(' and ')}</>}. It is
+          not published. If it needs to become a Safety Lessons Log entry, they will write it up
+          with identifying detail removed.
         </p>
       </div>
     </form>

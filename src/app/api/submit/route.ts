@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { safetyRecipients } from '@/lib/safety-mail';
 
 /**
  * MEMBER SUBMISSIONS — flying blog stories, gallery photographs, classified
@@ -27,7 +28,8 @@ import { createClient } from '@supabase/supabase-js';
  *   SUPABASE_SERVICE_ROLE_KEY   — Settings → API → service_role
  *
  * OPTIONAL, for emailing safety reports on as well as storing them:
- *   SAFETY_OFFICER_EMAIL        — where safety reports are sent
+ *   SAFETY_OFFICER_EMAIL        — who safety reports are emailed to. One address,
+ *                                 or several separated by commas
  *   RESEND_API_KEY              — any Resend account; free tier is ample
  *   MAIL_FROM                   — a verified sender, e.g. portal@dlgc.org.uk
  * Without these the report is still stored and the member is told it reached
@@ -42,6 +44,28 @@ export const runtime = 'nodejs';
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+/**
+ * IS IT SWITCHED ON? — open /api/submit in a browser.
+ *
+ * Says only whether each piece is configured and how many people safety
+ * reports are emailed to. It never shows an address or a key. Without it the
+ * only way to find out that emails were not being sent was for a report to go
+ * unanswered.
+ */
+export async function GET() {
+  const recipients = safetyRecipients(process.env.SAFETY_OFFICER_EMAIL);
+  const mail = Boolean(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
+  return NextResponse.json(
+    {
+      submissionsStored: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+      safetyReportsEmailed: mail && recipients.length > 0,
+      safetyReportRecipients: recipients.length,
+      mailServiceConfigured: mail,
+    },
+    { headers: { 'Cache-Control': 'no-store' } },
+  );
+}
 
 export async function POST(request: Request) {
   const url = process.env.SUPABASE_URL;
@@ -195,10 +219,11 @@ async function emailSafetyOfficer(r: {
   name: string;
   email: string;
 }) {
-  const to = process.env.SAFETY_OFFICER_EMAIL;
+  // Everyone named in the setting gets the same email (src/lib/safety-mail.ts).
+  const to = safetyRecipients(process.env.SAFETY_OFFICER_EMAIL);
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.MAIL_FROM;
-  if (!to || !apiKey || !from) return;
+  if (to.length === 0 || !apiKey || !from) return;
 
   const lines = [
     `Reported by: ${r.anonymous ? 'ANONYMOUS' : `${r.name} <${r.email}>`}`,

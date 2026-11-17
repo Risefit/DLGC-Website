@@ -277,9 +277,18 @@ stores nulls. Do not add IP logging, fingerprinting or anything else that could 
 reporter — the club's reporting culture, and therefore the Safety Lessons Log, depends on
 that being true in practice.
 
-To email reports on as well as storing them, set `SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY`
-and `MAIL_FROM` in Vercel. Without them the report is still stored, and the member is still
-told it arrived — it never fails silently.
+**Who is emailed.** Reports are always stored (Supabase → `submissions`). They are also
+emailed when three settings exist in Vercel: `SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY` and
+`MAIL_FROM`. `SAFETY_OFFICER_EMAIL` takes one address or several separated by commas —
+that is how a second person (Alex Sariban, from November 2026) receives every report. The
+addresses are people's own, so they live in that setting and **not in this repository**.
+The names of everyone who receives reports are shown on the form
+(`contacts.safetyOfficer` and `contacts.safetyReportsAlso` in `site.ts`); keep the names
+and the setting in step.
+
+Open `/api/submit` in a browser to see whether storing and emailing are switched on and how
+many people are emailed. It shows no addresses or keys. **Until the three settings exist
+nobody is emailed at all** — the report waits in Supabase for someone to look.
 
 ### Change social channels, the Safety Spot, or the charities
 All in `src/content/community.ts`.
@@ -629,8 +638,9 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] Convert duty rotas from quarterly PDFs into a real roster view
 - [ ] Set `WEBCAM_SNAPSHOT_URL` in Vercel so the camera works through the proxy — and change
       the password on the camera first, it is currently `dlgc` and has been public for years
-- [ ] Optional: `SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY` and `MAIL_FROM` so safety reports
-      are emailed as well as stored
+- [ ] **`SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY` and `MAIL_FROM` in Vercel** so safety reports
+      are emailed (to the Safety Officer and Alex Sariban) as well as stored. Check at
+      `/api/submit`
 - [ ] Register the club numbers with WhatsApp Business, or the WhatsApp buttons on the
       Directory will report the number is not on WhatsApp (all three are landlines)
 - [x] `supabase/migrations/002_submission_details.sql` — applied 18 August 2026
