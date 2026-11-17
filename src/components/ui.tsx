@@ -320,9 +320,16 @@ export function Figures({
           {it.note &&
             (it.href ? (
               <dd className="mt-1.5 text-sm">
-                <Link href={it.href} className="text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white">
-                  {it.note}
-                </Link>
+                {it.href.startsWith('/') || it.href.startsWith('#') ? (
+                  <Link href={it.href} className="text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                    {it.note}
+                  </Link>
+                ) : (
+                  /* an email address, say — not something next/link should handle */
+                  <a href={it.href} className="text-white/85 underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                    {it.note}
+                  </a>
+                )}
               </dd>
             ) : (
               <dd className="mt-1.5 text-sm text-white/85">{it.note}</dd>

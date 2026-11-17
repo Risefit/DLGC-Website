@@ -131,6 +131,7 @@ export default function RosterPage() {
       )}
 
       <Section
+        id="winch-drivers"
         title="Solo winch drivers"
         description="Members qualified to winch solo, most recent first. If you want to join them, talk to the Winch Master."
       >

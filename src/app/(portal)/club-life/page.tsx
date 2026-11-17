@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Band, BandPhoto, Figures, Section, ActionTile, icons } from '@/components/ui';
 import { roles, vacantRoles } from '@/content/roles';
+import { volunteerMailto } from '@/content/committee';
 import { news } from '@/content/news';
 import { clubPages, clubPageGroups } from '@/content/club-life';
 import { adverts, isAdvertExpired } from '@/content/adverts';
@@ -62,7 +63,8 @@ export default function ClubLifePage() {
                   vacantRoles.length > 0
                     ? `${vacantRoles.length} vacant — could one be yours?`
                     : 'Who does what',
-                href: '/directory#roles',
+                // With vacancies, the link is an email to the committee naming them.
+                href: vacantRoles.length > 0 ? volunteerMailto(vacantRoles.map((r) => r.role)) : '/directory#roles',
               },
             ]}
           />

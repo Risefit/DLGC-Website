@@ -77,5 +77,4 @@ export const vacantRoles = roles.filter((r) => r.holders.some((h) => /vacant/i.t
 
 export const rolesSource = 'https://www.dlgc.org.uk/members/job&roles.asp';
 
-/** Committee roles are maintained separately, as they were on the old site. */
-export const committeeSource = 'https://www.dlgc.org.uk/members/committee2026.2.asp';
+/** Committee roles are maintained separately: src/content/committee.ts, shown at /directory/committee. */

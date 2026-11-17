@@ -3,11 +3,13 @@ import Nav from '@/components/Nav';
 import ClubNumbers from '@/components/ClubNumbers';
 import { contacts, club } from '@/content/site';
 import SocialButtons from '@/components/SocialButtons';
+import MembersAdminTab from '@/components/MembersAdminTab';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col overflow-x-clip">
       <Nav />
+      <MembersAdminTab />
 
 
       <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 lg:py-10">

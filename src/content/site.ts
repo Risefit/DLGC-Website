@@ -13,32 +13,22 @@ export const club = {
   bga: 'https://www.gliding.co.uk/',
   bgaLadder: 'https://bgaladder.net/',
   /**
-   * The live met station page. `met_page.asp` was wrong — that is the old site's
-   * index of weather links, not the station itself.
-   */
-  weatherStation: 'https://dlgc.org.uk/members/metstation.html',
-  /**
-   * The club's Davis weather station, via WeatherLink's public embeddable page
-   * — the same feed metstation.html frames. No credentials, so it can be shown
-   * inside the portal instead of bouncing members to the old site.
+   * The club's Davis weather station, via WeatherLink's public embeddable page.
+   * No credentials, so it is shown inside the portal. The wind compass and the
+   * 24-hour trends are a second feed from the same station: see
+   * src/components/WindPanel.tsx and public/embed/weather-hub.html. Between
+   * them they are everything the old metstation.html showed.
    */
   weatherStationEmbed:
     'https://www.weatherlink.com/embeddablePage/show/8afbe67f6cb640b488cf7d1c06487900/wide',
   /**
-   * What the station page says about itself, and what to scroll for. From
-   * metstation.html — the widget is the same one, but the old page's framing
-   * text is the bit that tells you the trends are further down the panel.
-   */
-  weatherStationNote:
-    'Data from the DSC/DLGC weather station on West Edge. Scroll inside the panel for trends of average wind speed, gusts and wind direction; the other readings are at the lower left.',
-  /**
    * SECURITY: the old site's direct webcam URL embeds a shared username and
    * password in clear text over unencrypted HTTP. That must not be committed to
-   * this repository, which is why this points at the met station page instead.
-   * Once the club rotates the camera credential and puts it behind HTTPS, point
-   * this at the real stream.
+   * this repository. The camera shows inside the portal once
+   * WEBCAM_SNAPSHOT_URL is set in Vercel (src/app/api/webcam/route.ts); until
+   * then the weather page offers the old site's camera page instead.
    */
-  webcam: 'https://dlgc.org.uk/members/metstation.html',
+  webcam: 'https://www.dlgc.org.uk/members/camera.asp',
 };
 
 export const contacts = {
@@ -75,6 +65,13 @@ export const whatsappNumber = (tel: string): string =>
   '44' + tel.replace(/[^\d]/g, '').replace(/^0/, '');
 
 export const whatsappHref = (tel: string): string => `https://wa.me/${whatsappNumber(tel)}`;
+
+/**
+ * A UK mobile number (07…). WhatsApp belongs beside a mobile; a landline can
+ * only take a WhatsApp message if it has been registered with WhatsApp
+ * Business, and an emergency number never gets one.
+ */
+export const isMobile = (tel: string): boolean => /^(?:\+?44|0)7\d{9}$/.test(tel.replace(/[^\d+]/g, ''));
 
 export const telHref = (tel: string): string => `tel:${tel.replace(/\s/g, '')}`;
 
@@ -146,7 +143,7 @@ export const weatherGroups: { group: string; blurb: string; links: WeatherLink[]
     group: 'Observations and webcams',
     blurb: 'What is happening right now, rather than what is forecast.',
     links: [
-      { name: 'Camphill weather station', source: 'DLGC', href: 'https://www.dlgc.org.uk/members/metstation.html', note: 'The club\u2019s own Davis station — current observations plus 24 hours of wind averages. Also embedded at the top of this page.' },
+      // The club's own station is at the top of the weather page itself, so it is not listed here.
       { name: 'Bradwell webcam', source: 'Derbyshire Soaring Club', href: 'https://derbyshiresoaringclub.org.uk/brad-cam/', note: 'Looking at the Bradwell slope, four miles north-east. A useful second opinion on the hill cloud.' },
       { name: 'Cloud cover', source: 'Sat24', href: 'https://en.sat24.com/en/gb/visual', note: 'Satellite cloud video for the last 90 minutes. Visible for UK and Ireland, or infra-red for Europe.' },
       { name: 'Rainfall radar', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/maps-and-charts/rainfall-radar-forecast-map', note: 'Precipitation of any kind and intensity, centred on the Peak District.' },

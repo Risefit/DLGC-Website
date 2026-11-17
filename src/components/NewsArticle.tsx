@@ -1,5 +1,10 @@
 import type { NewsItem } from '@/content/news';
+import Link from 'next/link';
 import { Badge } from '@/components/ui';
+import { isPortalPage } from '@/lib/files';
+
+const linkClass =
+  'tap inline-flex max-w-full items-center gap-2 break-words rounded-lg border-2 border-skyLine bg-skyTint px-3.5 py-2 text-left text-sm font-semibold text-navy transition-colors hover:border-sky';
 
 /**
  * PRESERVED FROM THE OLD SITE: the house style — dated, attributed, warm and
@@ -34,21 +39,24 @@ export default function NewsArticle({ item }: { item: NewsItem }) {
         <ul className="mt-4 flex flex-wrap gap-2">
           {item.links.map((l, i) => (
             <li key={`${l.href}-${i}`} className="min-w-0 max-w-full">
-              <a
-                href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tap inline-flex max-w-full items-center gap-2 break-words rounded-lg border-2
-                           border-skyLine bg-skyTint px-3.5 py-2 text-left text-sm font-semibold
-                           text-navy transition-colors hover:border-sky"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-                  <rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="2" />
-                  <path d="M3 15l5-4 4 3 3-2 6 4" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                </svg>
-                <span className="min-w-0 break-words">{l.label}</span>
-                <span className="sr-only">(opens in a new tab)</span>
-              </a>
+              {isPortalPage(l.href) ? (
+                // Something that lives in the portal now: open it here.
+                <Link href={l.href} className={linkClass}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+                    <path d="M5 12h13m-5-5l5 5-5 5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="min-w-0 break-words">{l.label}</span>
+                </Link>
+              ) : (
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+                    <rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <path d="M3 15l5-4 4 3 3-2 6 4" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                  </svg>
+                  <span className="min-w-0 break-words">{l.label}</span>
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
+              )}
             </li>
           ))}
         </ul>

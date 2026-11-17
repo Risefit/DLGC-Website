@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camphill wind — live compass and 24-hour trends</title>
+<!--
+  THE WIND PANEL: compass, 24 hours of average wind and gusts, wind direction,
+  and the day's readings. It is the "weather hub" widget written for the
+  DSC/DLGC station on West Edge, the same one the old metstation.html showed.
+
+  This file is deliberately a page of its own. The portal shows it inside a
+  SANDBOXED frame (src/components/WindPanel.tsx), so the widget's script, which
+  the club does not control, cannot read anything belonging to the portal: not
+  the page, not a member's sign-in. Do not move this script into a portal page.
+
+  The long code below is the station's id. It identifies the station; it is not
+  a password.
+-->
+<style>
+  html, body { margin: 0; background: #fff; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  #weather-widget { margin: 0 auto; }
+  /* The widget lays itself out from the SHAPE of its frame: taller than wide
+     and it stacks compass, charts and readings in one column; wider than tall
+     and it puts the compass beside the charts. The portal picks the shape
+     (WindPanel.tsx) and says which with ?layout=stacked, so the column can be
+     held to a readable width instead of filling a tablet. */
+  .stacked #weather-widget { max-width: 480px; }
+  #unsupported { display: none; padding: 16px; color: #33485A; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="weather-widget"></div>
+<p id="unsupported">The wind panel could not be loaded. Try again in a moment.</p>
+<script src="https://dsc-weather.i-clients.co.uk/widgets/weather-hub-widget.js"></script>
+<script>
+  (function () {
+    if (/[?&]layout=stacked\b/.test(location.search)) document.documentElement.className = 'stacked';
+    function tellParent() {
+      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      parent.postMessage({ kind: 'dlgc-wind-panel', height: h }, '*');
+    }
+    try {
+      new weatherHub.WeatherHubWidget(
+        'https://dsc-weather.i-clients.co.uk',
+        '30D5F2BB-D444-4FDE-9C0A-97AD88C95CE0',
+        document.getElementById('weather-widget'),
+        {
+          primaryColor: '#1F6FA8',   /* average wind — the portal's sky blue */
+          secondaryColor: '#B45309', /* gusts */
+          labelColor: '#33485A',
+          windUnits: 'kts',
+          temperatureUnits: 'C'
+        }
+      );
+    } catch (e) {
+      document.getElementById('unsupported').style.display = 'block';
+    }
+    if (window.ResizeObserver) new ResizeObserver(tellParent).observe(document.documentElement);
+    window.addEventListener('load', tellParent);
+    setInterval(tellParent, 2000);
+  })();
+</script>
+</body>
+</html>

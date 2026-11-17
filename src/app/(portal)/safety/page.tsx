@@ -112,13 +112,13 @@ export default function SafetyPage() {
               <li key={r.href}>
                 <a
                   href={r.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={isPortalPage(r.href) ? undefined : '_blank'}
+                  rel={isPortalPage(r.href) ? undefined : 'noopener noreferrer'}
                   className="block px-5 py-4 transition-colors hover:bg-sky50"
                 >
                   <span className="font-medium text-navy">{r.title}</span>
                   {r.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{r.note}</span>}
-                  <span className="sr-only">(opens in a new tab)</span>
+                  {!isPortalPage(r.href) && <span className="sr-only">(opens in a new tab)</span>}
                 </a>
               </li>
             ))}
@@ -159,13 +159,13 @@ export default function SafetyPage() {
             <a
               key={x.href}
               href={x.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={isPortalPage(x.href) ? undefined : '_blank'}
+              rel={isPortalPage(x.href) ? undefined : 'noopener noreferrer'}
               className="card-interactive flex flex-col p-5"
             >
               <span className="font-semibold text-navy">{x.title}</span>
               <span className="mt-1 text-sm text-inkMuted">{x.note}</span>
-              <span className="sr-only">(opens in a new tab)</span>
+              {!isPortalPage(x.href) && <span className="sr-only">(opens in a new tab)</span>}
             </a>
           ))}
         </div>

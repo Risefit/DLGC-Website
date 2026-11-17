@@ -326,7 +326,7 @@ export const clubPages: ClubPage[] = portalise([
     ],
     source: `${OLD}/trophies%202025.asp`,
   },
-]);
+], { pages: false });
 
 export const clubPageGroups: ClubPage['group'][] = ['Groups and events', 'Competition', 'Read'];
 

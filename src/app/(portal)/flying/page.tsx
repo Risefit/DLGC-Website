@@ -92,6 +92,7 @@ export default function FlyingPage() {
 
       {/* Ported from the old manuals_webpage.asp, in the club's own three groups. */}
       <BandSection
+        id="manuals"
         tone="contour"
         title={
           <>

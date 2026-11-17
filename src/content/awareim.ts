@@ -4,7 +4,8 @@
  * AwareIM is administered by Mo Bent, is his proprietary product, and holds
  * personnel and financial data in its own authenticated database. This portal
  * links to it and nothing more: no shared session, no shared database, no data
- * exchange in either direction. Every link opens in a new tab.
+ * exchange in either direction. Its links open in one Members' Admin tab that
+ * is reused, so a member signs in once (src/components/MembersAdminTab.tsx).
  *
  * This portal NEVER collects an AwareIM username or password. A sign-in box
  * here would have to post credentials from our origin into Mo's session-based

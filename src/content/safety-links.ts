@@ -12,13 +12,14 @@
  */
 
 import { file } from './documents';
+import { portalise } from '@/lib/files';
 
 const OLD = 'https://www.dlgc.org.uk/members';
 
 export type SafetyResource = { title: string; note: string; href: string };
 export type SafetyGroup = { group: string; blurb: string; items: SafetyResource[] };
 
-export const safetyGroups: SafetyGroup[] = [
+export const safetyGroups: SafetyGroup[] = portalise([
   {
     group: 'Winch launching',
     blurb: 'Winch launching can be hazardous. With the right care and attention it is safe.',
@@ -128,7 +129,7 @@ export const safetyGroups: SafetyGroup[] = [
       { title: 'Safety Note 3.1 — June 2021', note: '', href: file('safety-safetynote-03-1-jun2021-pdf') },
     ],
   },
-];
+]);
 
 /**
  * BGA annual accident reviews, from the old page's long list. Newest first.
@@ -151,11 +152,11 @@ export const accidentReviews: { year: number; href: string }[] = [
 ];
 
 /** Soaring Society of America safety extracts, kept from the old page. */
-export const ssaExtracts = {
+export const ssaExtracts = portalise({
   title: 'Safety articles from a medic',
   note: 'A thought-provoking series, collected by the club.',
   href: `${OLD}/ssa_extracts.asp`,
-};
+});
 
 export const gasco = {
   title: 'GASCo Flight Safety Extra',

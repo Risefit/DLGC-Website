@@ -1,6 +1,6 @@
 import { PageHeader, Section, Callout } from '@/components/ui';
 import { adverts, advertRules, isAdvertExpired } from '@/content/adverts';
-import { contacts } from '@/content/site';
+import { contacts, whatsappHref, isMobile } from '@/content/site';
 import AdvertForm from '@/components/AdvertForm';
 
 export const metadata = { title: 'Buy and Sell' };
@@ -61,6 +61,20 @@ export default function BuyAndSellPage() {
                               <span key={t}>
                                 {' · '}
                                 <a href={`tel:${t.replace(/\s/g, '')}`} className="link">{t}</a>
+                                {isMobile(t) && (
+                                  <>
+                                    {' '}
+                                    <a
+                                      href={whatsappHref(t)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="font-semibold text-good underline decoration-good/40 underline-offset-2 hover:decoration-good"
+                                    >
+                                      WhatsApp
+                                      <span className="sr-only"> {a.contact!.name} (opens in a new tab)</span>
+                                    </a>
+                                  </>
+                                )}
                               </span>
                             ))}
                             {a.contact.email && (

@@ -33,9 +33,30 @@ data in its own authenticated database. **This portal links to it and does nothi
   page. A sign-in box here would have to post credentials from our origin into his session-based
   login — it would break the first time he changed anything, and it would teach members that
   typing their club password into a page that is not his is normal. Do not add one.
-- Every link opens in a new tab.
+- Its links open in **one** Members' Admin tab, which is reused (see "One tab, signed in once" below).
 - All AwareIM URLs live in **one file**: `src/content/awareim.ts`. If anything changes, that is the only edit.
 - If someone asks you to "integrate" or "pull data from" AwareIM, stop and check with the committee first. That decision has not been made.
+
+#### One tab, signed in once
+
+Members' Admin asks for a sign-in every time its logon address is loaded, even with another
+tab already signed in. The portal's buttons used to open that address in a new tab each
+time, so three buttons meant three sign-ins and three tabs.
+
+`src/components/MembersAdminTab.tsx` (mounted once, in the portal layout) changes only
+**which tab a link opens in**: the first button opens Members' Admin in a tab the portal
+remembers by name; every later button goes back to that same tab without reloading it, so
+the member is still signed in there. A short message at the foot of the page says so, in
+case the browser does not bring that tab to the front.
+
+- It does **not** sign anyone in, keep a session alive, or read anything from Members'
+  Admin. It cannot take a member to a particular screen either — that still needs Mo's
+  process names (next section).
+- A link that does land on its own screen (the airspace re-brief) is left alone, because
+  it has to load the logon address to work.
+- The remembered tab is opened without `noopener` — that is what lets the portal find it
+  again. This is the one deliberate exception to rule 8, for the club's own system only.
+- If a browser blocks it, the link behaves as it always did.
 
 #### Deep links — what was tried, and what is actually true
 
@@ -153,6 +174,25 @@ wrong part of the country. Verified against the live sites in August 2026; MetCh
 retired its per-crag link and Netweather its lightning page, and both were dealt with rather
 than left to rot. A forecast for the wrong area is worse than no link.
 
+### The weather page
+`/flying/weather` holds everything the station gives us, so nothing sends a member to the
+old site's `metstation.html`:
+
+- **Current conditions** — the Davis station's own WeatherLink panel (`club.weatherStationEmbed`
+  in `site.ts`).
+- **The camera** — through `/api/webcam`, once `WEBCAM_SNAPSHOT_URL` is set in Vercel. Until
+  then the card says so and links to the old site's camera page.
+- **Wind, live and over 24 hours** — `src/components/WindPanel.tsx`, which frames
+  `public/embed/weather-hub.html`. That page runs the station's "weather hub" widget, a
+  script the club does not control, so the frame is **sandboxed** (`sandbox="allow-scripts"`,
+  never `allow-same-origin`): the widget cannot read the portal or a member's sign-in.
+  **Never load that script into a portal page directly.**
+- The widget lays itself out from the shape of its frame. `WindPanel` gives it a wide frame
+  (compass beside the charts) only from 1000px of room, and a tall one (stacked) below that,
+  because side by side is unreadable on anything narrower.
+
+Then the forecast links, as before.
+
 ### Add or change a Club Life page
 `src/content/club-life.ts`. One entry per page — Vintage Rally, Silver Seekers, Junior
 Gliding, BGA Ladder, Blake Robertshaw, Inter-Club League, Trophies, Newsletters. Each has
@@ -200,6 +240,14 @@ the wrong system.
 `tools/parse-notices.mjs`). The CFI's notices are instructions, not advice — do not reword
 them, and if one contradicts another page of this site, the notice wins and the other page
 needs fixing.
+
+### The committee
+`/directory/committee`, from `src/content/committee.ts`: names and roles only, and the one
+shared address, `committee@glidingclub.org.uk`. Update it after each AGM. The roles are the
+club's own wording, working-party shorthand included; the footnote explains it.
+
+Every "Vacant — could this be you?" on the roles list, and the vacancy figure on Club Life,
+is an email to that address with the role already named (`volunteerMailto`).
 
 ### Roles and role holders
 Shown in full on the Directory page (`/directory#roles`); the old `/club-life/roles` address
@@ -259,6 +307,28 @@ an open publish button would lose it.
 Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
 email the editor instead — it never fails silently.
+
+### Links to the old site's pages
+Old news items and notices are full of links to the old site's pages. `OLD_PAGES` in
+`src/lib/files.ts` lists every old page that has a home in the portal; a link to one goes
+to the portal page instead, in the same tab, and a link whose only text was the old file
+name ("dutyrotas") is given a proper name. It happens when the content is loaded
+(`portalise`), so the news text itself is untouched.
+
+About eighty old pages have **no** home here yet and still open on the old site: the
+individual gallery pages (first-solo photographs, Snippets), the Blake Robertshaw task and
+turn-point pages, the Inter-Club League fixtures, the 2025 trophy winners, and a handful of
+one-offs. When one is brought across, add it to `OLD_PAGES` and every old link follows.
+
+The Club Life pages pass `{ pages: false }`: each links to its own old page on purpose, for
+the parts not brought across, and must not be pointed back at itself.
+
+### Phone numbers and WhatsApp
+WhatsApp goes beside a **mobile** number (`isMobile` in `site.ts`) — the catering numbers,
+and an advertiser's mobile on Buy and Sell. It never goes beside an emergency number. The
+three club numbers are landlines; their WhatsApp buttons work only if the club has
+registered those numbers with WhatsApp Business. If it has not, take the buttons out of
+`ClubNumbers.tsx` rather than leave a button that reports an error.
 
 ### Files from the old site — one address, and a private store
 Every old-site file is linked as `/files/members/…` (`src/lib/files.ts`). The route at
@@ -468,7 +538,8 @@ These come from the audit of the old site. Each one fixes a specific, observed f
    Members' Admin. If a directory is ever added here it must be opt-in per field.
 7. **Touch targets at least 44×44px** with real spacing. `.tap` in `globals.css` enforces the minimum.
 8. **Every external link** gets `target="_blank" rel="noopener noreferrer"` and a visible
-   "opens in a new tab" cue.
+   "opens in a new tab" cue. (One exception: plain Members' Admin links are steered into a
+   single reused tab — see "One tab, signed in once".)
 
 ---
 

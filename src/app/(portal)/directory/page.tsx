@@ -1,6 +1,6 @@
 import { PageHeader, Section, Callout, ActionTile, icons } from '@/components/ui';
 import ClubNumbers from '@/components/ClubNumbers';
-import { contacts } from '@/content/site';
+import { contacts, telHref, whatsappHref, isMobile } from '@/content/site';
 import RolesList from '@/components/RolesList';
 import { aim } from '@/content/awareim';
 
@@ -48,9 +48,22 @@ export default function DirectoryPage() {
             <h3 className="text-lg">Camphill Catering</h3>
             <ul className="mt-2 space-y-2">
               {contacts.catering.map((c) => (
-                <li key={c.name} className="flex items-baseline justify-between gap-3">
+                <li key={c.name} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span className="text-inkMuted">{c.name}</span>
-                  <a href={`tel:${c.tel.replace(/\s/g, '')}`} className="link font-medium">{c.tel}</a>
+                  <span className="flex flex-wrap items-center gap-x-4">
+                    <a href={telHref(c.tel)} className="link tap font-medium">{c.tel}</a>
+                    {isMobile(c.tel) && (
+                      <a
+                        href={whatsappHref(c.tel)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="tap text-sm font-semibold text-good underline decoration-good/40 underline-offset-2 hover:decoration-good"
+                      >
+                        WhatsApp
+                        <span className="sr-only"> {c.name} (opens in a new tab)</span>
+                      </a>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>

@@ -9,6 +9,7 @@
  * button becomes live. Nothing else needs changing.
  */
 import { file } from './documents';
+import { portalise } from '@/lib/files';
 
 export type Social = {
   name: string;
@@ -55,7 +56,7 @@ export const safetySpotIntro =
 
 export type SafetyLink = { label: string; sub?: string; href: string; strong?: boolean };
 
-export const safetySpot: SafetyLink[] = [
+export const safetySpot: SafetyLink[] = portalise([
   {
     label: 'Safe Start 2026',
     sub: 'Essential reading for all pilots — a self-briefing for a safe start to the season',
@@ -108,7 +109,7 @@ export const safetySpot: SafetyLink[] = [
     href: '/safety/emergency',
     strong: true,
   },
-];
+]);
 
 // ── Charities the club supports ────────────────────────────────────────────
 /**

@@ -38,7 +38,7 @@ export default function Webcam({
       <div className="card flex flex-col justify-center p-6">
         <h3 className="text-lg">Camphill Webcam</h3>
         <p className="mt-2 text-sm text-inkMuted">
-          The camera isn&rsquo;t reachable from the portal yet. It still works on the old site.
+          The camera is not connected to the portal yet. It still works on the old site.
         </p>
         <a
           href={fallbackHref}
@@ -46,7 +46,7 @@ export default function Webcam({
           rel="noopener noreferrer"
           className="link tap mt-2 text-sm"
         >
-          Open the met station page
+          Open the camera on the old site
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
       </div>

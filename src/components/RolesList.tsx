@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { Callout } from '@/components/ui';
-import { roles, vacantRoles, rolesUpdated, committeeSource } from '@/content/roles';
+import { roles, vacantRoles, rolesUpdated } from '@/content/roles';
+import { committee, volunteerMailto } from '@/content/committee';
 
 /**
  * WHO DOES WHAT AT CAMPHILL — from job&roles.asp, shown on the Directory page.
@@ -21,7 +23,11 @@ export default function RolesList() {
             </p>
             <p>
               A club this size runs on people putting their hand up. If one of these is something
-              you could do, or could learn, say so to any committee member.
+              you could do, or could learn, say so to any committee member — or{' '}
+              <a href={volunteerMailto(vacantRoles.map((r) => r.role))} className="link font-semibold">
+                email {committee.email}
+              </a>
+              .
             </p>
           </Callout>
         </div>
@@ -41,18 +47,22 @@ export default function RolesList() {
                   {r.holders.length === 0 ? (
                     <span className="text-sm text-inkMuted">—</span>
                   ) : (
-                    r.holders.map((h) => (
-                      <span
-                        key={h}
-                        className={
-                          vacant && /vacant/i.test(h)
-                            ? 'rounded bg-warnTint px-2 py-0.5 text-sm font-semibold text-warn'
-                            : 'text-sm'
-                        }
-                      >
-                        {/vacant/i.test(h) ? 'Vacant — could this be you?' : h}
-                      </span>
-                    ))
+                    r.holders.map((h) =>
+                      vacant && /vacant/i.test(h) ? (
+                        <a
+                          key={h}
+                          href={volunteerMailto([r.role])}
+                          className="tap rounded bg-warnTint px-3 text-sm font-semibold text-warn underline decoration-warn/40 underline-offset-2 hover:decoration-warn"
+                        >
+                          Vacant — could this be you?
+                          <span className="sr-only"> Email the committee about {r.role}</span>
+                        </a>
+                      ) : (
+                        <span key={h} className="text-sm">
+                          {h}
+                        </span>
+                      ),
+                    )
                   )}
                 </span>
               </li>
@@ -63,10 +73,9 @@ export default function RolesList() {
       <p className="mt-6 text-sm text-inkMuted">
         Contact details are not published here — they are in Members&rsquo; Admin, or ask the
         office. Committee roles are on{' '}
-        <a href={committeeSource} target="_blank" rel="noopener noreferrer" className="link">
+        <Link href="/directory/committee" className="link">
           the committee page
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
+        </Link>
         .
         {rolesUpdated && ` List last updated ${rolesUpdated}.`} If it is out of date, tell the website editor.
       </p>
