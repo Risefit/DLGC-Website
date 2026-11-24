@@ -280,7 +280,8 @@ that being true in practice.
 **Who is emailed.** Reports are always stored (Supabase → `submissions`). They are also
 emailed when three settings exist in Vercel: `SAFETY_OFFICER_EMAIL`, `RESEND_API_KEY` and
 `MAIL_FROM`. `SAFETY_OFFICER_EMAIL` takes one address or several separated by commas —
-that is how a second person (Alex Sariban, from November 2026) receives every report. The
+that is how a second person (Alex Sariban, Deputy Safety Officer, from November 2026)
+receives every report. The
 addresses are people's own, so they live in that setting and **not in this repository**.
 The names of everyone who receives reports are shown on the form
 (`contacts.safetyOfficer` and `contacts.safetyReportsAlso` in `site.ts`); keep the names

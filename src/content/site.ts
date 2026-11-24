@@ -41,7 +41,7 @@ export const contacts = {
    * because they are entitled to know who will read what they write. Their
    * addresses are NOT here — see src/lib/safety-mail.ts.
    */
-  safetyReportsAlso: ['Alex Sariban'],
+  safetyReportsAlso: [{ name: 'Alex Sariban', role: 'Deputy Safety Officer' }],
   /** The website editor — blog stories, gallery photographs, adverts. */
   websiteEditor: { name: 'Bob Bollom', email: 'rsbollom@gmail.com' },
   officeHours:

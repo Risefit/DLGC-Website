@@ -69,8 +69,8 @@ export default function SafetyReportForm({
 }: {
   safetyOfficerEmail: string;
   safetyOfficerName?: string;
-  /** Names of anyone else who is sent every report. Shown, so the member knows who will read it. */
-  alsoTo?: string[];
+  /** Anyone else who is sent every report. Shown, so the member knows who will read it. */
+  alsoTo?: { name: string; role?: string }[];
 }) {
   const [anonymous, setAnonymous] = useState(false);
   const [risk, setRisk] = useState<{ l: number; c: number } | null>(null);
@@ -146,7 +146,9 @@ export default function SafetyReportForm({
         <p className="mt-2 text-sm text-ink/70">
           Goes to {safetyOfficerName ? `${safetyOfficerName}, ` : ''}the Safety Officer
           {' '}(<a href={`mailto:${safetyOfficerEmail}`} className="link text-skyDark">{safetyOfficerEmail}</a>)
-          {alsoTo.length > 0 && <>, and to {alsoTo.join(' and ')}</>}. Not published, and not seen by
+          {alsoTo.length > 0 && (
+            <>, and to {alsoTo.map((p) => (p.role ? `${p.name}, the ${p.role}` : p.name)).join(' and ')}</>
+          )}. Not published, and not seen by
           the website editor.
         </p>
       </div>
@@ -390,7 +392,7 @@ export default function SafetyReportForm({
           {state === 'sending' ? 'Sending…' : 'Send to the Safety Officer'}
         </button>
         <p className="mt-3 max-w-prose2 text-xs text-slate2">
-          This goes to the Safety Officer{alsoTo.length > 0 && <> and {alsoTo.join(' and ')}</>}. It is
+          This goes to the Safety Officer{alsoTo.length > 0 && <> and {alsoTo.map((p) => (p.role ? `the ${p.role}` : p.name)).join(' and ')}</>}. It is
           not published. If it needs to become a Safety Lessons Log entry, they will write it up
           with identifying detail removed.
         </p>
