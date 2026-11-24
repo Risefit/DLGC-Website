@@ -9,7 +9,7 @@ export const metadata = { title: 'Directory' };
 /**
  * DATA PROTECTION NOTE
  * Member personal contact details are NOT held in this portal or in this
- * repository. The member directory lives in Members' Admin, which is
+ * repository. The member directory lives in Free Flight, which is
  * authenticated and administered separately. This page holds club numbers
  * (already public) and role names only.
  *
@@ -73,7 +73,7 @@ export default function DirectoryPage() {
 
       <Section
         title="Member contact details"
-        description="Held in Members' Admin, not here."
+        description="Held in Free Flight, not here."
       >
         <div className="grid gap-4 lg:grid-cols-2">
           <ActionTile
@@ -85,7 +85,7 @@ export default function DirectoryPage() {
           />
           <Callout tone="info" title="Why it isn't on this site">
             <p>
-              Members&rsquo; personal contact details stay in Members&rsquo; Admin, which is
+              Members&rsquo; personal contact details stay in Free Flight, which is
               authenticated and administered separately. Keeping them out of this portal means
               there is one place to control who sees what, and one place to remove someone from
               when they leave.

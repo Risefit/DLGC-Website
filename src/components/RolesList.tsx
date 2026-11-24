@@ -71,7 +71,7 @@ export default function RolesList() {
         </ul>
       </div>
       <p className="mt-6 text-sm text-inkMuted">
-        Contact details are not published here — they are in Members&rsquo; Admin, or ask the
+        Contact details are not published here — they are in Free Flight, or ask the
         office. Committee roles are on{' '}
         <Link href="/directory/committee" className="link">
           the committee page

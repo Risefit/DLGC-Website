@@ -65,7 +65,7 @@ export default function CalendarPage() {
       <p className="mb-8 max-w-prose2 text-inkMuted">
         {calendarNote}{' '}
         <a href={aim('events')} target="_blank" rel="noopener noreferrer" className="link">
-          Open the Events Planner in Members&rsquo; Admin
+          Open the Events Planner in Free Flight
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
         .

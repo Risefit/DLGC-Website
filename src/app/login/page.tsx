@@ -10,7 +10,7 @@ import { club } from '@/content/site';
 
 /**
  * Email + password sign-in via Supabase Auth.
- * Entirely separate from Members' Admin (AwareIM) — different system,
+ * Entirely separate from Free Flight (AwareIM) — different system,
  * different database, different credentials. Say so on the page so members
  * aren't confused about which password they need.
  */
@@ -97,8 +97,8 @@ export default function LoginPage() {
         <div className="card p-6">
           <h2 className="text-xl">Sign in</h2>
           <p className="mt-1 text-sm text-inkMuted">
-            Use your portal email and password. This is <strong>not</strong> your Members&rsquo;
-            Admin login — that system has its own separate sign-in.
+            Use your portal email and password. This is <strong>not</strong> your Free
+            Flight login — that system has its own separate sign-in.
           </p>
 
 

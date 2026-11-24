@@ -2,7 +2,7 @@
  * Auth configuration.
  *
  * IMPORTANT: this portal's authentication is entirely separate from AwareIM
- * (Members' Admin). They share no session, no user table and no database.
+ * (Free Flight). They share no session, no user table and no database.
  * That separation is deliberate and must be preserved — AwareIM holds
  * personnel and financial data and is administered independently.
  *

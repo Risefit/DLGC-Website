@@ -1,10 +1,13 @@
 /**
- * Members' Admin (AwareIM) — EXTERNAL SYSTEM. DO NOT INTEGRATE.
+ * Free Flight (AwareIM) — EXTERNAL SYSTEM. DO NOT INTEGRATE.
+ *
+ * "Free Flight" is what members call it and what every page says. This portal
+ * called it "Members' Admin" until November 2026.
  *
  * AwareIM is administered by Mo Bent, is his proprietary product, and holds
  * personnel and financial data in its own authenticated database. This portal
  * links to it and nothing more: no shared session, no shared database, no data
- * exchange in either direction. Its links open in one Members' Admin tab that
+ * exchange in either direction. Its links open in one Free Flight tab that
  * is reused, so a member signs in once (src/components/MembersAdminTab.tsx).
  *
  * This portal NEVER collects an AwareIM username or password. A sign-in box
@@ -68,7 +71,7 @@ export type AwareTarget = {
 };
 
 /**
- * Mirrors the Members' Admin menu as it actually appears, read from a signed-in
+ * Mirrors the Free Flight menu as it actually appears, read from a signed-in
  * session. If Mo rearranges his menu, update the `where` values to match.
  */
 const TARGETS = {
@@ -95,7 +98,7 @@ const TARGETS = {
 export type AwareKey = keyof typeof TARGETS;
 
 /**
- * The URL for a Members' Admin destination. Use this everywhere instead of
+ * The URL for a Free Flight destination. Use this everywhere instead of
  * AWAREIM_BASE, so a button starts working the moment its process name is known.
  */
 export const aim = (key: AwareKey): string => {
@@ -114,7 +117,7 @@ const all: AwareLink[] = (Object.keys(TARGETS) as AwareKey[]).map((key) => ({
   href: aim(key),
 }));
 
-/** The Members' Admin dropdown list. */
+/** The Free Flight dropdown list. */
 export const awareimLinks = all.filter((l) => l.inMenu);
 
 /** How many destinations still land on the logon page rather than their screen. */

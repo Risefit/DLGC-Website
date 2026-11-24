@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react';
 import { AWAREIM_BASE } from '@/content/awareim';
 
 /**
- * ONE MEMBERS' ADMIN TAB, REUSED.
+ * ONE FREE FLIGHT TAB, REUSED.
  *
- * Members' Admin (AwareIM) asks for a sign-in every time its logon address is
+ * Free Flight (AwareIM) asks for a sign-in every time its logon address is
  * loaded, even when another tab is already signed in. Every button here used to
  * open that address in a fresh tab, so a member who pressed three buttons signed
  * in three times and ended up with three tabs.
  *
- * Now the first button opens Members' Admin in a tab this portal remembers by
+ * Now the first button opens Free Flight in a tab this portal remembers by
  * name, and every later button goes back to THAT tab instead of opening another.
  * Nothing is reloaded, so the member is still signed in there.
  *
@@ -53,7 +53,7 @@ export default function MembersAdminTab() {
       e.preventDefault();
 
       // A tab we have just created is blank and readable. One that is already on
-      // Members' Admin belongs to another site and refuses to be read — which is
+      // Free Flight belongs to another site and refuses to be read — which is
       // how we know it is the one to go back to.
       let blank = false;
       try {
@@ -84,7 +84,7 @@ export default function MembersAdminTab() {
     <div aria-live="polite" className="no-print">
       {notice && (
         <p className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-card bg-navy px-5 py-4 text-white shadow-panel">
-          Members’ Admin is already open in another tab, and you are still signed in there. If this
+          Free Flight is already open in another tab, and you are still signed in there. If this
           tab is still in front, switch to that one.
         </p>
       )}

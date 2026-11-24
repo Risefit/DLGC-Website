@@ -62,7 +62,7 @@ export default function AirspacePage() {
           <p className="max-w-prose2">{REBRIEF_RULE}</p>
           <p className="mt-3 max-w-prose2 text-sm text-inkMuted">
             When you have reviewed the LoA for the Wave Box and Airway Crossing, and the Camphill
-            Wave Box and L975 Crossing Briefing, reset your briefing date in Members&rsquo; Admin.
+            Wave Box and L975 Crossing Briefing, reset your briefing date in Free Flight.
           </p>
           <a
             href={aim('rebrief')}
@@ -71,7 +71,7 @@ export default function AirspacePage() {
             className="tap mt-4 gap-2 rounded-lg bg-warn px-6 py-3.5 font-semibold text-white transition-colors hover:brightness-110"
           >
             Reset my briefing date
-            <span className="sr-only">(opens Members&rsquo; Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
         </div>
       </section>

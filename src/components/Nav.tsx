@@ -36,7 +36,7 @@ const UNDER: Record<string, string[]> = {
 };
 
 /**
- * Members' Admin dropdown.
+ * Free Flight dropdown.
  * Opens on CLICK, not hover — the old site's hover-only navigation was
  * unusable on phones and to keyboard users (WCAG 1.4.13). Keep it click-based.
  */
@@ -68,7 +68,7 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
         className="tap w-full lg:w-auto gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-white
                    font-medium hover:bg-white/25 transition-colors"
       >
-        <span>Members&rsquo; Admin</span>
+        <span>Free Flight</span>
         <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className={open ? 'rotate-180 transition-transform' : 'transition-transform'}>
           <path d="M2 5l6 6 6-6" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -94,7 +94,7 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
               <rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
               <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="2" />
             </svg>
-            Sign in to Members&rsquo; Admin
+            Sign in to Free Flight
             <span className="sr-only">(opens in a new tab)</span>
           </a>
           <p className="px-3 py-2.5 text-xs text-slate2">
@@ -133,7 +133,7 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 /**
- * SIGNING IN TO THE PORTAL ITSELF — not Members' Admin, which is the dropdown
+ * SIGNING IN TO THE PORTAL ITSELF — not Free Flight, which is the dropdown
  * beside it and a different system with a different password. The wording says
  * "portal" every time so nobody types the wrong password into the wrong box.
  *

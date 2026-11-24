@@ -3,6 +3,7 @@ import Nav from '@/components/Nav';
 import ClubNumbers from '@/components/ClubNumbers';
 import { contacts, club } from '@/content/site';
 import SocialButtons from '@/components/SocialButtons';
+import { charities } from '@/content/community';
 import MembersAdminTab from '@/components/MembersAdminTab';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
@@ -85,13 +86,30 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   <li><a href={club.bgaLadder} className="link" target="_blank" rel="noopener noreferrer">BGA Ladder<span className="sr-only"> (opens in a new tab)</span></a></li>
                   <li><a href={club.facebookPage} className="link" target="_blank" rel="noopener noreferrer">Club Facebook page<span className="sr-only"> (opens in a new tab)</span></a></li>
                 </ul>
+
+                {/* The same list as the dashboard's "Charities we support", from
+                    the one place it is kept (charities in content/community.ts),
+                    so a charity added there appears on every page as well. */}
+                <h3 className="mb-2 mt-5 text-sm font-semibold uppercase tracking-[0.08em] text-slate2">
+                  Charities we support
+                </h3>
+                <ul className="space-y-1.5">
+                  {charities.map((c) => (
+                    <li key={c.name}>
+                      <a href={c.href} className="link" target="_blank" rel="noopener noreferrer">
+                        {c.name}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
             <p className="mt-9 border-t border-navy/15 pt-5 text-xs text-slate2">
               {club.name} · Gliding at Camphill since {club.founded}. Members&rsquo; portal —
-              separate from Members&rsquo; Admin, which holds membership and financial records
-              and is reached from the Members&rsquo; Admin menu.
+              separate from Free Flight, which holds membership and financial records
+              and is reached from the Free Flight menu.
             </p>
           </div>
         </div>

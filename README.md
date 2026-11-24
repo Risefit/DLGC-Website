@@ -50,7 +50,7 @@ Open <http://localhost:3000>. It works straight away with no accounts and no dat
 > ⚠️ **`NEXT_PUBLIC_PREVIEW_OPEN` must be `false` in production.** While it is `true` the portal
 > is open to anyone with the URL.
 
-This login is completely separate from Members' Admin (AwareIM). Different system, different
+This login is completely separate from Free Flight (AwareIM). Different system, different
 database, different password. The login page says so, because members will otherwise assume
 they are the same.
 
@@ -204,8 +204,8 @@ Test any change at **390px wide** as well as desktop.
 
 ## What this portal deliberately does not do
 
-- **It does not touch Members' Admin (AwareIM).** It links to it. See `CLAUDE.md`.
-- **It holds no member personal data.** Contact details stay in Members' Admin.
+- **It does not touch Free Flight (AwareIM).** It links to it. See `CLAUDE.md`.
+- **It holds no member personal data.** Contact details stay in Free Flight.
 - **It has no analytics.** None was wanted.
 - **It is independent of the public site** (`glidingclub.org.uk`). A link can be added from
   there later; nothing here depends on it.

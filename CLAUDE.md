@@ -21,9 +21,15 @@ and a hand-maintained A–Z index because its own navigation didn't work.
 |---|---|---|
 | **This portal** (`dlgc.org.uk`) | Club information, documents, news, archive | We own and edit it |
 | **Public site** (`glidingclub.org.uk`) | WordPress + WooCommerce marketing site | Separate. We may link to it. Do not modify it |
-| **Members' Admin** (`free-flight.info:8443`) | AwareIM. Daily Flying Planner, log book, statements, renewals, member directory | **Do not touch.** Link only |
+| **Free Flight** (`free-flight.info:8443`) | AwareIM. Daily Flying Planner, log book, statements, renewals, member directory | **Do not touch.** Link only |
 
-### Members' Admin — the hard rule
+### Free Flight — the hard rule
+
+**The name.** Members call the system Free Flight (it lives at `free-flight.info`), so that
+is what every page, button and menu calls it. Until November 2026 this portal called it
+"Members' Admin"; Phil asked for the change. The club's own roles list still says "Free
+Flight & Members' Admin" for the role, and old news items keep whatever they said. In the
+code the component is still `MembersAdminTab` — a name nobody sees.
 
 AwareIM is Mo Bent's proprietary software, administered by him, holding personnel and financial
 data in its own authenticated database. **This portal links to it and does nothing else.**
@@ -33,18 +39,18 @@ data in its own authenticated database. **This portal links to it and does nothi
   page. A sign-in box here would have to post credentials from our origin into his session-based
   login — it would break the first time he changed anything, and it would teach members that
   typing their club password into a page that is not his is normal. Do not add one.
-- Its links open in **one** Members' Admin tab, which is reused (see "One tab, signed in once" below).
+- Its links open in **one** Free Flight tab, which is reused (see "One tab, signed in once" below).
 - All AwareIM URLs live in **one file**: `src/content/awareim.ts`. If anything changes, that is the only edit.
 - If someone asks you to "integrate" or "pull data from" AwareIM, stop and check with the committee first. That decision has not been made.
 
 #### One tab, signed in once
 
-Members' Admin asks for a sign-in every time its logon address is loaded, even with another
+Free Flight asks for a sign-in every time its logon address is loaded, even with another
 tab already signed in. The portal's buttons used to open that address in a new tab each
 time, so three buttons meant three sign-ins and three tabs.
 
 `src/components/MembersAdminTab.tsx` (mounted once, in the portal layout) changes only
-**which tab a link opens in**: the first button opens Members' Admin in a tab the portal
+**which tab a link opens in**: the first button opens Free Flight in a tab the portal
 remembers by name; every later button goes back to that same tab without reloading it, so
 the member is still signed in there. A short message at the foot of the page says so, in
 case the browser does not bring that tab to the front.
@@ -356,7 +362,8 @@ All in `src/content/community.ts`.
   placeholder rather than a dead link — that is how Instagram, TikTok and X currently show.
 - **Safety Spot:** the panel from the old site's home page, kept in full. `strong: true`
   gives an entry the red left border (Safe Start and Crash/Emergency have it).
-- **Charities:** name, link and one line on why the club supports it.
+- **Charities:** name, link and one line on why the club supports it. The list shows on
+  the dashboard and, as plain links, under "Elsewhere" in the footer of every page.
 
 ### The gallery
 One page, `/gallery`, in this order: the club's own six hand-kept galleries
@@ -464,7 +471,7 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
 ### Signing in to the portal
 The menu carries "Portal sign in" (and "Sign in to the portal" in the phone menu), which
 becomes the member's address and "Sign out" once they are in — `PortalAccount` in
-`src/components/Nav.tsx`. **It always says "portal"**, because the Members' Admin button
+`src/components/Nav.tsx`. **It always says "portal"**, because the Free Flight button
 sits beside it and is a different system with a different password.
 
 While the login gate is off, pressing Sign in with the boxes empty simply goes in; filling
@@ -627,11 +634,11 @@ These come from the audit of the old site. Each one fixes a specific, observed f
    pair the colour with the word.
 5. **Emergency Procedures stays one tap from every page** (the red strip above the footer, in the portal layout).
 6. **No member personal data in this repository.** Phone numbers and email addresses live in
-   Members' Admin. If a directory is ever added here it must be opt-in per field.
+   Free Flight. If a directory is ever added here it must be opt-in per field.
 7. **Touch targets at least 44×44px** with real spacing. `.tap` in `globals.css` enforces the minimum.
 8. **Every link in the content of a page** — external or not — gets `target="_blank"
    rel="noopener noreferrer"` and a visible "opens in a new tab" cue; navigation stays in
-   the same tab. See "Which tab a link opens in". (One exception: plain Members' Admin
+   the same tab. See "Which tab a link opens in". (One exception: plain Free Flight
    links are steered into a single reused tab — see "One tab, signed in once".)
 
 ---
@@ -657,7 +664,7 @@ src/
 │   ├── login/             Sign-in (email + password, Supabase)
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
 ├── components/
-│   ├── Nav.tsx            The six-item menu, the "Also" group, Members' Admin dropdown
+│   ├── Nav.tsx            The six-item menu, the "Also" group, Free Flight dropdown
 │   ├── ui.tsx             Band, PageHeader, Section, Figures, tiles — use these
 │   └── DocumentLibrary.tsx  Search + filter for the document list
 ├── content/               ← MOST EDITS HAPPEN HERE. Plain data, no React

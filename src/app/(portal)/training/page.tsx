@@ -102,11 +102,11 @@ export default function TrainingPage() {
         <nav aria-label="Your record" className="mt-7 flex flex-wrap gap-3">
           <a href={aim('splReport')} target="_blank" rel="noopener noreferrer" className="pill-accent">
             My SPL Rolling Report {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
           <a href={aim('logbook')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
             My Log Book {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
           <a href="#flying-cards" className="pill-ghost">Flying cards</a>
           <a href="#start-here" className="pill-ghost">New to the club</a>

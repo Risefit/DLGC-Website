@@ -249,7 +249,7 @@ export const partYearScale = [
 // ── Calendar ───────────────────────────────────────────────────────────────
 
 export const calendarNote =
-  'These are the most significant dates only. The master Events Planner lives in Members’ Admin and is maintained by the office and committee — check there for critical dates and full detail. Anyone arranging an event and needing facilities (e.g. the clubroom) must contact the office or a committee member to check availability and book.';
+  'These are the most significant dates only. The master Events Planner lives in Free Flight and is maintained by the office and committee — check there for critical dates and full detail. Anyone arranging an event and needing facilities (e.g. the clubroom) must contact the office or a committee member to check availability and book.';
 
 export type CalendarEvent = {
   when: string;
@@ -328,7 +328,9 @@ export const findIt: { term: string; to: string; label: string }[] = [
   { term: 'Club Rules', to: '/documents?q=rules', label: 'Documents → Rules' },
   { term: 'Code of Conduct', to: '/documents?q=conduct', label: 'Documents → Policies' },
   { term: 'Constitution (Memorandum & Articles)', to: '/documents?q=memorandum', label: 'Documents → Rules' },
-  { term: 'Daily Flying Planner (DFP)', to: '/account', label: "Members' Admin" },
+  { term: 'Daily Flying Planner (DFP)', to: '/account', label: "Free Flight" },
+  { term: 'Free Flight', to: '/account', label: 'Free Flight' },
+  { term: 'Members’ Admin (now called Free Flight)', to: '/account', label: 'Free Flight' },
   { term: 'Daily Mentor Role', to: '/documents?q=mentor', label: 'Documents' },
   { term: 'Data Protection Policy', to: '/documents?q=data+protection', label: 'Documents → Policies' },
   { term: 'Distress & Diversion Service', to: '/safety', label: 'Safety' },
@@ -358,7 +360,7 @@ export const findIt: { term: string; to: string; label: string }[] = [
   { term: 'Launch Marshals — Manual and Authorised List', to: '/documents?q=launch+marshal', label: 'Documents' },
   { term: 'Launch Speeds & Weak Links', to: '/documents?q=launch+speeds', label: 'Documents → Manuals' },
   { term: 'Licences for Glider Pilots', to: '/documents?q=licencing', label: 'Documents → Medicals' },
-  { term: 'Log Book', to: '/account', label: "Members' Admin" },
+  { term: 'Log Book', to: '/account', label: "Free Flight" },
   { term: 'Medical Certification Guidance', to: '/documents?q=medical', label: 'Documents → Medicals' },
   { term: 'Members Contact Info', to: '/directory', label: 'Directory' },
   { term: 'Membership — Reciprocal', to: '/documents?q=reciprocal', label: 'Documents' },
@@ -381,7 +383,7 @@ export const findIt: { term: string; to: string; label: string }[] = [
   { term: 'Simulator — Use Guidelines', to: '/documents?q=simulator', label: 'Documents → Simulator' },
   { term: 'Splicing Manual', to: '/documents?q=splicing', label: 'Documents → Manuals' },
   { term: 'Sports Development Plan', to: '/documents?q=development', label: 'Documents' },
-  { term: 'Statements / Flying Account', to: '/account', label: "Members' Admin" },
+  { term: 'Statements / Flying Account', to: '/account', label: "Free Flight" },
   { term: 'Student Pilot Theory Test', to: '/training', label: 'Training' },
   { term: 'Student Pilots Guide', to: '/documents?q=student+pilots+guide', label: 'Documents → Manuals' },
   { term: 'T21 Explanatory Notes', to: '/documents?q=T21', label: 'Documents → Aircraft' },

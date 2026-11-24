@@ -101,17 +101,17 @@ export default function Dashboard() {
         <nav aria-label="Most used" className="mt-5 flex flex-wrap gap-3">
           <a href={aim('flyingPlanner')} target="_blank" rel="noopener noreferrer" className="pill-accent">
             Daily Flying Planner {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
           <Link href="/flying/roster" className="pill-ghost">Duty roster</Link>
           <Link href="/flying/weather" className="pill-ghost">Weather and webcam</Link>
           <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
             My flying account {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
         </nav>
         <p className="mt-3 max-w-[52ch] text-xs text-white/75">
-          The Daily Flying Planner and your flying account are in Members’ Admin, which has its own
+          The Daily Flying Planner and your flying account are in Free Flight, which has its own
           sign-in and opens in a new tab.
         </p>
 

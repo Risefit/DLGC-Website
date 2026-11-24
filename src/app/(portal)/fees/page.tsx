@@ -20,9 +20,9 @@ export default function FeesPage() {
 
       <p className="mb-8 max-w-prose2 text-inkMuted">
         Effective from {feesMeta.effective}; last updated {feesMeta.updated}. Your flying account
-        balance, statements and payments are in Members&rsquo; Admin —{' '}
+        balance, statements and payments are in Free Flight —{' '}
         <a href={aim('account')} target="_blank" rel="noopener noreferrer" className="link">
-          open Members&rsquo; Admin
+          open Free Flight
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
         .

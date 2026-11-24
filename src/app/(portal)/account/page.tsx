@@ -1,7 +1,7 @@
 import { PageHeader, Callout } from '@/components/ui';
 import { awareimLinks } from '@/content/awareim';
 
-export const metadata = { title: "Members' Admin" };
+export const metadata = { title: "Free Flight" };
 
 /**
  * This page is a signpost, not an integration.
@@ -15,20 +15,20 @@ export default function AccountPage() {
     <>
       <PageHeader
         eyebrow="A separate system"
-        title="Members&rsquo; Admin"
-        lead="Your flying account, log book, duties, membership renewal and the Daily Flying Planner all live in Members' Admin — a separate system with its own login."
+        title="Free Flight"
+        lead="Your flying account, log book, duties, membership renewal and the Daily Flying Planner all live in Free Flight — a separate system with its own login."
       />
 
       <div className="mb-8">
         <Callout tone="info" title="Why this is separate">
           <p>
-            Members&rsquo; Admin holds membership, personal and financial records in its own secure
+            Free Flight holds membership, personal and financial records in its own secure
             database, administered by Mo Bent. It is deliberately kept apart from this portal: this
             site holds club information and documents, and never touches your personal or financial
             data.
           </p>
           <p>
-            You will need to sign in to Members&rsquo; Admin separately — signing in here does not
+            You will need to sign in to Free Flight separately — signing in here does not
             sign you in there. Every link below opens it in a new tab.
           </p>
         </Callout>
@@ -59,7 +59,7 @@ export default function AccountPage() {
       </ul>
 
       <p className="mt-6 text-sm text-inkMuted">
-        Problems signing in to Members&rsquo; Admin, or something wrong with your account? Contact
+        Problems signing in to Free Flight, or something wrong with your account? Contact
         Mo Bent — this portal&rsquo;s editors cannot see or change anything in that system.
       </p>
     </>

@@ -62,11 +62,11 @@ export default function FlyingPage() {
         <nav aria-label="Book and check" className="mt-7 flex flex-wrap gap-3">
           <a href={aim('flyingPlanner')} target="_blank" rel="noopener noreferrer" className="pill-accent">
             Daily Flying Planner {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
           <a href={aim('flightsToday')} target="_blank" rel="noopener noreferrer" className="pill-ghost">
             Flights today {outIcon}
-            <span className="sr-only">(opens Members’ Admin in a new tab)</span>
+            <span className="sr-only">(opens Free Flight in a new tab)</span>
           </a>
           <Link href="/flying/roster" className="pill-ghost">Duty roster</Link>
           <Link href="/flying/weather" className="pill-ghost">Weather and webcam</Link>

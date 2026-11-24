@@ -31,7 +31,7 @@ export default function RosterPage() {
       <PageHeader
         eyebrow="Instructors, winch drivers, launch marshals and duty clerks"
         title="Duty Roster"
-        lead="Saturdays, Sundays and Bank Holidays, quarter by quarter. Your own duties and swap requests live in Members’ Admin."
+        lead="Saturdays, Sundays and Bank Holidays, quarter by quarter. Your own duties and swap requests live in Free Flight."
       />
 
       <Section
@@ -77,7 +77,7 @@ export default function RosterPage() {
             href={aim('duties')}
             external
             label="Duties and Volunteers"
-            hint="What you have signed up for, swaps and offers — in Members’ Admin"
+            hint="What you have signed up for, swaps and offers — in Free Flight"
             icon={icons.people}
           />
           <div className="card p-5">
