@@ -27,7 +27,7 @@ export const safetyGroups: SafetyGroup[] = portalise([
       {
         title: 'BGA safe winch launching',
         note: 'Guidance, videos and a quiz. Worth doing even if you have launched a thousand times.',
-        href: 'https://members.gliding.co.uk/bga-safety-management/safe-winching/',
+        href: 'https://members.gliding.co.uk/safety/safe-winching/',
       },
       {
         title: 'Acceleration and over-rotation',
@@ -58,7 +58,7 @@ export const safetyGroups: SafetyGroup[] = portalise([
       {
         title: 'CHIRP — confidential incident reporting',
         note: 'Mostly general aviation rather than gliding, but the occurrences should make all of us think harder.',
-        href: 'https://chirp.co.uk/category/aviation/general-aviation/',
+        href: 'https://chirp.co.uk/',
       },
       {
         title: 'Safety Officer — role and contact',
@@ -68,7 +68,7 @@ export const safetyGroups: SafetyGroup[] = portalise([
       {
         title: 'BGA Club Safety Officer Toolkit',
         note: 'For anyone taking on or supporting the role.',
-        href: 'https://members.gliding.co.uk/bga-safety-management/club-safety-officer-toolkit/',
+        href: 'https://members.gliding.co.uk/safety/club-safety-officer-toolkit/',
       },
     ],
   },
@@ -89,7 +89,7 @@ export const safetyGroups: SafetyGroup[] = portalise([
       {
         title: 'Drones and mid-air conflict awareness',
         note: 'BGA guidance.',
-        href: 'https://members.gliding.co.uk/bga-safety-management/drone-mid-air-conflict-awareness/',
+        href: 'https://members.gliding.co.uk/safety/drone-mid-air-conflict-awareness/',
       },
       {
         title: 'Ten traps for ridge flying',
@@ -139,15 +139,15 @@ export const accidentReviews: { year: number; href: string }[] = [
   { year: 2021, href: 'https://members.gliding.co.uk/library/safety-briefings/2021-safety-review/' },
   { year: 2020, href: 'https://members.gliding.co.uk/library/safety/2020-accident-review/' },
   { year: 2019, href: 'https://members.gliding.co.uk/library/safety/2019-accident-review/' },
-  { year: 2018, href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2018/12/Accident-Review-2018.pdf' },
+  { year: 2018, href: 'https://members.gliding.co.uk/library/safety/2018-accident-review/' },
   { year: 2017, href: 'https://members.gliding.co.uk/library/safety/2017-accident-review/' },
   { year: 2016, href: 'https://members.gliding.co.uk/library/accident-and-incident-summaries/2016-accident-review/' },
   { year: 2015, href: 'https://members.gliding.co.uk/library/accident-and-incident-summaries/2015-accident-review/' },
   { year: 2014, href: 'https://members.gliding.co.uk/library/safety/2014-accident-review/' },
-  { year: 2013, href: 'http://www.gliding.co.uk/bgainfo/documents/accidentreview2013web.pdf' },
-  { year: 2012, href: 'http://www.gliding.co.uk/bgainfo/documents/accidentreview2012web.pdf' },
-  { year: 2011, href: 'http://www.gliding.co.uk/bgainfo/documents/accidentreview2011web.pdf' },
-  { year: 2010, href: 'http://www.gliding.co.uk/bgainfo/safety/documents/summary2010.pdf' },
+  { year: 2013, href: 'https://members.gliding.co.uk/library/safety-briefings/2013-accident-review/' },
+  { year: 2012, href: 'https://members.gliding.co.uk/library/safety-briefings/2012-accident-review/' },
+  { year: 2011, href: 'https://members.gliding.co.uk/library/safety-briefings/2011-accident-review/' },
+  { year: 2010, href: 'https://members.gliding.co.uk/library/safety-briefings/2010-accident-review/' },
   { year: 2008, href: file('pdfs-accidents-to-gliders-2008-pdf') },
 ];
 
@@ -158,10 +158,7 @@ export const ssaExtracts = portalise({
   href: `${OLD}/ssa_extracts.asp`,
 });
 
-export const gasco = {
-  title: 'GASCo Flight Safety Extra',
-  note: 'A free monthly digest of UK general aviation safety information. Email the GASCo office to be added to the mailing list.',
-  href: 'https://www.gasco.org.uk/',
-};
+// GASCo Flight Safety Extra was listed here until November 2026. GASCo announced
+// it was winding up, so the link came out rather than be left to go dead.
 
 export const safetyPageSource = `${OLD}/safety_page.asp`;

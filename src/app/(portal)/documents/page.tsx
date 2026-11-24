@@ -25,9 +25,17 @@ export default async function DocumentsPage({
             Club <em>documents</em>
           </>
         }
-        lead="Every manual, rule, policy, briefing and notice the club holds."
+        lead="Every manual, rule, policy, briefing and notice the club holds. Search first; browse if you would rather."
       />
 
+      <DocumentLibrary
+        initialQuery={sp.q ?? ''}
+        initialTier={tier}
+        initialReview={sp.review ?? ''}
+        initialCategory={sp.category ?? 'all'}
+      >
+      {/* Required reading sits under the search and steps aside while a member
+          is searching or browsing — see DocumentLibrary. */}
       <BandSection
         tone="white"
         id="required-reading"
@@ -37,17 +45,10 @@ export default async function DocumentsPage({
           </>
         }
         description="The manuals, rules and procedures members are asked to read. Open each one, then tick to confirm you have read it. When one is re-issued you will be asked again."
-        action={<a href="#library" className="pill-line">Search all documents</a>}
       >
         <RequiredReading groups={requiredReading} everyoneKeys={requiredOfEveryone.map((i) => i.key)} />
       </BandSection>
-
-      <DocumentLibrary
-        initialQuery={sp.q ?? ''}
-        initialTier={tier}
-        initialReview={sp.review ?? ''}
-        initialCategory={sp.category ?? 'all'}
-      />
+      </DocumentLibrary>
     </>
   );
 }

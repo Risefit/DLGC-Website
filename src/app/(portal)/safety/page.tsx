@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { Band, BandPhoto, Figures, Section } from '@/components/ui';
+import { Band, BandPhoto, Figures, Section, FileKind, outIcon } from '@/components/ui';
 import { safetyCulture, contacts } from '@/content/site';
 import { documents } from '@/content/documents';
 import { safetyLessons } from '@/content/safety-log';
-import { safetyGroups, accidentReviews, ssaExtracts, gasco } from '@/content/safety-links';
+import { safetyGroups, accidentReviews, ssaExtracts } from '@/content/safety-links';
 import SafetyReportForm from '@/components/SafetyReportForm';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 export const metadata = { title: 'Safety' };
 
@@ -17,7 +17,6 @@ export default function SafetyPage() {
     ...safetyGroups.flatMap((g) => g.items.map((i) => i.href)),
     ...accidentReviews.map((r) => r.href),
     ssaExtracts.href,
-    gasco.href,
     '/safety/emergency',
   ]);
   const safety = documents.filter((d) => d.category === 'Safety');
@@ -113,13 +112,19 @@ export default function SafetyPage() {
               <li key={r.href}>
                 <a
                   href={r.href}
-                  target={isPortalPage(r.href) ? undefined : '_blank'}
-                  rel={isPortalPage(r.href) ? undefined : 'noopener noreferrer'}
+                  target={opensNewTab(r.href) ? '_blank' : undefined}
+                  rel={opensNewTab(r.href) ? 'noopener noreferrer' : undefined}
                   className="block px-5 py-4 transition-colors hover:bg-sky50"
                 >
-                  <span className="font-medium text-navy">{r.title}</span>
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="font-medium text-navy">
+                      {r.title}
+                      <FileKind doc={r} />
+                    </span>
+                    {opensNewTab(r.href) && <span className="mt-1.5 text-slate2">{outIcon}</span>}
+                  </span>
                   {r.note && <span className="mt-1 block max-w-prose2 text-sm text-inkMuted">{r.note}</span>}
-                  {!isPortalPage(r.href) && <span className="sr-only">(opens in a new tab)</span>}
+                  {opensNewTab(r.href) && <span className="sr-only">(opens in a new tab)</span>}
                 </a>
               </li>
             ))}
@@ -156,17 +161,20 @@ export default function SafetyPage() {
           ))}
         </ul>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {[ssaExtracts, gasco].map((x) => (
+          {[ssaExtracts].map((x) => (
             <a
               key={x.href}
               href={x.href}
-              target={isPortalPage(x.href) ? undefined : '_blank'}
-              rel={isPortalPage(x.href) ? undefined : 'noopener noreferrer'}
+              target={opensNewTab(x.href) ? '_blank' : undefined}
+              rel={opensNewTab(x.href) ? 'noopener noreferrer' : undefined}
               className="card-interactive flex flex-col p-5"
             >
-              <span className="font-semibold text-navy">{x.title}</span>
+              <span className="flex items-start justify-between gap-3">
+                <span className="font-semibold text-navy">{x.title}</span>
+                {opensNewTab(x.href) && <span className="mt-1.5 text-slate2">{outIcon}</span>}
+              </span>
               <span className="mt-1 text-sm text-inkMuted">{x.note}</span>
-              {!isPortalPage(x.href) && <span className="sr-only">(opens in a new tab)</span>}
+              {opensNewTab(x.href) && <span className="sr-only">(opens in a new tab)</span>}
             </a>
           ))}
         </div>
@@ -182,7 +190,7 @@ export default function SafetyPage() {
       >
         <ul className="card divide-y divide-skyLine overflow-hidden">
           {more.map((d) => {
-            const external = !isPortalPage(d.href);
+            const external = opensNewTab(d.href);
             return (
               <li key={d.id}>
                 <a
@@ -191,7 +199,13 @@ export default function SafetyPage() {
                   rel={external ? 'noopener noreferrer' : undefined}
                   className="block px-5 py-4 transition-colors hover:bg-sky50"
                 >
-                  <span className="font-medium text-navy">{d.title}</span>
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="font-medium text-navy">
+                      {d.title}
+                      <FileKind doc={d} />
+                    </span>
+                    {external && <span className="mt-1.5 text-slate2">{outIcon}</span>}
+                  </span>
                   {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
                   {external && <span className="sr-only"> (opens in a new tab)</span>}
                 </a>

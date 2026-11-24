@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import type { CfiNotice } from '@/content/notices';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 /**
  * The CFI's notices. On the old site these were one very long page with an
@@ -101,12 +101,12 @@ export default function NoticeBrowser({ notices }: { notices: CfiNotice[] }) {
                         <li key={l.href} className="min-w-0 max-w-full">
                           <a
                             href={l.href}
-                            target={isPortalPage(l.href) ? undefined : '_blank'}
-                            rel={isPortalPage(l.href) ? undefined : 'noopener noreferrer'}
+                            target={opensNewTab(l.href) ? '_blank' : undefined}
+                            rel={opensNewTab(l.href) ? 'noopener noreferrer' : undefined}
                             className="tap inline-flex max-w-full items-center gap-2 break-words rounded-lg border-2 border-skyLine bg-skyTint px-3.5 py-2 text-left text-sm font-semibold text-navy transition-colors hover:border-sky"
                           >
                             <span className="min-w-0 break-words">{l.label}</span>
-                            {!isPortalPage(l.href) && <span className="sr-only">(opens in a new tab)</span>}
+                            {opensNewTab(l.href) && <span className="sr-only">(opens in a new tab)</span>}
                           </a>
                         </li>
                       ))}

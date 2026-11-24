@@ -6,7 +6,7 @@ import { manualGroups, flightManualCaveat } from '@/content/manuals';
 import { rotaQuarters } from '@/content/roster';
 import { currentCfiNotices } from '@/content/notices';
 import { waveBoxLoaIssued } from '@/content/airspace';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 export const metadata = { title: 'Flying' };
 
@@ -142,7 +142,7 @@ export default function FlyingPage() {
         </div>
         <ul className="grid gap-x-10 border-t-2 border-navy sm:grid-cols-2">
           {notices.map((d) => {
-            const external = !isPortalPage(d.href);
+            const external = opensNewTab(d.href);
             return (
               <li key={d.id} className="border-b border-skyLine">
                 <a

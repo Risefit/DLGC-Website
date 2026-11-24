@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { Band, BandPhoto, Figures, Section, Callout, outIcon } from '@/components/ui';
+import { Band, BandPhoto, Figures, Section, Callout, FileKind, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
 import type { Doc } from '@/content/documents';
 import { flyingCards, flyingCardSummary, redCardTheoryTest } from '@/content/flying-cards';
 import { startHere, towardsSolo, onTheGround, simulator, medical, briefings, libraryCount } from '@/content/training';
 import FlyingCardPanel from '@/components/FlyingCardPanel';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 export const metadata = { title: 'Training' };
 
@@ -19,7 +19,7 @@ export default function TrainingPage() {
   const list = (docs: Doc[]) => (
     <ul className="card divide-y divide-skyLine overflow-hidden">
       {docs.map((d) => {
-        const external = !isPortalPage(d.href);
+        const external = opensNewTab(d.href);
         return (
           <li key={d.id}>
             <a
@@ -28,8 +28,14 @@ export default function TrainingPage() {
               rel={external ? 'noopener noreferrer' : undefined}
               className="block px-5 py-4 transition-colors hover:bg-sky50"
             >
-              <span className="font-medium text-navy">{d.title}</span>
-              {d.version && <span className="ml-2 text-sm text-slate2">{d.version}</span>}
+              <span className="flex items-start justify-between gap-3">
+                <span>
+                  <span className="font-medium text-navy">{d.title}</span>
+                  {d.version && <span className="ml-2 text-sm text-slate2">{d.version}</span>}
+                  <FileKind doc={d} />
+                </span>
+                {external && <span className="mt-1.5 text-slate2">{outIcon}</span>}
+              </span>
               {d.note && <span className="mt-0.5 block max-w-prose2 text-sm text-inkMuted">{d.note}</span>}
               {external && <span className="sr-only"> (opens in a new tab)</span>}
             </a>

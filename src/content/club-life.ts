@@ -103,10 +103,10 @@ export const clubPages: ClubPage[] = portalise([
           'UK Junior Gliding runs events throughout the year where young pilots join in for a weekend away — a different site, pilots from across the country, new flying experiences. The annual UK Junior Nationals is open to any junior pilot with a Silver Badge. To join in, contact UKJG for the arrangements, and the host club for site details.',
         ],
         links: [
-          { label: 'UK Junior Gliding', href: 'http://www.juniorgliding.co.uk/', note: 'Events, contacts and what is on' },
-          { label: 'BGA Junior Gliding', href: 'https://members.gliding.co.uk/pilot-resources-flying-training/junior-gliding/' },
+          { label: 'UK Junior Gliding', href: 'https://www.gliding.co.uk/juniorgliding-2/', note: 'Events, contacts and what is on' },
+          { label: 'BGA Junior Gliding', href: 'https://members.gliding.co.uk/junior-gliding/' },
           { label: 'BGA Junior Gliding — funding opportunities', href: 'https://members.gliding.co.uk/junior-gliding/funding-opportunities/' },
-          { label: 'BGA Junior Gliding Centre resources', href: 'https://members.gliding.co.uk/club-development/jgc-resources/', note: 'What the accreditation means' },
+          { label: 'BGA Junior Gliding Centres', href: 'https://members.gliding.co.uk/club-management/membership-participation/becoming-a-junior-gliding-centre/', note: 'What the accreditation means' },
           { label: 'Email UK Junior Gliding', href: 'mailto:ukjuniorgliding@gmail.com' },
         ],
         columns: 2,
@@ -189,12 +189,12 @@ export const clubPages: ClubPage[] = portalise([
       {
         heading: 'From the BGA and elsewhere',
         links: [
-          { label: 'Breaking the site barrier', href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2015/04/1430311842_Breakingthesitebarrier.pdf', note: 'BGA' },
-          { label: 'Prepare for some fun — early cross country', href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2015/04/1430311859_Prepareforsomefun.pdf', note: 'BGA' },
-          { label: 'Guidance following a field landing', href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2015/04/1430311903_Guidancefollowingafieldlanding.pdf', note: 'BGA' },
-          { label: 'Navigation — BGA guidance', href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2017/08/7-25-NAVIGATION-V3-2017.pdf', note: 'BGA' },
-          { label: 'Field landing tutorials', href: 'https://members.gliding.co.uk/library-search-results/?bgasearch_keyword=field+landing+tutorial', note: 'BGA library search' },
-          { label: 'CAA Safety Sense leaflet 25', href: 'http://publicapps.caa.co.uk/docs/33/ga_srg_09webSSL25October.pdf', note: 'CAA' },
+          { label: 'Breaking the site barrier', href: 'https://members.gliding.co.uk/library/pilot-info/breaking-the-site-barrier/', note: 'BGA' },
+          { label: 'Prepare for some fun — early cross country', href: 'https://members.gliding.co.uk/library/pilot-info/prepare-for-some-fun/', note: 'BGA' },
+          { label: 'Guidance following a field landing', href: 'https://members.gliding.co.uk/library/pilot-info/guidance-after-a-field-landing/', note: 'BGA' },
+          { label: 'Navigation — BGA guidance', href: 'https://members.gliding.co.uk/library/instructor-manual/bga-instructor-manual-section-7-25/', note: 'BGA' },
+          { label: 'Field landing tutorials', href: 'https://members.gliding.co.uk/field-landing/', note: 'BGA — the briefing and the video chapters' },
+          { label: 'CAA Safety Sense leaflets', href: 'https://www.caa.co.uk/general-aviation/safety-topics/safety-sense-leaflets/', note: 'CAA — including leaflet 25, Use of GPS' },
           { label: 'Aerodrome Traffic Zones explained', href: 'https://airspacesafety.com/wp-content/uploads/2019/04/AerodromeTrafficZone.pdf', note: 'Airspace & Safety Initiative' },
           { label: 'Radio frequencies and outlandings', href: 'https://www.ruskin.me.uk/gliding-data' },
           { label: 'Sporting Code Section 3C (2017)', href: 'https://www.fai.org/sites/default/files/basic_page/document/sc3c_2017.pdf', note: 'FAI' },
@@ -273,7 +273,7 @@ export const clubPages: ClubPage[] = portalise([
       {
         heading: 'The competition pages',
         links: [
-          { label: 'Introduction, latest news and results', href: `${OLD}/blake-rbshw/blake_rbshw_briefA_Aor22.asp` },
+          { label: 'Introduction, latest news and results', href: `${OLD}/blake-rbshw/blake_rbshw_briefA.asp` },
           { label: 'Task list', href: `${OLD}/blake-rbshw/blake_rbshw_briefB.asp` },
           { label: 'Local turn points', href: `${OLD}/blake-rbshw/blake_rbshw_briefC.asp` },
           { label: 'Rules and scoring', href: `${OLD}/blake-rbshw/blake_rbshw_briefD.asp` },
@@ -319,7 +319,9 @@ export const clubPages: ClubPage[] = portalise([
         ],
         links: [
           { label: 'Trophies and winners', href: `${OLD}/trophies%202025.asp`, note: 'Every trophy and every winner on record' },
-          { label: 'Awards scheme details', href: `${OLD}/trophies.asp` },
+          // Straight to the document. This used to go to an old-site page that now
+          // shows the winners again, with the scheme one more click away.
+          { label: 'Trophies scheme — the rules', href: file('pdfs-trophies-scheme-v6-feb-26-arh-pdf'), note: 'What each trophy is awarded for (V6, February 2026)' },
         ],
         columns: 2,
       },

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { previewOpen } from '@/lib/auth';
-import { FILES_BUCKET, oldSiteUrl, storageKey } from '@/lib/files';
+import { FILES_BUCKET, fileKind, oldSiteUrl, pdfCopyKey, storageKey } from '@/lib/files';
 
 /**
  * ONE ADDRESS FOR EVERY FILE FROM THE OLD SITE:  /files/members/…
@@ -9,6 +9,7 @@ import { FILES_BUCKET, oldSiteUrl, storageKey } from '@/lib/files';
  *   Signed in to the portal, and the file has been copied across
  *     → a link to the club's private copy that works for ten minutes.
  *       No second password box.
+ *       A Word or PowerPoint file comes as its PDF copy, if one is stored.
  *   Signed in, but the file was never copied (too big, or added to the old
  *   site after the copy was made)
  *     → the old site, exactly as before.
@@ -42,6 +43,16 @@ function send(url: string) {
   return res;
 }
 
+/**
+ * Some of the club's PDFs were saved to open with a bookmarks panel down the
+ * left, which on a phone covers the page. This asks the browser's PDF viewer
+ * to open the document without it. It is only a request written after the "#"
+ * — nothing is sent to any server — and a viewer that does not know it ignores it.
+ */
+function tidyPdf(url: string, isPdf = /\.pdf$/i.test(url.split(/[?#]/)[0])) {
+  return isPdf && !url.includes('#') ? `${url}#pagemode=none&navpanes=0` : url;
+}
+
 export async function GET(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
 
@@ -53,25 +64,34 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ path: s
   const fallback = oldSiteUrl(path);
 
   const supabase = await createClient();
-  if (!supabase) return send(fallback); // storage not configured at all
+  if (!supabase) return send(tidyPdf(fallback)); // storage not configured at all
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    if (previewOpen) return send(fallback);
+    if (previewOpen) return send(tidyPdf(fallback));
     const login = request.nextUrl.clone();
     login.pathname = '/login';
     login.search = '';
     return send(login.toString());
   }
 
-  const { data, error } = await supabase.storage
-    .from(FILES_BUCKET)
-    .createSignedUrl(storageKey(path), LINK_LIFETIME_SECONDS);
+  const key = storageKey(path);
+  const store = supabase.storage.from(FILES_BUCKET);
 
-  if (error || !data?.signedUrl) return send(fallback); // not copied across
+  // A Word, PowerPoint or Excel file cannot be shown by a browser. If the club
+  // has stored a PDF copy beside it ("…/report.doc.pdf"), hand over that, so
+  // the document opens like any other. No copy: the original, as before.
+  if (fileKind(path[path.length - 1])) {
+    const pdf = await store.createSignedUrl(pdfCopyKey(key), LINK_LIFETIME_SECONDS);
+    if (!pdf.error && pdf.data?.signedUrl) return send(tidyPdf(pdf.data.signedUrl, true));
+  }
 
-  return send(data.signedUrl);
+  const { data, error } = await store.createSignedUrl(key, LINK_LIFETIME_SECONDS);
+
+  if (error || !data?.signedUrl) return send(tidyPdf(fallback)); // not copied across
+
+  return send(tidyPdf(data.signedUrl));
 }

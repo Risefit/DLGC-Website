@@ -117,8 +117,8 @@ export const weatherGroups: { group: string; blurb: string; links: WeatherLink[]
       { name: 'RASP UK Map', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php/rasptable-desktop', note: 'UK map with selectable predictions of all gliding meteorological data.' },
       { name: 'RASP Index', source: 'RASP UK (Stratus)', href: 'https://rasp.stratus.org.uk/index.php', note: 'Index to the full range of forecast data affecting gliding.' },
       { name: 'RASP BLIPMAP explained', source: 'Dr Jack', href: 'http://www.drjack.info/RASP/INFO/parameters.html', note: 'What each RASP parameter actually means. Worth reading once.' },
-      { name: 'GA F214 / F215 via MAVIS', source: 'Met Office', href: 'http://mavis.metoffice.gov.uk/', note: 'Cloud, visibility, weather and wind forecasts geared to General Aviation. After login: General Aviation → Briefing Charts → Significant Weather.', login: true },
-      { name: 'Met Office aviation services', source: 'Met Office', href: 'https://register.metoffice.gov.uk/WaveRegistrationClient/public/register.do?service=generalaviation', note: 'Register once for free General Aviation access, then use MAVIS above.', login: true },
+      { name: 'GA F214 / F215 via MAVIS', source: 'Met Office', href: 'https://mavis.metoffice.gov.uk/', note: 'Cloud, visibility, weather and wind forecasts geared to General Aviation. After login: General Aviation → Briefing Charts → Significant Weather.', login: true },
+      { name: 'Met Office Aviation Briefing Service', source: 'Met Office', href: 'https://www.metoffice.gov.uk/services/transport/aviation/regulated/national-aviation/abs', note: 'What the free General Aviation service offers and how to register. Register once, then use MAVIS above.' },
       { name: 'XC Weather', source: 'XCWeather', href: 'https://www.xcweather.co.uk/GB/forecast', note: 'Basic wind, temperature and weather on a UK map. Aimed at hang gliders and paragliders, but a quick read of the day.' },
     ],
   },
@@ -132,7 +132,6 @@ export const weatherGroups: { group: string; blurb: string; links: WeatherLink[]
       { name: 'Crag forecasts — pick Bamford Edge', source: 'MetCheck', href: 'https://www.metcheck.com/HOBBIES/climbing_forecast.asp', note: 'Seven-day forecast for a point 5km north-east of Camphill at the same elevation, so the wind and temperature are realistic for us. MetCheck retired the direct link, so choose Bamford Edge from the crag list.' },
       { name: 'Peak District mountain forecast', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/specialist-forecasts/mountain/peak-district', note: 'Cloud base, wind, temperature and hazards for the uplands rather than the valleys.' },
       { name: 'Peak District', source: 'MWIS', href: 'https://www.mwis.org.uk/forecasts/english-and-welsh/peak-district', note: 'Mountain Weather Information Service, written for walkers and climbers. The cloud base and hill wind assessments are useful to us.' },
-      { name: 'Recent rain', source: 'RainToday', href: 'http://www.raintoday.co.uk/', note: 'Where it has actually rained in the last few hours — useful for judging the state of the field.' },
     ],
   },
   {
@@ -151,7 +150,7 @@ export const weatherGroups: { group: string; blurb: string; links: WeatherLink[]
     links: [
       // The club's own station is at the top of the weather page itself, so it is not listed here.
       { name: 'Bradwell webcam', source: 'Derbyshire Soaring Club', href: 'https://derbyshiresoaringclub.org.uk/brad-cam/', note: 'Looking at the Bradwell slope, four miles north-east. A useful second opinion on the hill cloud.' },
-      { name: 'Cloud cover', source: 'Sat24', href: 'https://en.sat24.com/en/gb/visual', note: 'Satellite cloud video for the last 90 minutes. Visible for UK and Ireland, or infra-red for Europe.' },
+      { name: 'Cloud cover', source: 'Sat24', href: 'https://www.sat24.com/en-gb/country/gb', note: 'Satellite cloud video for the last 90 minutes. Visible for UK and Ireland, or infra-red for Europe.' },
       { name: 'Rainfall radar', source: 'Met Office', href: 'https://weather.metoffice.gov.uk/maps-and-charts/rainfall-radar-forecast-map', note: 'Precipitation of any kind and intensity, centred on the Peak District.' },
       { name: 'Lightning strikes', source: 'Blitzortung', href: 'https://www.blitzortung.org/en/live_lightning_maps.php?map=12', note: 'Instantaneous location of lightning strikes up to two hours old.' },
       { name: 'Wind streamlines', source: 'earth.nullschool.net', href: 'https://earth.nullschool.net/#current/wind/isobaric/1000hPa/orthographic=-1.18,55.34,1970', note: 'Wind at the 1000hPa level every three hours, centred on the UK.' },
@@ -346,7 +345,6 @@ export const findIt: { term: string; to: string; label: string }[] = [
   { term: 'Flying Blog', to: '/club-life/blog', label: 'Club Life → Blog' },
   { term: 'Flying Cards — all colours', to: '/training', label: 'Training' },
   { term: 'Flying Calendar', to: '/calendar', label: 'Calendar' },
-  { term: 'GASCo Flight Safety Extra', to: '/safety', label: 'Safety' },
   { term: 'Glider Hire Fee Rules', to: '/documents?q=glider+hire', label: 'Documents' },
   { term: 'Glider Maintenance', to: '/documents?q=maintenance', label: 'Documents → Aircraft' },
   { term: 'Ground Training Manual', to: '/documents?q=ground+training', label: 'Documents → Manuals' },

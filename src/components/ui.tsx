@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
+import { fileKind } from '@/lib/files';
 
 /**
  * The header of an inner page: a compact version of the dark contour band.
@@ -340,7 +341,21 @@ export function Figures({
   );
 }
 
-/** The small arrow that marks a link leaving the portal. */
+/**
+ * Says, beside a document's title, that it is a Word file or a PowerPoint —
+ * which a browser downloads rather than shows. Nothing for a PDF.
+ */
+export function FileKind({ doc }: { doc: { href: string } }) {
+  const kind = fileKind(doc.href);
+  if (!kind) return null;
+  return (
+    <span className="ml-2 inline-block whitespace-nowrap rounded-control bg-sunken px-1.5 py-0.5 align-middle text-xs font-medium text-navy">
+      {kind.label} · downloads
+    </span>
+  );
+}
+
+/** The small arrow that marks a link that opens in a new tab. */
 export const outIcon = (
   <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0">
     <path d="M6 2h8v8M14 2L6.5 9.5M11 12v2H2V5h2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />

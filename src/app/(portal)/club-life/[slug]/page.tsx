@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PageHeader, Section } from '@/components/ui';
+import { PageHeader, Section, outIcon } from '@/components/ui';
 import { clubPages, clubPageBySlug, type ClubSection } from '@/content/club-life';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab, fileKind } from '@/lib/files';
 
 export function generateStaticParams() {
   return clubPages.map((p) => ({ slug: p.slug }));
@@ -24,18 +24,23 @@ function LinkGrid({ section }: { section: ClubSection }) {
   return (
     <ul className={`grid gap-3 ${cols}`}>
       {section.links!.map((l) => {
-        const internal = isPortalPage(l.href);
+        const blank = opensNewTab(l.href);
+        const kind = fileKind(l.href);
         return (
           <li key={l.href + l.label}>
             <a
               href={l.href}
-              target={internal ? undefined : '_blank'}
-              rel={internal ? undefined : 'noopener noreferrer'}
+              target={blank ? '_blank' : undefined}
+              rel={blank ? 'noopener noreferrer' : undefined}
               className="card-interactive flex h-full flex-col p-4"
             >
-              <span className="font-medium text-navy">{l.label}</span>
+              <span className="flex items-start justify-between gap-3">
+                <span className="font-medium text-navy">{l.label}</span>
+                {blank && <span className="mt-1.5 text-slate2">{outIcon}</span>}
+              </span>
               {l.note && <span className="mt-1 text-sm text-inkMuted">{l.note}</span>}
-              {!internal && <span className="sr-only">(opens in a new tab)</span>}
+              {kind && <span className="mt-1 text-xs font-medium text-slate2">{kind.label} — {kind.hint}</span>}
+              {blank && <span className="sr-only">(opens in a new tab)</span>}
             </a>
           </li>
         );

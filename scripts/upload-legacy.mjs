@@ -266,9 +266,20 @@ async function main() {
   const bigKeys = new Set(tooBig.map((t) => storageKey(t.path.split('/'))));
   const missing = wanted ? wanted.filter((w) => !byKey.has(w.key) && !bigKeys.has(w.key)) : [];
 
+  // A PDF COPY of a Word or PowerPoint file sits beside the original with
+  // ".pdf" on the end of its whole name ("JKU report.doc.pdf"). The portal
+  // gives a signed-in member that copy, so the document opens in the browser
+  // (pdfCopyKey in src/lib/files.ts). It counts as linked whenever its
+  // original is.
+  const OFFICE = /\.(docx?|rtf|pp[ts]x?|xlsx?)$/;
+  const isPdfCopy = (key) => key.endsWith('.pdf') && OFFICE.test(key.slice(0, -4)) && wantedKeys.has(key.slice(0, -4));
+  const isLinked = (f) => wantedKeys.has(f.key) || isPdfCopy(f.key);
+
   const found = [...byKey.values()];
-  const linked = found.filter((f) => wantedKeys.has(f.key));
-  const extras = found.filter((f) => !wantedKeys.has(f.key));
+  const linked = found.filter(isLinked);
+  const extras = found.filter((f) => !isLinked(f));
+  const office = found.filter((f) => wantedKeys.has(f.key) && OFFICE.test(f.key));
+  const officeWithPdf = office.filter((f) => byKey.has(f.key + '.pdf'));
   const size = (list) => list.reduce((n, f) => n + f.bytes, 0);
 
   let plan = found;
@@ -281,9 +292,13 @@ async function main() {
   console.log('');
   console.log(`  ${found.length} files to keep (${mb(size(found))}), ${pages} old web pages ignored`);
   if (wanted) {
-    console.log(`  ${linked.length} of the ${wanted.length} files the portal links to are here`);
+    console.log(`  ${found.filter((f) => wantedKeys.has(f.key)).length} of the ${wanted.length} files the portal links to are here`);
     console.log(`  ${extras.length} more files are in the copy but not linked from the portal (${mb(size(extras))})`);
     if (missing.length) console.log(`  ${missing.length} linked files are NOT in this copy — they will keep opening on the old site`);
+    if (office.length) {
+      console.log(`  ${office.length} linked files are Word, PowerPoint or Excel; ${officeWithPdf.length} have a PDF copy beside them`);
+      if (officeWithPdf.length < office.length) console.log('      (without a PDF copy they download instead of opening in the browser)');
+    }
   }
   if (tooBig.length) {
     console.log(`  ${tooBig.length} files are over 50 MB and stay on the old site:`);

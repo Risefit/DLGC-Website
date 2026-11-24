@@ -46,10 +46,11 @@ export const photoGalleries: PhotoGallery[] = [
   },
   {
     name: 'Solo winch drivers',
-    blurb: 'Members who have qualified to winch solo. Also listed on the Duty Roster page.',
-    count: 11,
-    href: '/flying/roster',
-    internal: true,
+    // The photographs. This tile used to go to the Duty Roster page, which has
+    // the names and dates but no pictures — not what a gallery promises.
+    blurb: 'Photographs of the members who have qualified to winch solo. Their names and dates are on the Duty Roster page.',
+    count: 22,
+    href: `${OLD}/winch%20drvr%20gallery.asp`,
   },
   {
     name: 'Field landings — wine winners',

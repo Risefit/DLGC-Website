@@ -6,7 +6,7 @@ import { documents } from '@/content/documents';
 import { upcomingEvents, eventDate, startOfToday } from '@/content/site';
 import { rotaQuarters } from '@/content/roster';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -79,7 +79,26 @@ export default function Dashboard() {
           />
         }
       >
-        <nav aria-label="Most used" className="mt-7 flex flex-wrap gap-3">
+        {/* Find It, first thing on the page — a member asked for exactly this.
+            A plain form, so it works before any script has loaded. */}
+        <form action="/find-it" method="get" role="search" className="mt-6 flex max-w-[34rem] gap-2">
+          <label htmlFor="dash-find" className="sr-only">
+            Find it: look up a subject or a document
+          </label>
+          <input
+            id="dash-find"
+            name="q"
+            type="search"
+            placeholder="Subject or document"
+            className="min-w-0 flex-1 rounded-full border-2 border-white/40 bg-white px-5 py-3 text-ink placeholder:text-slate2 focus:border-windsock focus:outline-none"
+          />
+          <button type="submit" className="pill-ghost shrink-0">
+            <span aria-hidden="true">{icons.search}</span>
+            Find it
+          </button>
+        </form>
+
+        <nav aria-label="Most used" className="mt-5 flex flex-wrap gap-3">
           <a href={aim('flyingPlanner')} target="_blank" rel="noopener noreferrer" className="pill-accent">
             Daily Flying Planner {outIcon}
             <span className="sr-only">(opens Members’ Admin in a new tab)</span>
@@ -164,13 +183,13 @@ export default function Dashboard() {
                   <li key={d.id}>
                     <a
                       href={d.href}
-                      target={isPortalPage(d.href) ? undefined : '_blank'}
-                      rel={isPortalPage(d.href) ? undefined : 'noopener noreferrer'}
+                      target={opensNewTab(d.href) ? '_blank' : undefined}
+                      rel={opensNewTab(d.href) ? 'noopener noreferrer' : undefined}
                       className="tap w-full justify-between gap-3 py-2.5 font-medium text-navy hover:text-skyDark"
                     >
                       {d.title}
-                      {!isPortalPage(d.href) && <span className="text-slate2">{outIcon}</span>}
-                      {!isPortalPage(d.href) && <span className="sr-only">(opens in a new tab)</span>}
+                      {opensNewTab(d.href) && <span className="text-slate2">{outIcon}</span>}
+                      {opensNewTab(d.href) && <span className="sr-only">(opens in a new tab)</span>}
                     </a>
                   </li>
                 ))}
@@ -193,26 +212,21 @@ export default function Dashboard() {
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {safetySpot.map((l) => {
-            // Two of these live in the portal — the emergency procedures and the
-            // lessons log. Those must not open in a new tab.
-            const internal = isPortalPage(l.href);
-            const body = (
-              <>
-                <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>{l.label}</span>
-                {l.sub && <span className="mt-1 text-sm text-inkMuted">{l.sub}</span>}
-                {!internal && <span className="sr-only">(opens in a new tab)</span>}
-              </>
-            );
+            // All ten open the same way, in a new tab, so the panel behaves as
+            // one list (see opensNewTab). Two used to replace the page.
             const cls = `flex h-full flex-col rounded-card border bg-white px-5 py-4 transition-colors hover:border-bad ${
               l.strong ? 'border-l-4 border-bad/60' : 'border-bad/20'
             }`;
             return (
               <li key={l.label}>
-                {internal ? (
-                  <Link href={l.href} className={cls}>{body}</Link>
-                ) : (
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>{body}</a>
-                )}
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                  <span className="flex items-start justify-between gap-3">
+                    <span className={`font-semibold ${l.strong ? 'text-bad' : 'text-navy'}`}>{l.label}</span>
+                    <span className="mt-1.5 text-slate2">{outIcon}</span>
+                  </span>
+                  {l.sub && <span className="mt-1 text-sm text-inkMuted">{l.sub}</span>}
+                  <span className="sr-only">(opens in a new tab)</span>
+                </a>
               </li>
             );
           })}
@@ -235,7 +249,7 @@ export default function Dashboard() {
                 <span aria-hidden="true">{icons.search}</span>
                 Search documents
               </Link>
-              <Link href="/find-it" className="pill-line">The old A–Z</Link>
+              <Link href="/find-it" className="pill-line">Find It, the A–Z</Link>
             </div>
           </div>
 

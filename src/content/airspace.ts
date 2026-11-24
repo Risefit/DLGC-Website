@@ -63,7 +63,7 @@ export const nsgaIntro = [
 
 export const nsgaDocs: AirspaceDoc[] = portalise([
   { title: 'Derbyshire NSGA', note: 'The local area, in detail', href: file('airspace-derbyshire-nsga-pdf') },
-  { title: 'Derbyshire Non-SSR Area', note: 'Overview of the areas where transponders are not required', href: `${A}/Derbyshire%20NonSSR%20Area%20.pdf` },
+  { title: 'Derbyshire Non-SSR Area', note: 'Overview of the areas where transponders are not required. The file dates from 2012', href: file('derbyshire-nonssr-area-pdf') },
   { title: 'Transition to the Yorkshire NTA', note: 'Crossing between the two areas', href: file('airspace-transition-to-yorkshire-nta-pdf') },
 ]);
 
@@ -110,11 +110,6 @@ export const notamTools: NotamTool[] = [
     name: 'SkyDemon',
     note: 'Plot an intended route and the relevant NOTAMs are notified. Recommended for cross-country planning at home.',
     href: 'https://www.skydemon.aero/',
-  },
-  {
-    name: 'Spine',
-    note: 'Load it onto your own computer. Another interpreter of NATS NOTAM data.',
-    href: 'http://www.enborne.f2s.com/gliding/spine.htm',
   },
   {
     name: 'NATS AIS — the authoritative source',

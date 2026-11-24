@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { albums, totalPhotos, type Album } from '@/content/gallery';
 
 /**
@@ -10,6 +10,10 @@ import { albums, totalPhotos, type Album } from '@/content/gallery';
  *
  * Clicking the selected album again clears it, and "All photographs" shows
  * everything for anyone who wants to scroll.
+ *
+ * Choosing an album MOVES THE PAGE DOWN to its photographs. With thirty album
+ * buttons the pictures appeared below the bottom of the screen, and a member
+ * reasonably concluded the buttons did nothing (November 2026).
  */
 export default function GalleryBrowser({ base }: { base: string }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -23,6 +27,18 @@ export default function GalleryBrowser({ base }: { base: string }) {
   }, [selected]);
 
   const count = shown.reduce((n, s) => n + s.photos.length, 0);
+
+  const photosRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selected) return;
+    const el = photosRef.current;
+    if (!el) return;
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+    el.focus({ preventScroll: true });
+  }, [selected]);
+
+  const chosen = selected === '__all__' ? 'All photographs' : albums.find((a) => a.slug === selected)?.title;
 
   return (
     <>
@@ -77,10 +93,33 @@ export default function GalleryBrowser({ base }: { base: string }) {
 
         <p className="mt-3 text-sm text-inkMuted">
           {selected
-            ? `Showing ${count} photograph${count === 1 ? '' : 's'}. Click the album again to close it.`
-            : 'Choose an album to see the photographs.'}
+            ? `Showing ${count} photograph${count === 1 ? '' : 's'} below. Press the album again to close it.`
+            : 'Choose an album and its photographs appear underneath.'}
         </p>
       </section>
+
+      {selected && (
+        <div ref={photosRef} tabIndex={-1} className="mb-5 scroll-mt-4 border-t-2 border-navy pt-5 outline-none">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="display text-2xl lg:text-3xl">{chosen}</h2>
+              <p className="mt-1 text-inkMuted">
+                {count} photograph{count === 1 ? '' : 's'}. Press any one to open it full size in a new tab.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(null);
+                document.getElementById('albums-h')?.scrollIntoView({ block: 'start' });
+              }}
+              className="pill-line"
+            >
+              Back to the albums
+            </button>
+          </div>
+        </div>
+      )}
 
       {shown.map((s) => (
         <section key={s.title} className="mb-10">

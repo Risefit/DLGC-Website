@@ -60,7 +60,9 @@ export const safetySpot: SafetyLink[] = portalise([
   {
     label: 'Safe Start 2026',
     sub: 'Essential reading for all pilots — a self-briefing for a safe start to the season',
-    href: 'https://members.gliding.co.uk/wp-content/uploads/sites/3/2025/02/Safe-start-2026_online.pdf',
+    // The BGA's own Safe Start page, not the PDF: the BGA moves its files, and
+    // this page always carries the current year's briefing.
+    href: 'https://members.gliding.co.uk/library/safety-briefings/safe-start-presentation/',
     strong: true,
   },
   {
@@ -71,7 +73,7 @@ export const safetySpot: SafetyLink[] = portalise([
   {
     label: 'Keep winch launching safe',
     sub: 'BGA safe winching guidance',
-    href: 'https://members.gliding.co.uk/bga-safety-management/safe-winching/',
+    href: 'https://members.gliding.co.uk/safety/safe-winching/',
   },
   {
     label: 'Paying attention when rigging',
@@ -81,7 +83,7 @@ export const safetySpot: SafetyLink[] = portalise([
   {
     label: 'Using the Safe Rigging Toolbox',
     sub: 'BGA safe rigging',
-    href: 'https://members.gliding.co.uk/bga-safety-management/safe-rigging/',
+    href: 'https://members.gliding.co.uk/safety/managing-flying-risk-index/safe-rigging/',
   },
   {
     label: 'Safety Lessons Log',
@@ -95,13 +97,13 @@ export const safetySpot: SafetyLink[] = portalise([
   },
   {
     label: 'Safety Briefing Documents',
-    sub: 'From the BGA library',
+    sub: 'The BGA’s full list of briefings — pick a subject',
     href: 'https://members.gliding.co.uk/library/safety-briefings/',
   },
   {
     label: 'Spinning from a turn',
-    sub: 'BGA safety briefing',
-    href: 'https://members.gliding.co.uk/library/safety-briefings/',
+    sub: 'BGA spin avoidance — the briefing and the videos',
+    href: 'https://members.gliding.co.uk/safety/stall-and-spin-avoidance/',
   },
   {
     label: 'Crash / emergency — actions',
@@ -124,6 +126,11 @@ export type Charity = { name: string; href: string; why: string };
 
 export const charities: Charity[] = [
   {
+    name: 'Launchpoint',
+    href: 'https://members.gliding.co.uk/launchpoint/',
+    why: 'British gliding’s own charitable trust, which now includes the Caroline Trust.',
+  },
+  {
     name: 'Yorkshire Air Ambulance',
     href: 'https://yorkshireairambulance.org.uk/donate/',
     why: 'The service that would come for us. Entirely charity funded.',
@@ -132,6 +139,11 @@ export const charities: Charity[] = [
     name: 'Edale Mountain Rescue',
     href: 'https://justgiving.com/edalemrt',
     why: 'Our neighbours in the Peak, and they train at Camphill.',
+  },
+  {
+    name: 'Camphill Junior Fund',
+    href: file('misc-pages-junr-fnd-ad-pdf'),
+    why: 'The club’s own fund for its junior members.',
   },
   {
     name: 'Guide Dogs',

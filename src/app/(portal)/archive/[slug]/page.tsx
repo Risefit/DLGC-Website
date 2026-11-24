@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader, Badge } from '@/components/ui';
 import { collections, getCollection } from '@/content/documents';
-import { isPortalPage } from '@/lib/files';
+import { opensNewTab } from '@/lib/files';
 
 /** Pre-render every collection at build time. */
 export function generateStaticParams() {
@@ -64,7 +64,7 @@ export default async function CollectionPage({
           <h2 className="display mb-3 text-[1.7rem] lg:text-3xl">{year}</h2>
           <ul className="card divide-y divide-skyLine overflow-hidden">
             {byYear.get(year)!.map((d) => {
-              const external = !isPortalPage(d.href);
+              const external = opensNewTab(d.href);
               const size = fmtSize((d as { bytes?: number }).bytes);
               return (
                 <li key={d.id}>

@@ -116,6 +116,65 @@ Keep the house style — it is the best thing the old site had, and it is delibe
 - Warm and specific. Congratulate first solos by name. Thank people for unglamorous jobs.
 - Set `pinned: true` to surface it in "Worth knowing now" on the dashboard. Use sparingly — two at most.
 
+### Which tab a link opens in — one rule
+A member pointed out in November 2026 that it varied from link to link. It is now one rule,
+and one function decides it (`opensNewTab` in `src/lib/files.ts`):
+
+- **A link inside the content of a page opens in a new tab**, with the small arrow beside
+  it: a document, another website, an old-site page — and equally a portal page named in a
+  reading list, the Safety Spot or a news item. The member keeps their place.
+- **Navigation stays in the same tab**: the menu, the buttons in the band at the top of a
+  page, section tiles, "back" links, the footer, the Find It list. Those use `next/link`
+  directly. Do not open navigation in new tabs — that buries a member in tabs.
+
+A new list of links should call `opensNewTab(href)` rather than decide for itself.
+
+### Links to other organisations — link to the page, not the file
+In 2026 the BGA moved every uploaded file to a new address, and every link straight to a
+BGA PDF (`…/wp-content/uploads/…`) died at once: Safe Start, five accident reviews, four
+cross-country articles. **Link to the BGA's page for a document** (`members.gliding.co.uk/
+library/…/`), which stays put and always carries the current file. The same goes for the
+CAA and the Met Office. Old news items still say `…/wp-content/uploads/…`; those are sent
+to the BGA's new file server as the item is loaded (`BGA_UPLOAD` in `src/lib/files.ts`).
+
+Checked against the live sites on 24 November 2026; taken out because the site had gone:
+GASCo (wound up), Spine, RainToday and the old UK Junior Gliding address.
+
+### Word and PowerPoint files
+A browser can show a PDF. It cannot show a Word document or a PowerPoint: it downloads the
+file and hands it to another app, and a member without that app sees nothing. Twenty-odd
+files in the library are like this. Two things are in place:
+
+- The link says so before it is pressed — a "Word document · downloads" label, from
+  `fileKind()` in `src/lib/files.ts`. Nothing to maintain.
+- **The cure is a PDF copy.** Save the PDF beside the original in the copy of the old
+  site, with `.pdf` added to the whole name (`JKU report for members.doc.pdf`), and run the
+  uploader. A signed-in member is then given the PDF and it opens in the browser
+  (`pdfCopyKey`, and the route in `src/app/files`). The original stays where it is.
+
+### The Documents page — search first, then browse
+`src/components/DocumentLibrary.tsx`. The search box is the first thing on the page and
+results come back as one list, best match first (`rankDocs` in `documents.ts`; it also
+matches a document's old file name). With nothing typed the page shows Required reading
+and then the categories as tiles — never three hundred rows at once. Find It
+(`/find-it`, and the search box at the top of the dashboard) searches the same list.
+
+What keeps it tidy is the data, not the page:
+
+- **An old version goes to the archive** the moment a new one is published (see "Retire a
+  document"). Thirty-six rows that had been left as "current" were archived in November
+  2026 — earlier Pilots Manuals, Launch Marshals Manuals, medical procedures, policies,
+  past quarters' rotas. Each says what replaced it. **The CFI or Secretary should glance
+  down the list of what was archived** (`dlgc/member-feedback-2026-11.md` in the project
+  notes) in case one is still in force.
+- **A document gets a proper title**, in `ENRICH` in `documents.ts`. About 150 were
+  written then, only where the name was certain. Rota titles (`26Q4 Instructors Rota`)
+  and `SPL Theory Briefings … 2026 Q4` must stay exactly as they are — the roster page
+  finds them by title.
+- **It sits in the category a member would look in** (`RECATEGORISE`). "Competitions &
+  Trophies" was added for the Blake Robertshaw task sheets, which were swamping
+  Operational Notices. "Advisory" is shown to members as "Articles & Advice".
+
 ### Add or update a document
 Edit `src/content/documents-imported.ts`. **This is the one list** — one row per document,
 and every page that links to a file gets the address from here. Add new rows at the **top**.
@@ -306,6 +365,11 @@ One page, `/gallery`, in this order: the club's own six hand-kept galleries
 `/club-life/photo-galleries` address redirects there. Album titles were tidied by hand from
 folder names in November 2026; the `slug` still holds the original folder name.
 
+Choosing an album moves the page down to its photographs and says how many there are;
+before that the pictures appeared below the bottom of the screen and the album buttons
+looked dead. Each photograph opens full size in a new tab. The "Solo winch drivers" tile
+opens the old site's photographs; the names and dates are on the Duty Roster page.
+
 ### Member submissions (flying blog stories, gallery photos)
 Members submit via forms on `/club-life/blog` and `/gallery`. **Nothing publishes
 automatically** — everything lands in the Supabase `submissions` table with status
@@ -321,7 +385,7 @@ email the editor instead — it never fails silently.
 ### Links to the old site's pages
 Old news items and notices are full of links to the old site's pages. `OLD_PAGES` in
 `src/lib/files.ts` lists every old page that has a home in the portal; a link to one goes
-to the portal page instead, in the same tab, and a link whose only text was the old file
+to the portal page instead (in a new tab, like every link in a news item), and a link whose only text was the old file
 name ("dutyrotas") is given a proper name. It happens when the content is loaded
 (`portalise`), so the news text itself is untouched.
 
@@ -332,6 +396,24 @@ one-offs. When one is brought across, add it to `OLD_PAGES` and every old link f
 
 The Club Life pages pass `{ pages: false }`: each links to its own old page on purpose, for
 the parts not brought across, and must not be pointed back at itself.
+
+### When the old site renames a file — provisional minutes above all
+Minutes go up as `2026_07(P).pdf`; when they are approved the Secretary replaces that file
+with `2026_07.pdf`, and every link to the provisional one dies. All 536 old-site links in
+the news were tested on 24 November 2026 and 66 were dead, nearly all for this reason.
+
+`MOVED_FILES` in `src/lib/files.ts` lists each dead address and where it goes now. **When
+minutes are approved:** change the row in `documents-imported.ts` to the new file name and
+title, and add one line to `MOVED_FILES`. The same table covers anything else the old site
+renames. A link whose file has gone for good points at the nearest page instead.
+
+Minutes that still say "provisional" or "draft" on the page itself (several from 2022 to
+2025) are the files as the Secretary published them — the portal cannot correct those.
+
+### PDFs open without the side panel
+Some club PDFs were saved to open with a bookmarks panel, which covers the page on a
+phone. The file route adds `#pagemode=none&navpanes=0` to a PDF's address, which asks the
+browser's viewer to leave the panel shut. Harmless where it is not understood.
 
 ### Phone numbers and WhatsApp
 WhatsApp goes beside a **mobile** number (`isMobile` in `site.ts`) — the catering numbers,
@@ -547,9 +629,10 @@ These come from the audit of the old site. Each one fixes a specific, observed f
 6. **No member personal data in this repository.** Phone numbers and email addresses live in
    Members' Admin. If a directory is ever added here it must be opt-in per field.
 7. **Touch targets at least 44×44px** with real spacing. `.tap` in `globals.css` enforces the minimum.
-8. **Every external link** gets `target="_blank" rel="noopener noreferrer"` and a visible
-   "opens in a new tab" cue. (One exception: plain Members' Admin links are steered into a
-   single reused tab — see "One tab, signed in once".)
+8. **Every link in the content of a page** — external or not — gets `target="_blank"
+   rel="noopener noreferrer"` and a visible "opens in a new tab" cue; navigation stays in
+   the same tab. See "Which tab a link opens in". (One exception: plain Members' Admin
+   links are steered into a single reused tab — see "One tab, signed in once".)
 
 ---
 
@@ -651,8 +734,13 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] Decide who owns each document category and set real `reviewDue` dates
 - [ ] CFI to review `src/content/training.ts` (what a student is shown first), and to say
       which of the 28 earlier CFI notices still apply
-- [ ] Proper titles for the documents still named after their files ("833TrnscvrOps",
-      "BR01"…). Add them to `ENRICH` in `documents.ts`
+- [x] Proper titles for the documents named after their files — done November 2026 for
+      everything current. Archived documents still carry file names; add to `ENRICH`
+- [ ] **PDF copies of the 26 Word and PowerPoint files**, so they open in the browser
+      (see "Word and PowerPoint files")
+- [ ] CFI or Secretary to check the 36 documents archived as old versions in November 2026
+- [ ] Bring the five Blake Robertshaw pages across from the old site (introduction, task
+      list, turn points, rules, notes for badge hunters)
 - [ ] Camphill Catering's two mobile numbers are in `site.ts` and shown on the Directory.
       Rule 6 says no personal numbers without consent — confirm, or remove them
 - [ ] Check the album names in `gallery.ts` that were a best reading of a folder name
