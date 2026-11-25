@@ -2,7 +2,7 @@
 
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
-import { adminClient, temporaryPassword } from '@/lib/supabase/admin';
+import { adminClient, logSupabaseProblem, temporaryPassword } from '@/lib/supabase/admin';
 import { isController, isMember } from '@/lib/auth';
 
 /**
@@ -86,7 +86,18 @@ export async function loadMembers(): Promise<
   }
   const { me, admin } = ctx;
 
-  const users = await everyUser(admin);
+  let users: User[];
+  try {
+    users = await everyUser(admin);
+  } catch (e) {
+    // Almost always the secret key: missing, mistyped, or from another project.
+    const why = e instanceof Error ? e.message : 'unknown error';
+    logSupabaseProblem('members page, listing accounts', { message: why });
+    return {
+      ok: false,
+      message: `The portal could not read the list of members from Supabase (${why}). Check that SUPABASE_SERVICE_ROLE_KEY in Vercel is the secret key of the project members sign in to, then redeploy.`,
+    };
+  }
   const members: Member[] = users
     .map((u) => ({
       id: u.id,
@@ -144,6 +155,7 @@ async function create(
 
   if (error) {
     const said = error.message ?? '';
+    if (!/already|registered|exists/i.test(said)) logSupabaseProblem('members page, creating an account', error);
     if (/already|registered|exists/i.test(said)) {
       return {
         ok: false,

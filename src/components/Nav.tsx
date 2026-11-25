@@ -150,7 +150,24 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
   const [controller, setController] = useState(false);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
+  const [waiting, setWaiting] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+
+  // A controller is told how many people are waiting to join. Nobody emails
+  // them about it, so this number is the only notice they get.
+  useEffect(() => {
+    if (!controller) return;
+    let live = true;
+    fetch('/api/admin/waiting')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { waiting?: number } | null) => {
+        if (live && d && typeof d.waiting === 'number') setWaiting(d.waiting);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [controller]);
 
   useEffect(() => {
     if (!open) return;
@@ -221,8 +238,9 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
           {email}
         </span>
         {controller && (
-          <Link href="/admin/members" onClick={onNavigate} className={button}>
-            Members
+          <Link href="/admin/members" onClick={onNavigate} className={`${button} gap-2`}>
+            Members: add and approve
+            {waiting > 0 && <Waiting n={waiting} />}
           </Link>
         )}
         <Link href="/account/password" onClick={onNavigate} className={button}>
@@ -236,7 +254,17 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
   }
 
   // On a wide screen: one button that opens on a click, like Free Flight's.
+  // A controller also gets "Members" out in the open beside it — the first
+  // controller looked for where to approve people and could not find it
+  // inside the menu.
   return (
+    <div className="flex items-center gap-3">
+      {controller && (
+        <Link href="/admin/members" className={`${button} gap-2`}>
+          Members
+          {waiting > 0 && <Waiting n={waiting} />}
+        </Link>
+      )}
     <div className="relative" ref={ref}>
       <button
         type="button"
@@ -267,7 +295,9 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
                   className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
                 >
                   Members
-                  <span className="ml-2 text-xs font-normal text-slate2">add, approve, remove</span>
+                  <span className="ml-2 text-xs font-normal text-slate2">
+                    {waiting > 0 ? `${waiting} waiting to join` : 'add, approve, remove'}
+                  </span>
                 </Link>
               </li>
             )}
@@ -295,6 +325,17 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
         </div>
       )}
     </div>
+    </div>
+  );
+}
+
+/** The number of people waiting to join, on the orange the dark header keeps for one thing at a time. */
+function Waiting({ n }: { n: number }) {
+  return (
+    <span className="grid h-6 min-w-6 place-items-center rounded-full bg-windsock px-1.5 text-sm font-bold text-deep">
+      {n}
+      <span className="sr-only"> waiting to join</span>
+    </span>
   );
 }
 

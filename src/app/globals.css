@@ -229,6 +229,17 @@
   }
   .band-dark .display,
   .ground-dark .display { @apply text-white; }
+  /* A white card on a dark surface is a light surface again. Without this,
+     anything in it that takes its colour from its surroundings — above all
+     what somebody TYPES into a box — is white on white. That is exactly what
+     happened on the sign-in and join pages in November 2026: members could
+     not see their own typing. */
+  .band-dark .card,
+  .ground-dark .card,
+  .band-dark .card-panel,
+  .ground-dark .card-panel { @apply text-ink; }
+  .band-dark .card :is(input, textarea, select),
+  .ground-dark .card :is(input, textarea, select) { @apply bg-white text-ink; }
   .band-dark .display em,
   .ground-dark .display em { @apply text-windsock; }
 

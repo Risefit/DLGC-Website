@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminClient } from '@/lib/supabase/admin';
+import { adminClient, logSupabaseProblem } from '@/lib/supabase/admin';
 
 /**
  * ASK TO JOIN — stores one request for a controller to look at.
@@ -53,18 +53,20 @@ export async function POST(request: Request) {
     return no('Requests cannot be taken on this copy of the site. Please ring the club office.', 503);
   }
 
-  const { count, error: countError } = await admin
+  const { count, error: countError, status: countStatus } = await admin
     .from('portal_requests')
     .select('id', { count: 'exact', head: true })
     .eq('status', 'pending');
   if (countError) {
+    logSupabaseProblem('ask to join, counting requests', { ...countError, status: countStatus });
     return no('Requests cannot be taken at the moment. Please ring the club office.', 503);
   }
   if ((count ?? 0) >= MAX_WAITING) return same();
 
-  const { error } = await admin.from('portal_requests').insert({ name, email, note: note || null });
+  const { error, status } = await admin.from('portal_requests').insert({ name, email, note: note || null });
   // 23505: this address already has a request waiting. Say the same as ever.
   if (error && error.code !== '23505') {
+    logSupabaseProblem('ask to join, saving a request', { ...error, status });
     return no('That could not be saved. Please try again, or ring the club office.', 503);
   }
 

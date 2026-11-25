@@ -10,15 +10,34 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   - every caller checks who is asking BEFORE using it. See requireController()
  *     in src/app/(portal)/admin/members/actions.ts.
  *
- * Needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel (no NEXT_PUBLIC_
- * prefix) — the same two the submissions form already uses.
+ * Needs SUPABASE_SERVICE_ROLE_KEY in Vercel (no NEXT_PUBLIC_ prefix).
+ *
+ * WHICH PROJECT IT TALKS TO. The same one members sign in to —
+ * NEXT_PUBLIC_SUPABASE_URL — and only if that is missing, SUPABASE_URL. The
+ * two were meant to be identical, but they are typed in separately, and on the
+ * day the portal was locked the server's own copy turned out not to lead to
+ * the project at all: "Ask to join" failed and nothing reached Supabase. The
+ * secret key has to belong to the project members sign in to, so that is the
+ * address it is used with. Stray spaces or a line break pasted in with either
+ * value are trimmed off, because a key with a line break in it cannot be sent.
  */
 export function adminClient(): SupabaseClient | null {
   if (typeof window !== 'undefined') throw new Error('adminClient() must never run in the browser');
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+}
+
+/**
+ * Write down why Supabase refused, where the website editor can find it
+ * (Vercel → the project → Logs). Only the reason is recorded — never a name,
+ * an address, a password or a key.
+ */
+export function logSupabaseProblem(where: string, error: { message?: string; code?: string; status?: number } | null) {
+  if (!error) return;
+  const what = [error.status ? `HTTP ${error.status}` : '', error.code ?? '', error.message || 'no reason given'].filter(Boolean).join(' · ');
+  console.error(`[portal] ${where}: ${what}`);
 }
 
 /**

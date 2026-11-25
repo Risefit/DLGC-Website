@@ -503,6 +503,22 @@ there begins with `requireController()`**, which asks Supabase who is signed in;
 that, anybody could call them. Do not add one that skips it, and never import
 `src/lib/supabase/admin.ts` (the secret key) into a component that runs in the browser.
 
+**Three things found on the first day, 25 November 2026 — do not undo them.**
+
+- *Typing was invisible on the sign-in and join pages.* A white card on the dark front
+  page inherited white text, so what a member typed was white on white. `globals.css` now
+  makes any `.card` on a dark surface dark-on-white, and the sign-in form has "Show the
+  password as I type". **Type into every box when you test a form** — a screenshot of an
+  empty form looks perfect.
+- *"Ask to join" answered "Requests cannot be taken at the moment".* The server was using
+  its own copy of the Supabase address (`SUPABASE_URL`), which did not lead to the project.
+  The server now uses the address members sign in with (`NEXT_PUBLIC_SUPABASE_URL`) — see
+  `src/lib/supabase/admin.ts`. When Supabase refuses the server, the reason is written to
+  Vercel → Logs as a line beginning `[portal]` (never a name, address or key).
+- *The first controller could not find where to approve people.* Controllers now have a
+  **Members** button in the header, with the number waiting to join beside it
+  (`/api/admin/waiting`). Nobody emails a controller, so that number is the only notice.
+
 **What the lock does not cover.** The pages are locked; the script files behind them
 (`/_next/static/…`) are not, because a browser has to fetch them before anybody is signed
 in. Their names are long and unguessable, but they are not secret, and the ones behind the

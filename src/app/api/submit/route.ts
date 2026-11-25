@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { adminClient } from '@/lib/supabase/admin';
 import { safetyRecipients } from '@/lib/safety-mail';
 
 /**
@@ -24,7 +24,7 @@ import { safetyRecipients } from '@/lib/safety-mail';
  * culture rests on it.
  *
  * REQUIRED SERVER-SIDE ENVIRONMENT VARIABLES (no NEXT_PUBLIC_ prefix):
- *   SUPABASE_URL                — same as NEXT_PUBLIC_SUPABASE_URL
+ *   (the project address is taken from NEXT_PUBLIC_SUPABASE_URL — see src/lib/supabase/admin.ts)
  *   SUPABASE_SERVICE_ROLE_KEY   — Settings → API → service_role
  *
  * OPTIONAL, for emailing safety reports on as well as storing them:
@@ -58,7 +58,7 @@ export async function GET() {
   const mail = Boolean(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
   return NextResponse.json(
     {
-      submissionsStored: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+      submissionsStored: Boolean(adminClient()),
       safetyReportsEmailed: mail && recipients.length > 0,
       safetyReportRecipients: recipients.length,
       mailServiceConfigured: mail,
@@ -68,10 +68,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  // The server's own client: the project members sign in to, with the secret key.
+  const supabase = adminClient();
 
-  if (!url || !key) {
+  if (!supabase) {
     return NextResponse.json(
       {
         ok: false,
@@ -130,7 +130,6 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = createClient(url, key, { auth: { persistSession: false } });
   let imagePath: string | null = null;
 
   if (file instanceof File && file.size > 0) {

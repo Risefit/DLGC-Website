@@ -23,6 +23,10 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
   const why = useSearchParams().get('why');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // A temporary password is twelve odd characters read off a text message.
+  // Typed blind, as dots, nobody can tell whether it went in right — or, as
+  // the first member to try it found, whether it went in at all.
+  const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(
     why === 'not-a-member'
       ? 'That sign-in does not have access to the portal. If you think it should, ask the club office.'
@@ -90,7 +94,7 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border-2 border-skyLine px-4 py-3.5 focus:border-sky focus:outline-none"
+            className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 text-ink focus:border-sky focus:outline-none"
           />
         </div>
 
@@ -100,16 +104,28 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
           </label>
           <input
             id="password"
-            type="password"
+            type={show ? 'text' : 'password'}
             autoComplete="current-password"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border-2 border-skyLine px-4 py-3.5 focus:border-sky focus:outline-none"
+            className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 text-ink focus:border-sky focus:outline-none"
           />
-          <p className="mt-1.5 text-xs text-slate2">
-            First time? Use the temporary password you were given. You will be asked to choose
-            your own straight away.
+          <label className="tap mt-1 cursor-pointer gap-3 text-sm text-navy">
+            <input
+              type="checkbox"
+              checked={show}
+              onChange={(e) => setShow(e.target.checked)}
+              className="h-5 w-5 rounded border-2 border-skyLine text-sky focus:ring-sky"
+            />
+            Show the password as I type
+          </label>
+          <p className="mt-1 text-xs text-slate2">
+            First time? Use the temporary password you were given, dashes included. You will be
+            asked to choose your own straight away.
           </p>
         </div>
 

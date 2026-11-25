@@ -77,7 +77,7 @@ export default function JoinForm() {
             maxLength={120}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border-2 border-skyLine px-4 py-3.5 focus:border-sky focus:outline-none"
+            className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 text-ink focus:border-sky focus:outline-none"
           />
         </div>
 
@@ -93,7 +93,7 @@ export default function JoinForm() {
             maxLength={254}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border-2 border-skyLine px-4 py-3.5 focus:border-sky focus:outline-none"
+            className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3.5 text-ink focus:border-sky focus:outline-none"
           />
           <p className="mt-1.5 text-xs text-slate2">This becomes what you sign in with.</p>
         </div>
@@ -109,7 +109,7 @@ export default function JoinForm() {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="How long you have been a member, or a telephone number to ring"
-            className="w-full rounded-lg border-2 border-skyLine px-4 py-3 placeholder:text-slate2/70 focus:border-sky focus:outline-none"
+            className="w-full rounded-lg border-2 border-skyLine bg-white px-4 py-3 text-ink placeholder:text-slate2/70 focus:border-sky focus:outline-none"
           />
         </div>
 
