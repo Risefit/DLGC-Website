@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { isController } from '@/lib/auth';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
 
@@ -137,13 +138,33 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
  * beside it and a different system with a different password. The wording says
  * "portal" every time so nobody types the wrong password into the wrong box.
  *
- * Signed out: a link to the sign-in page. Signed in: the address you signed in
- * with, and a way out. It reads the session this browser already holds; it
- * never asks the server who you are, so it costs nothing on each page.
+ * Signed in (which, now the portal is members only, is everybody who can see
+ * this menu): the address you signed in with, a link to change your password,
+ * and a way out. A controller also gets "Members". It reads the session this
+ * browser already holds; it never asks the server who you are, so it costs
+ * nothing on each page — and the Members page checks for itself, on the
+ * server, that whoever opens it really is a controller.
  */
 function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; wide?: boolean }) {
   const [email, setEmail] = useState<string | null>(null);
+  const [controller, setController] = useState(false);
   const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -155,10 +176,12 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
     supabase.auth.getSession().then(({ data }) => {
       if (!live) return;
       setEmail(data.session?.user?.email ?? null);
+      setController(isController(data.session?.user));
       setReady(true);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setEmail(session?.user?.email ?? null);
+      setController(isController(session?.user));
     });
     return () => {
       live = false;
@@ -170,8 +193,9 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
     const supabase = createClient();
     await supabase?.auth.signOut();
     onNavigate?.();
-    // A full reload, so nothing from the signed-in session is left on screen.
-    window.location.assign('/login');
+    // A full reload to the front page, so nothing from the signed-in session
+    // is left on screen.
+    window.location.assign('/');
   }
 
   if (!ready) return null;
@@ -188,15 +212,88 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
     );
   }
 
+  // In the phone menu: everything laid out, one under another.
+  if (wide) {
+    return (
+      <div className="space-y-2">
+        <span className="block truncate text-sm text-white/80">
+          <span className="sr-only">Signed in to the portal as </span>
+          {email}
+        </span>
+        {controller && (
+          <Link href="/admin/members" onClick={onNavigate} className={button}>
+            Members
+          </Link>
+        )}
+        <Link href="/account/password" onClick={onNavigate} className={button}>
+          Change my portal password
+        </Link>
+        <button type="button" onClick={signOut} className={button}>
+          Sign out of the portal
+        </button>
+      </div>
+    );
+  }
+
+  // On a wide screen: one button that opens on a click, like Free Flight's.
   return (
-    <div className={wide ? 'space-y-2' : 'flex items-center gap-3'}>
-      <span className={`block truncate text-sm text-white/80 ${wide ? '' : 'hidden max-w-[15rem] xl:block'}`}>
-        <span className="sr-only">Signed in to the portal as </span>
-        {email}
-      </span>
-      <button type="button" onClick={signOut} className={button}>
-        {wide ? 'Sign out of the portal' : 'Sign out'}
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-haspopup="true"
+        className={`${button} gap-2`}
+      >
+        <span>My sign-in</span>
+        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className={open ? 'rotate-180 transition-transform' : 'transition-transform'}>
+          <path d="M2 5l6 6 6-6" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
+
+      {open && (
+        <div className="card absolute right-0 z-50 mt-2 w-[19rem] max-w-[calc(100vw-2rem)] p-2 shadow-lift" role="menu">
+          <p className="px-3 pb-2 pt-1.5 text-xs text-slate2">
+            Signed in to the portal as
+            <span className="block break-all text-sm font-medium text-navy">{email}</span>
+          </p>
+          <ul className="border-t border-skyLine pt-1">
+            {controller && (
+              <li>
+                <Link
+                  href="/admin/members"
+                  onClick={() => setOpen(false)}
+                  role="menuitem"
+                  className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+                >
+                  Members
+                  <span className="ml-2 text-xs font-normal text-slate2">add, approve, remove</span>
+                </Link>
+              </li>
+            )}
+            <li>
+              <Link
+                href="/account/password"
+                onClick={() => setOpen(false)}
+                role="menuitem"
+                className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+              >
+                Change my password
+              </Link>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={signOut}
+                role="menuitem"
+                className="tap w-full rounded-lg px-3 py-2.5 text-left font-medium text-navy transition-colors hover:bg-sky50"
+              >
+                Sign out
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

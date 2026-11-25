@@ -17,38 +17,55 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>. It works straight away with no accounts and no database —
-**preview mode** leaves the login gate open so you can look around.
+Open <http://localhost:3000>. On your own computer, with no Supabase settings, the lock is
+off so you can look around. (To switch it off while Supabase *is* set up, put
+`NEXT_PUBLIC_PORTAL_OPEN=true` in `.env.local`. Never set that in Vercel.)
 
 ---
 
 ## Deploy to Vercel
 
-1. Push this folder to a GitHub repository.
+1. Push this folder to a GitHub repository. **Make the repository private** — it holds the
+   club's news, names and notices, and the portal's lock means nothing if the same text can
+   be read on GitHub.
 2. In Vercel: **Add New → Project**, import that repo. Framework auto-detects as Next.js.
-3. Deploy. It will work immediately in preview mode.
-4. Add environment variables when you are ready to switch auth on (below).
+3. Add the settings below, then deploy.
 
-## Switch on real sign-in
+## The portal is members only
 
-1. Create a project at [supabase.com](https://supabase.com) (free tier is ample).
-2. **Project Settings → API**: copy the Project URL and the `anon` public key.
-3. In Vercel, **Settings → Environment Variables**, add:
+A visitor sees the front page, the sign-in page and "Ask to join". Everything else needs a
+signed-in member. There is no setting that opens it on the live site, and if the Supabase
+settings are missing the portal stays shut.
 
-   | Name | Value |
-   |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | your project URL |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | your anon public key |
-   | `NEXT_PUBLIC_PREVIEW_OPEN` | `false` |
+**Settings in Vercel** (Settings → Environment Variables):
 
-4. In Supabase, **Authentication → Providers**: enable **Email**, and turn **off** "Enable
-   sign-ups" so only accounts you create can sign in.
-5. Add members under **Authentication → Users → Add user**. Set a password and tick
-   "Auto confirm user".
-6. Redeploy.
+| Name | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | the Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | its anon / publishable key |
+| `SUPABASE_URL` | the project URL again |
+| `SUPABASE_SERVICE_ROLE_KEY` | its secret key. Never give this a `NEXT_PUBLIC_` name |
 
-> ⚠️ **`NEXT_PUBLIC_PREVIEW_OPEN` must be `false` in production.** While it is `true` the portal
-> is open to anyone with the URL.
+**In Supabase, once:**
+
+1. **Authentication → Sign In / Providers**: Email on, and **"Allow new users to sign up"
+   OFF**. Members are made on the portal's Members page, never by signing themselves up.
+2. Run `supabase/migrations/005_portal_requests.sql` in the SQL Editor (it holds "Ask to
+   join" requests).
+3. **Make the first controller.** Authentication → Users → Add user → Create new user:
+   your email address, a password of your own, "Auto Confirm User" ticked. Then in the SQL
+   Editor, with your address in place of the one shown:
+
+   ```sql
+   update auth.users
+      set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb)
+                              || '{"portal_member": true, "portal_admin": true}'::jsonb
+    where email = 'you@example.org';
+   ```
+
+That is the only account made by hand. Sign in, open **My sign-in → Members**, and add
+everybody else there: each gets a temporary password for you to pass on, and has to choose
+their own the first time they sign in. Requests from "Ask to join" wait on the same page.
 
 This login is completely separate from Free Flight (AwareIM). Different system, different
 database, different password. The login page says so, because members will otherwise assume
@@ -65,8 +82,7 @@ Every document, photograph and presentation from the old members' site is linked
 |---|---|---|
 | Signed in to the portal | yes | Opens from the club's private storage. No second password |
 | Signed in to the portal | no (too big, or newer than the copy) | Opens on the old site, as before |
-| Not signed in, portal in preview | either | Opens on the old site, as before |
-| Not signed in, login gate on | either | Sent to the sign-in page |
+| Not a signed-in member | either | Sent to the front page |
 
 The copies live in a **private** Supabase Storage bucket called `legacy`. It is never made
 public: it holds committee minutes, accounts and lists of named members.

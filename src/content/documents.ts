@@ -31,7 +31,6 @@
 
 import { importedDocuments } from './documents-imported';
 import { FILES_BASE, fileKind } from '@/lib/files';
-import { previewOpen } from '@/lib/auth';
 
 export type Tier = 'live' | 'reference' | 'archive';
 
@@ -126,7 +125,6 @@ const curatedKept = curated;
  * own private copy, and everybody else to the old site as before. See
  * src/lib/files.ts.
  */
-export const servedFromOldSite = previewOpen;
 
 const rebased: Doc[] = importedDocuments.map((d) =>
   d.href.startsWith('/legacy/')

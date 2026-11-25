@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { previewOpen } from '@/lib/auth';
+import { isMember, portalOpen } from '@/lib/auth';
 import { FILES_BUCKET, fileKind, oldSiteUrl, pdfCopyKey, storageKey } from '@/lib/files';
 
 /**
@@ -13,11 +13,9 @@ import { FILES_BUCKET, fileKind, oldSiteUrl, pdfCopyKey, storageKey } from '@/li
  *   Signed in, but the file was never copied (too big, or added to the old
  *   site after the copy was made)
  *     → the old site, exactly as before.
- *   Not signed in, while the portal is in preview
- *     → the old site, exactly as before. The old site asks for the members'
- *       password, so nothing is exposed by the preview being open.
- *   Not signed in, once the login gate is on
- *     → the sign-in page.
+ *   Not a signed-in member
+ *     → the front page. (While the lock is off for local development, the old
+ *       site, which asks for its own password.)
  *
  * The private copy is NEVER handed to somebody who is not signed in. That is
  * the whole point of this file: the bucket is private, and the only way to a
@@ -70,12 +68,15 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ path: s
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    if (previewOpen) return send(tidyPdf(fallback));
-    const login = request.nextUrl.clone();
-    login.pathname = '/login';
-    login.search = '';
-    return send(login.toString());
+  // Not a signed-in member. The lock (middleware.ts) has normally turned such a
+  // request away already; this is the second check, so the private copy can
+  // never depend on one line elsewhere being right.
+  if (!user || !isMember(user)) {
+    if (portalOpen) return send(tidyPdf(fallback)); // working on the site locally
+    const front = request.nextUrl.clone();
+    front.pathname = '/';
+    front.search = '';
+    return send(front.toString());
   }
 
   const key = storageKey(path);

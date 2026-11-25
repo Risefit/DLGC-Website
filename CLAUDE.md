@@ -466,18 +466,63 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
   Table Editor → `reading_confirmations` (it shows each member's sign-in address, the
   document, its version and the date). That table holds members' addresses, so only the
   people the committee nominates should have the Supabase login.
-- Needs a signed-in member. Signed out, it is a plain reading list with a link to sign in.
+- Every visitor to the page is now a signed-in member, so the ticks always work (given
+  migration 004 has been run).
 
-### Signing in to the portal
-The menu carries "Portal sign in" (and "Sign in to the portal" in the phone menu), which
-becomes the member's address and "Sign out" once they are in — `PortalAccount` in
-`src/components/Nav.tsx`. **It always says "portal"**, because the Free Flight button
-sits beside it and is a different system with a different password.
+### The portal is members only — who gets in, and how
+Switched on in November 2026 at Phil's request. `src/lib/auth.ts` has the rules and
+`middleware.ts` is the lock; read the comments at the top of each before changing either.
 
-While the login gate is off, pressing Sign in with the boxes empty simply goes in; filling
-them in signs in properly, which is what makes documents open from the club's own copy.
-Accounts are created in Supabase → Authentication → Users. Nobody can register themselves
-as long as "Allow new users to sign up" is off there — check that it is.
+- **A visitor** sees three pages: the front page (`/`), sign-in (`/login`) and "Ask to
+  join" (`/join`). They share one frame, `src/components/FrontDoor.tsx`. **Nothing from
+  inside the portal goes on them** — no news, no names, no menu.
+- **Everything else needs a signed-in member.** A member is an account carrying the mark
+  `portal_member`, which only the server's secret key can set. Signing up is not enough,
+  and "Allow new users to sign up" stays OFF in Supabase regardless.
+- **It fails shut.** There is no setting that opens the live site. `NEXT_PUBLIC_PORTAL_OPEN=true`
+  is for a developer's own computer only. The old `NEXT_PUBLIC_PREVIEW_OPEN` is no longer read.
+
+**Controllers** (the mark `portal_admin`) run the Members page, `/admin/members`, reached
+from **My sign-in → Members**:
+
+- *Add a member* — name and email address. The account is made at once with a **temporary
+  password, shown once**, for the controller to pass on in person, by telephone or by text.
+- *Waiting to join* — requests from the front page (table `portal_requests`, migration
+  005). Approve makes the account the same way; Decline makes nothing.
+- *New temporary password* — for somebody who has forgotten theirs. There is no "email me
+  a reset link" yet, because the club's email sending is not set up.
+- *Remove access / Restore access*, and *Make a controller*. A controller cannot remove
+  themselves, so there is always one.
+
+A member on a temporary password is taken to `/account/password` and can go nowhere else
+until they have chosen their own (10 characters or more). Anybody can change theirs later
+from **My sign-in → Change my password**.
+
+The code that does all this is `src/app/(portal)/admin/members/actions.ts`. **Every action
+there begins with `requireController()`**, which asks Supabase who is signed in; without
+that, anybody could call them. Do not add one that skips it, and never import
+`src/lib/supabase/admin.ts` (the secret key) into a component that runs in the browser.
+
+**What the lock does not cover.** The pages are locked; the script files behind them
+(`/_next/static/…`) are not, because a browser has to fetch them before anybody is signed
+in. Their names are long and unguessable, but they are not secret, and the ones behind the
+search boxes carry the text being searched (document titles, the safety log, the roles
+list). Two consequences: the three public pages must never import from `src/content` in a
+component marked `'use client'` (the sign-in form is handed the one telephone number it
+needs), and nothing truly confidential belongs in `src/content` at all — that is what the
+private file store is for.
+
+**Members' names and email addresses live in Supabase only** — never in this repository,
+a content file, a commit message or a log (rule 6).
+
+The menu says "My sign-in" and the sign-in page says "portal" throughout, because the
+Free Flight button sits beside it and is a different system with a different password.
+
+**The first controller** is made by hand, once: see README, "The portal is members only".
+
+**Still open — make the GitHub repository private.** The lock keeps a visitor out of the
+website, but everything on it (news, names, notices) is also in the repository, which was
+public when last checked. Until that is changed the lock is only half shut.
 
 ### No preview notes or hint boxes on the pages
 Phil's instruction, November 2026: pages carry the club's content, not commentary about
@@ -488,8 +533,6 @@ vacant-roles callout, the airspace re-brief panel, the notes inside the emergenc
 procedures, and the red "Verify before relying on this page" box on Emergency Procedures —
 that one comes out only when the Safety Officer has checked the telephone numbers.
 
-**The login gate is still OFF** (`NEXT_PUBLIC_PREVIEW_OPEN=true`) even though nothing on
-the page says so any more.
 
 ### The menu — six items, and it stays six
 Dashboard, Flying, Training, Safety, Documents, Club Life. Gallery, Directory, Archive and
@@ -660,8 +703,11 @@ there is no horizontal scrollbar.
 ```
 src/
 ├── app/
-│   ├── (portal)/          Every signed-in page. layout.tsx has the nav + footer
-│   ├── login/             Sign-in (email + password, Supabase)
+│   ├── page.tsx           The public front page — sign in, or ask to join
+│   ├── login/  join/      Sign-in, and "Ask to join". The only other public pages
+│   ├── (portal)/          Every members' page. layout.tsx has the nav + footer
+│   │   ├── admin/members/ Controllers only: add, approve and remove members
+│   │   └── account/password/  Choose or change your portal password
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
 ├── components/
 │   ├── Nav.tsx            The six-item menu, the "Also" group, Free Flight dropdown
@@ -676,8 +722,9 @@ src/
 │   ├── site.ts            Fees, calendar, weather links, contacts, Find It A–Z
 │   ├── awareim.ts         The ONLY place AwareIM URLs appear
 │   └── retired/           Kept, not used
-├── lib/                   Supabase clients, auth config, files.ts (old-site file addresses)
+├── lib/                   auth.ts (who gets in), Supabase clients, files.ts (old-site files)
 └── app/files/             The one route every old-site file goes through
+middleware.ts              THE LOCK. Every request passes through it
 next.config.mjs            Redirects for merged and moved pages
 tools/make-contours.mjs    Draws the contour background
 scripts/upload-legacy.mjs  Copies the old site's files into private storage
@@ -715,16 +762,22 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
       `scripts/upload-legacy.mjs` on the computer that has the mirror (README)
 - [ ] Run `supabase/migrations/004_reading_confirmations.sql` so required-reading ticks can
       be saved, and have the CFI correct the list in `src/content/required-reading.ts`
-- [ ] **Before switching the login gate on:** in Supabase → Authentication, turn OFF
-      "Allow new users to sign up". Otherwise anybody can register themselves and is then
-      "signed in" as far as the portal and the file store are concerned
+- [ ] **Make the GitHub repository private** — the portal is locked but its text is all in
+      the repository
+- [ ] In Supabase → Authentication, turn OFF "Allow new users to sign up". A self-made
+      account cannot get into the portal (it is not a member), but there is no reason to
+      allow them at all
+- [ ] Email for the portal (`RESEND_API_KEY`, `MAIL_FROM`, the club domain's DNS records):
+      then a member could reset a forgotten password themselves, and a controller could be
+      told when somebody asks to join. Until then both go through a controller by hand
 - [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them
 - [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
       from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone
       numbers in the source have irregular digit counts. They are reproduced exactly as
       published and flagged "number needs checking" rather than guessed at. This is the one
       page where being wrong could matter.
-- [ ] Set `NEXT_PUBLIC_PREVIEW_OPEN=false` in Vercel once member accounts exist
+- [x] The portal locked to members — November 2026. `NEXT_PUBLIC_PREVIEW_OPEN` can be
+      deleted from Vercel; it is no longer read
 - [ ] **Transfer Supabase / Vercel / GitHub to club-owned accounts before handover** (see above)
 - [ ] Convert duty rotas from quarterly PDFs into a real roster view
 - [ ] Set `WEBCAM_SNAPSHOT_URL` in Vercel so the camera works through the proxy — and change
