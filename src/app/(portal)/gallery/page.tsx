@@ -6,6 +6,7 @@ import { albums, totalPhotos } from '@/content/gallery';
 import { photoGalleries } from '@/content/photo-galleries';
 import { FILES_BASE } from '@/lib/files';
 import { contacts } from '@/content/site';
+import { publishedPhotos, sentInImage } from '@/lib/sent-in';
 
 export const metadata = { title: 'Gallery' };
 
@@ -17,12 +18,18 @@ export const metadata = { title: 'Gallery' };
  *   1. the club's own six galleries, kept by hand and still growing — First
  *      Solos gains a picture every time somebody goes solo;
  *   2. the albums recovered from the old site;
+ *   (between 1 and 2, once there are any) photographs members have sent in and
+ *      a controller has approved — src/lib/sent-in.ts;
  *   3. the form for sending a photograph in. It comes last because most
  *      visitors are here to look, and it has its own button at the top.
  *
  * /club-life/photo-galleries redirects here (next.config.mjs).
  */
-export default function GalleryPage() {
+/** Rebuilt at once when a controller approves a photograph, and hourly in any case. */
+export const revalidate = 3600;
+
+export default async function GalleryPage() {
+  const sentIn = await publishedPhotos();
   return (
     <>
       <PageHeader
@@ -80,6 +87,47 @@ export default function GalleryPage() {
       </ul>
       </Section>
 
+      {sentIn.length > 0 && (
+        <Section
+          id="from-members"
+          title={
+            <>
+              Sent in <em>by members</em>
+            </>
+          }
+          description="The newest first. Each one opens full size in a new tab."
+        >
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {sentIn.map((p) => (
+              <li key={p.id}>
+                <figure className="card flex h-full flex-col overflow-hidden">
+                  <a href={sentInImage(p.id)} target="_blank" rel="noopener noreferrer" className="block bg-sunken">
+                    {/* A private picture behind the sign-in, so a plain <img>: the member's browser fetches it. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={sentInImage(p.id, 'small')}
+                      alt={p.title ? `${p.title}, from ${p.from}` : `Photograph from ${p.from}`}
+                      loading="lazy"
+                      className="aspect-[4/3] w-full object-cover"
+                    />
+                    <span className="sr-only">Open it full size (opens in a new tab)</span>
+                  </a>
+                  <figcaption className="flex-1 p-4">
+                    {p.title && <span className="block font-semibold text-navy">{p.title}</span>}
+                    <span className="block text-sm italic text-inkMuted">from {p.from}</span>
+                    {p.body.map((t, i) => (
+                      <span key={i} className="mt-1.5 block text-sm text-ink">
+                        {t}
+                      </span>
+                    ))}
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
       <Section
         id="albums"
         title={
@@ -103,7 +151,7 @@ export default function GalleryPage() {
         <SubmitForm
           kind="photo"
           heading="Add a photograph to the gallery"
-          intro="Taken something good at Camphill? Send it in — the website editor checks everything before it goes up."
+          intro="Taken something good at Camphill? Send it in — one of the portal’s controllers checks everything before it goes up."
           bodyLabel="Tell us about it"
           bodyPlaceholder="Where, when, who is in it, and anything worth knowing."
           imageRequired

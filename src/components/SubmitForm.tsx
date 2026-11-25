@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 /**
  * Member submission form — used for both flying blog stories and gallery
- * photographs. Nothing publishes automatically; everything goes to the website
- * editor to read and approve.
+ * photographs. Nothing publishes automatically; everything goes to the
+ * portal's controllers, who approve it on /admin/submissions.
  */
 export default function SubmitForm({
   kind,
@@ -95,7 +95,7 @@ export default function SubmitForm({
             className={field}
             autoComplete="email"
           />
-          <p className="mt-1 text-xs text-slate2">So the editor can come back to you.</p>
+          <p className="mt-1 text-xs text-slate2">So a controller can come back to you. It is not shown on the site.</p>
         </div>
       </div>
 
@@ -165,11 +165,11 @@ export default function SubmitForm({
         className="tap mt-6 w-full justify-center rounded-lg bg-sky px-6 py-4 text-lg font-semibold
                    text-white hover:bg-skyDark disabled:opacity-60 transition-colors sm:w-auto"
       >
-        {state === 'sending' ? 'Sending…' : 'Send to the editor'}
+        {state === 'sending' ? 'Sending…' : 'Send it in'}
       </button>
 
       <p className="mt-3 text-xs text-slate2">
-        Nothing is published automatically — the editor reads everything first.
+        Nothing is published automatically — one of the portal’s controllers reads everything first.
       </p>
     </form>
   );

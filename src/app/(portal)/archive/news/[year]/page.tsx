@@ -2,10 +2,15 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/ui';
 import NewsArticle from '@/components/NewsArticle';
-import { news, currentNewsYear, newsYears } from '@/content/news';
+import { currentNewsYear as fileNewsYear, newsYears as fileNewsYears } from '@/content/news';
+import { newsView } from '@/lib/news';
 
+/** Rebuilt when a notice is posted, and hourly in any case. */
+export const revalidate = 3600;
+
+/** The years in the news file are built ahead; any other year is built when first asked for. */
 export function generateStaticParams() {
-  return newsYears.filter((y) => y.year < currentNewsYear).map((y) => ({ year: String(y.year) }));
+  return fileNewsYears.filter((y) => y.year < fileNewsYear).map((y) => ({ year: String(y.year) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ year: string }> }) {
@@ -16,6 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ year: str
 export default async function NewsYearPage({ params }: { params: Promise<{ year: string }> }) {
   const { year } = await params;
   const y = Number(year);
+  const { news, currentNewsYear, newsYears } = await newsView();
   const items = news.filter((n) => Number(n.date.slice(0, 4)) === y);
   if (!items.length || y >= currentNewsYear) notFound();
 

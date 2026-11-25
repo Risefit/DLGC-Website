@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PageHeader } from '@/components/ui';
-import { archivedNews, currentNewsYear, newsYears } from '@/content/news';
+import { newsView } from '@/lib/news';
 
 export const metadata = { title: 'News Archive' };
 
@@ -9,7 +9,11 @@ export const metadata = { title: 'News Archive' };
  * a slow page on a phone and impossible to navigate; a year is a size a member
  * can actually read.
  */
-export default function NewsArchiveIndex() {
+/** Rebuilt when a notice is posted, and hourly in any case. */
+export const revalidate = 3600;
+
+export default async function NewsArchiveIndex() {
+  const { archivedNews, currentNewsYear, newsYears } = await newsView();
   const years = newsYears.filter((y) => y.year < currentNewsYear);
 
   return (

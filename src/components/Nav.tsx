@@ -167,6 +167,7 @@ function PortalAccount({
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
   const [waiting, setWaiting] = useState(0);
+  const [sentIn, setSentIn] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
   // A controller is told how many people are waiting to join. Nobody emails
@@ -174,14 +175,20 @@ function PortalAccount({
   useEffect(() => {
     if (!controller) return;
     let live = true;
-    fetch('/api/admin/waiting')
+    const ask = () =>
+      fetch('/api/admin/waiting')
       .then((r) => (r.ok ? r.json() : null))
-      .then((d: { waiting?: number } | null) => {
+      .then((d: { waiting?: number; sentIn?: number } | null) => {
         if (live && d && typeof d.waiting === 'number') setWaiting(d.waiting);
+        if (live && d && typeof d.sentIn === 'number') setSentIn(d.sentIn);
       })
-      .catch(() => {});
+        .catch(() => {});
+    ask();
+    // The approval page says when a decision has been made, so the number follows.
+    window.addEventListener('dlgc:sent-in-changed', ask);
     return () => {
       live = false;
+      window.removeEventListener('dlgc:sent-in-changed', ask);
     };
   }, [controller]);
 
@@ -260,6 +267,12 @@ function PortalAccount({
           </Link>
         )}
         {controller && (
+          <Link href="/admin/submissions" onClick={onNavigate} className={`${button} gap-2`}>
+            Sent in by members: approve
+            {sentIn > 0 && <Waiting n={sentIn} />}
+          </Link>
+        )}
+        {controller && (
           <Link href="/admin/reading" onClick={onNavigate} className={button}>
             Reading record: who has confirmed
           </Link>
@@ -299,6 +312,12 @@ function PortalAccount({
         className={`${button} gap-2`}
       >
         <span>My sign-in</span>
+        {controller && sentIn > 0 && (
+          <>
+            <Waiting n={sentIn} />
+            <span className="sr-only">sent in by members, waiting for approval</span>
+          </>
+        )}
         <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className={open ? 'rotate-180 transition-transform' : 'transition-transform'}>
           <path d="M2 5l6 6 6-6" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -322,6 +341,21 @@ function PortalAccount({
                   Members
                   <span className="ml-2 text-xs font-normal text-slate2">
                     {waiting > 0 ? `${waiting} waiting to join` : 'add, approve, remove'}
+                  </span>
+                </Link>
+              </li>
+            )}
+            {controller && (
+              <li>
+                <Link
+                  href="/admin/submissions"
+                  onClick={() => setOpen(false)}
+                  role="menuitem"
+                  className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+                >
+                  Sent in by members
+                  <span className="ml-2 text-xs font-normal text-slate2">
+                    {sentIn > 0 ? `${sentIn} waiting for approval` : 'stories and photographs'}
                   </span>
                 </Link>
               </li>

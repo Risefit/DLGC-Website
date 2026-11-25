@@ -5,7 +5,8 @@ import { isController } from '@/lib/auth';
 
 /**
  * HOW MANY PEOPLE ARE WAITING TO JOIN — for the number beside "Members" in a
- * controller's menu. There is no email to tell a controller that somebody has
+ * controller's menu — and how many stories and photographs are waiting to be
+ * approved, for the number beside "My sign-in". There is no email to tell a controller that somebody has
  * asked to join, so the menu has to.
  *
  * It answers with a count and nothing else, and only to a controller: it asks
@@ -32,5 +33,13 @@ export async function GET() {
     .select('id', { count: 'exact', head: true })
     .eq('status', 'pending');
 
-  return NextResponse.json({ ok: !error, waiting: error ? 0 : (count ?? 0) }, { headers });
+  // Stories and photographs members have sent in and nobody has decided on.
+  // Those two kinds only: a safety report is not a controller's to see or count.
+  const { count: sentIn } = await admin
+    .from('submissions')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending')
+    .in('kind', ['blog', 'photo']);
+
+  return NextResponse.json({ ok: !error, waiting: error ? 0 : (count ?? 0), sentIn: sentIn ?? 0 }, { headers });
 }

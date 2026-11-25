@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Band, BandPhoto, BandSection, Figures, Badge, icons, outIcon } from '@/components/ui';
 import { aim } from '@/content/awareim';
-import { news } from '@/content/news';
+import { newsView } from '@/lib/news';
 import { documents } from '@/content/documents';
 import { upcomingEvents, eventDate, startOfToday } from '@/content/site';
 import { rotaQuarters } from '@/content/roster';
@@ -32,7 +32,8 @@ const newsDate = (iso: string) => {
  * things members do most; pinned notices are marked in the news list rather
  * than repeated above it.
  */
-export default function Dashboard() {
+export default async function Dashboard() {
+  const { news } = await newsView();
   const today = startOfToday();
   const upcoming = upcomingEvents
     .map((e) => ({ ...e, date: eventDate(e) }))

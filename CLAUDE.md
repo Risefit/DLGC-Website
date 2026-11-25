@@ -101,6 +101,29 @@ signpost fails. If Mo rearranges his menu, update `where` to match.
 ## Common jobs
 
 ### Add a news item
+**From the News page (the usual way, from November 2026).** A controller opens
+`/club-life/news` and presses **Add a notice**: heading, date, who it is from, the
+text, any links, and whether to mark it "Worth knowing now". It is on the News page and
+the dashboard at once. Under each notice posted this way a controller has **Edit** and
+**Take down**; a notice taken down is kept and can be put back from "Notices taken
+down". Only controllers see any of these buttons, and the server refuses anybody else
+whatever their browser shows (`src/app/(portal)/club-life/news/actions.ts`, which
+begins with `requireController()` like every controller action).
+
+- Posted notices are rows in the Supabase table `portal_news` (migration 008), not in
+  the repository. `src/lib/news.ts` joins them to the news file, and **every page that
+  shows news asks `newsView()` there** — do not import the `news` array into a page.
+- What is typed is plain text and is shown as text. A link must start `https://` or,
+  for a portal page, `/`; "this link" is refused as a link's name (rule 3).
+- "Worth knowing now" shows on the two newest notices that carry it, whoever marked
+  them. The form says so.
+- The pages are built ahead and kept. Posting, editing or taking down tells the site to
+  rebuild them (`revalidatePath('/', 'layout')`), and they refresh hourly in any case.
+- **The old site still has its own news column.** A notice posted here does not appear
+  there, and one posted there has to be brought across. Until the old site is retired,
+  somebody has to decide which is the club's noticeboard.
+
+**In the file (for the notices brought across from the old site).**
 Edit `src/content/news.ts`. Add to the **top** of the `news` array.
 
 The year split is automatic: the News page shows everything from 1 January of the newest
@@ -380,10 +403,34 @@ opens the old site's photographs; the names and dates are on the Duty Roster pag
 ### Member submissions (flying blog stories, gallery photos)
 Members submit via forms on `/club-life/blog` and `/gallery`. **Nothing publishes
 automatically** — everything lands in the Supabase `submissions` table with status
-`pending`, and the editor reviews it in the Supabase dashboard (Table Editor).
+`pending` and shows nowhere.
+
+**A controller decides, on `/admin/submissions`** (My sign-in → Sent in by members; the
+number waiting sits beside "My sign-in"). Each waiting story or photograph can be tidied
+— title, text, the name it is shown as from — and then **approved, which publishes it
+at once**: a story at the top of the Flying Blog, a photograph under "Sent in by
+members" in the Gallery. Or declined. One that is on the site can be taken down, and one
+that is not shown can be published after all. Nothing is deleted (migration 009 adds who
+decided and when).
 
 That gate is deliberate. The club's news voice is the best thing about the old site, and
 an open publish button would lose it.
+
+- **Safety reports and adverts are rows in the same table, and controllers never see
+  them.** Every query in `src/lib/sent-in.ts`, the approval page, its action and the
+  picture route names the two kinds it is for (`'blog'`, `'photo'`). Do not write one
+  that reads `submissions` without that — a safety report is for the Safety Officer
+  alone, and some are anonymous.
+- **Pictures stay private.** They are in the private `submissions` store; a page shows
+  one through `/files/sent-in/<id>`, which gives a signed-in member a ten-minute link
+  and only once the picture is approved (a controller can also see one that is waiting).
+- **Approving a picture makes two smaller copies** (`src/lib/photos.ts`): 1800 and 700
+  pixels, turned the right way up, saved **without the camera's hidden data** — so the
+  location a phone records does not go out with the photograph. The original is kept
+  untouched. If the copies cannot be made the original is shown instead.
+- The member's email address is shown to controllers so they can write back, and never
+  on the site.
+- Adverts still go to the website editor and into `src/content/adverts.ts` by hand.
 
 Needs two server-side variables in Vercel (no `NEXT_PUBLIC_` prefix):
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Without them the form tells the member to
@@ -799,6 +846,7 @@ src/
 │   │   ├── admin/members/ Controllers only: add, approve, invite and remove members
 │   │   ├── admin/reading/ Controllers only: who has confirmed the required reading,
 │   │   │                  and the button that emails a member a reminder
+│   │   ├── admin/submissions/  Controllers only: approve what members send in
 │   │   ├── account/reading/   Where a reminder's button lands: read one document and tick it
 │   │   └── account/password/  Choose or change your portal password
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
@@ -807,7 +855,8 @@ src/
 │   ├── ui.tsx             Band, PageHeader, Section, Figures, tiles — use these
 │   └── DocumentLibrary.tsx  Search + filter for the document list
 ├── content/               ← MOST EDITS HAPPEN HERE. Plain data, no React
-│   ├── news.ts            News and Notices
+│   ├── news.ts            News and Notices brought from the old site (new ones are
+│   │                      posted on the News page — see src/lib/news.ts)
 │   ├── documents-imported.ts  THE document list. One row per file
 │   ├── documents.ts       file() / current() helpers, ENRICH titles and review dates
 │   ├── training.ts        What the Training page features
@@ -816,7 +865,10 @@ src/
 │   ├── awareim.ts         The ONLY place AwareIM URLs appear
 │   └── retired/           Kept, not used
 ├── lib/                   auth.ts (who gets in), Supabase clients, files.ts (old-site files),
-│                          mail.ts (the one place that sends email)
+│                          mail.ts (the one place that sends email), news.ts (all the
+│                          news, file and posted), sent-in.ts (approved stories and
+│                          photographs), controller.ts (the check every controller
+│                          action starts with)
 └── app/files/             The one route every old-site file goes through
 middleware.ts              THE LOCK. Every request passes through it
 next.config.mjs            Redirects for merged and moved pages
@@ -869,6 +921,10 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
       and paste it into "Add names", and have somebody check the thirty marked "check first"
 - [x] `supabase/migrations/006_portal_roll.sql` — applied 25 November 2026
 - [x] `supabase/migrations/007_reading_reminders.sql` — applied 25 November 2026
+- [x] `supabase/migrations/008_portal_news.sql` and `009_submission_decisions.sql` —
+      applied 25 November 2026
+- [ ] Decide which is the club's noticeboard while the old site is still running: news
+      posted on the portal does not appear on the old site, or the other way about
 - [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them
 - [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
       from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone

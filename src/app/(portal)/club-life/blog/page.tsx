@@ -1,10 +1,20 @@
 import { PageHeader, Section } from '@/components/ui';
 import SubmitForm from '@/components/SubmitForm';
 import { contacts } from '@/content/site';
+import { publishedStories, sentInImage } from '@/lib/sent-in';
 
 export const metadata = { title: 'Flying Blog' };
 
-/** The entries carried across from the old site so far. Add new ones at the top. */
+/** Rebuilt at once when a controller approves a story, and hourly in any case. */
+export const revalidate = 3600;
+
+/**
+ * The entries carried across from the old site so far. Add new ones at the top.
+ *
+ * Stories members send in with the form below are NOT added here: once a
+ * controller approves one (/admin/submissions) it is read from Supabase and
+ * shown with these, newest first (src/lib/sent-in.ts).
+ */
 const entries = [
   {
     date: '2024-11-29',
@@ -28,7 +38,28 @@ const entries = [
   },
 ];
 
-export default function BlogPage() {
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const display = (iso: string) => {
+  const d = new Date(iso);
+  return `${DAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+};
+
+export default async function BlogPage() {
+  const sentIn = await publishedStories();
+  const stories = [
+    ...sentIn.map((s) => ({
+      key: `sent-${s.id}`,
+      date: s.date.slice(0, 10),
+      display: display(s.date),
+      from: s.from,
+      title: s.title,
+      body: s.body,
+      image: s.hasImage ? { small: sentInImage(s.id, 'small'), full: sentInImage(s.id) } : null,
+    })),
+    ...entries.map((e) => ({ key: e.date, ...e, title: '', image: null })),
+  ].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
   return (
     <>
       <PageHeader
@@ -51,12 +82,26 @@ export default function BlogPage() {
         action={<a href="#write-one" className="pill-line">Write a story</a>}
       >
         <div className="max-w-4xl">
-          {entries.map((e) => (
-            <article key={e.date} className="story">
+          {stories.map((e) => (
+            <article key={e.key} className="story">
               <time dateTime={e.date} className="block text-sm font-semibold uppercase tracking-[0.12em] text-slate2">
                 {e.display}
               </time>
+              {e.title && <h3 className="display mt-1.5 text-[1.7rem] text-navy lg:text-3xl">{e.title}</h3>}
               <p className="mt-1 text-sm italic text-inkMuted">from {e.from}</p>
+              {e.image && (
+                <a href={e.image.full} target="_blank" rel="noopener noreferrer" className="mt-4 block max-w-2xl">
+                  {/* A private picture behind the sign-in, so a plain <img>: the member's browser fetches it. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={e.image.full}
+                    alt={`Photograph sent with the story${e.title ? ` “${e.title}”` : ''} by ${e.from}`}
+                    loading="lazy"
+                    className="w-full rounded-card border border-skyLine bg-sunken"
+                  />
+                  <span className="sr-only">Open the photograph full size (opens in a new tab)</span>
+                </a>
+              )}
               <div className="prose-club mt-3">
                 {e.body.map((p, i) => <p key={i}>{p}</p>)}
               </div>
@@ -77,7 +122,7 @@ export default function BlogPage() {
         <SubmitForm
           kind="blog"
           heading="Send a flying story"
-          intro="Tell other members what the flying was like. The website editor reads everything and publishes it — nothing goes up automatically."
+          intro="Tell other members what the flying was like. One of the portal’s controllers reads everything and publishes it — nothing goes up automatically."
           bodyLabel="Your story"
           bodyPlaceholder="What the day was like, who flew, what the conditions did, anything that made it worth being there…"
           editorEmail={contacts.websiteEditor.email}

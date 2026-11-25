@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Band, BandPhoto, Figures, Section, ActionTile, icons } from '@/components/ui';
 import { roles, vacantRoles } from '@/content/roles';
 import { volunteerMailto } from '@/content/committee';
-import { news } from '@/content/news';
+import { newsView } from '@/lib/news';
 import { clubPages, clubPageGroups } from '@/content/club-life';
 import { adverts, isAdvertExpired } from '@/content/adverts';
 import { totalPhotos } from '@/content/gallery';
@@ -14,7 +14,11 @@ export const metadata = { title: 'Club Life' };
  * not to a document search — that was the complaint about the first version and
  * it was a fair one.
  */
-export default function ClubLifePage() {
+/** News is shown here too: rebuilt when a notice is posted, and hourly in any case. */
+export const revalidate = 3600;
+
+export default async function ClubLifePage() {
+  const { news } = await newsView();
   const liveAdverts = adverts.filter((a) => !isAdvertExpired(a)).length;
   const latest = news[0];
 

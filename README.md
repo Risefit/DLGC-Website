@@ -86,6 +86,14 @@ it and ticks it; the manual is not attached and nothing is confirmed by the emai
 `supabase/migrations/007_reading_reminders.sql` keeps a note of what was sent (run on
 25 November 2026).
 
+**What controllers can do without touching the code** (all from the site, signed in):
+post, edit and take down news on the News page (`/club-life/news` → Add a notice);
+approve or decline the flying-blog stories and photographs members send in
+(My sign-in → Sent in by members); see who has confirmed the required reading; add,
+invite and remove members. `supabase/migrations/008_portal_news.sql` and
+`009_submission_decisions.sql` are the tables behind the first two (run on
+25 November 2026). Safety reports are not among them: those go to the Safety Officer.
+
 This login is completely separate from Free Flight (AwareIM). Different system, different
 database, different password. The login page says so, because members will otherwise assume
 they are the same.

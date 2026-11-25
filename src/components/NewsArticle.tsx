@@ -13,7 +13,14 @@ const linkClass =
  * Shared by the News page and every year of the archive, so the archive is not
  * a lesser version of the same thing.
  */
-export default function NewsArticle({ item }: { item: NewsItem }) {
+export default function NewsArticle({
+  item,
+  tools,
+}: {
+  item: NewsItem;
+  /** Buttons for whoever looks after the notice — see NoticeTools in NewsDesk.tsx. */
+  tools?: React.ReactNode;
+}) {
   return (
     <article className="story">
       <time dateTime={item.date} className="block text-sm font-semibold uppercase tracking-[0.12em] text-slate2">
@@ -62,6 +69,7 @@ export default function NewsArticle({ item }: { item: NewsItem }) {
           ))}
         </ul>
       )}
+      {tools}
     </article>
   );
 }

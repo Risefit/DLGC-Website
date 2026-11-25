@@ -194,8 +194,8 @@ export async function POST(request: Request) {
   if (kind === 'safety') await emailSafetyOfficer({ title, body, extras, anonymous, name, email });
 
   const MESSAGES: Record<string, string> = {
-    blog: 'Thank you — your story has gone to the website editor, who will read it and publish it.',
-    photo: 'Thank you — your photograph has gone to the website editor for the gallery.',
+    blog: 'Thank you — your story has gone to the portal’s controllers. One of them will read it, and it appears on this page as soon as it is approved.',
+    photo: 'Thank you — your photograph has gone to the portal’s controllers. It appears in the gallery as soon as one of them approves it.',
     advert: 'Thank you — your advert has gone to the website editor, who will put it on the page.',
     safety: anonymous
       ? 'Your report is logged for the Safety Officer. Nothing identifying you was recorded with it.'

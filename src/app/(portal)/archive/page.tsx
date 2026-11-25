@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { PageHeader, Section, Badge } from '@/components/ui';
 import { archiveCollections, looseDocs, searchDocs, documents } from '@/content/documents';
-import { archivedNews, currentNewsYear } from '@/content/news';
+import { newsView } from '@/lib/news';
 
 export const metadata = { title: 'Archive' };
 
@@ -23,6 +23,7 @@ export default async function ArchivePage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = '' } = await searchParams;
+  const { archivedNews, currentNewsYear } = await newsView();
 
   const cols = q
     ? archiveCollections.filter(
