@@ -9,7 +9,9 @@ import { createServerClient } from '@supabase/ssr';
  * else is for somebody signed in and marked as a member — see src/lib/auth.ts
  * for what that means and how a person becomes one.
  *
- *   not signed in               → the front page (or "not signed in" for /api)
+ *   not signed in               → the front page (or "not signed in" for /api);
+ *                                 from a reminder email's button, the sign-in
+ *                                 page, which brings them back afterwards
  *   signed in, not a member     → the sign-in page, which says why
  *   temporary password          → /account/password, until they choose their own
  *   temporary password, expired → the sign-in page, which says it has run out
@@ -24,6 +26,7 @@ import { createServerClient } from '@supabase/ssr';
 const PUBLIC = new Set(['/', '/login', '/join']);
 const PASSWORD_PAGE = '/account/password';
 const TEMP_PASSWORD_DAYS = 14; // the same number as in src/lib/auth.ts
+const READING_PAGE = '/account/reading'; // the same address as in src/lib/auth.ts
 
 function isPublic(path: string) {
   return (
@@ -103,7 +106,20 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  if (!user) return away('/');
+  if (!user) {
+    // The button in a reminder email. Not signed in: go and sign in, and come
+    // straight back to the document — not to the front page, where the trail
+    // would go cold. The sign-in form only honours this one address.
+    if (path === READING_PAGE) {
+      const target = request.nextUrl.clone();
+      target.pathname = '/login';
+      target.search = `?next=${encodeURIComponent(READING_PAGE + request.nextUrl.search)}`;
+      const res = NextResponse.redirect(target);
+      res.headers.set('Cache-Control', 'no-store');
+      return res;
+    }
+    return away('/');
+  }
   if (!member) return away('/login', 'not-a-member');
 
   // A temporary password that has sat unused too long no longer opens anything,

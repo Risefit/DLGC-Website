@@ -26,7 +26,7 @@ export type Sent =
   | { ok: true }
   | { ok: false; reason: string; /** the day's or month's allowance is used up */ quota: boolean };
 
-export async function sendMail(mail: { to: string; subject: string; text: string }): Promise<Sent> {
+export async function sendMail(mail: { to: string; subject: string; text: string; html?: string }): Promise<Sent> {
   if (typeof window !== 'undefined') throw new Error('sendMail() must never run in the browser');
   const apiKey = (process.env.RESEND_API_KEY || '').trim();
   const from = (process.env.MAIL_FROM || '').trim();
@@ -39,7 +39,13 @@ export async function sendMail(mail: { to: string; subject: string; text: string
       res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from, to: [mail.to], subject: mail.subject, text: mail.text }),
+        body: JSON.stringify({
+          from,
+          to: [mail.to],
+          subject: mail.subject,
+          text: mail.text,
+          ...(mail.html ? { html: mail.html } : {}),
+        }),
       });
     } catch {
       return { ok: false, reason: 'The email service could not be reached.', quota: false };
@@ -117,4 +123,82 @@ export function invitation(p: { firstName: string; email: string; password: stri
       'Camphill, Great Hucklow',
     ].join('\n'),
   };
+}
+
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** One document a member is being asked to read. */
+export type ReminderItem = { key: string; title: string; version?: string | null; why: string; who?: string | null };
+
+/** Where the button in a reminder takes the member: the page for that one document. */
+export const confirmLink = (key: string) => `${portalAddress()}/account/reading?doc=${encodeURIComponent(key)}`;
+
+/**
+ * The reminder a controller sends from the reading record: "you have not yet
+ * confirmed these — here they are". One email, however many documents.
+ *
+ * THE DOCUMENT IS NOT ATTACHED, on purpose. The button opens it in the portal:
+ * that is always the current version (an attachment would be out of date the
+ * day a manual is re-issued), some of the reading is a page rather than a file,
+ * and the tick has to be made by the member themselves, signed in, for the
+ * record to mean anything. Each button goes to the page for that one document,
+ * where the member opens it and ticks "I have read this".
+ *
+ * Titles and the one-line "why" come straight from
+ * src/content/required-reading.ts; nothing of the documents themselves is
+ * quoted or reworded here.
+ */
+export function readingReminder(p: { firstName: string; items: ReminderItem[]; sentBy?: string }) {
+  const one = p.items.length === 1;
+  const subject = one
+    ? `Please read and confirm: ${p.items[0].title}`
+    : `Please read and confirm: ${p.items.length} club documents`;
+  const intro = `The club asks members to read certain documents and to confirm that they have. Our record shows you have not yet confirmed ${one ? 'this one' : 'these'}:`;
+  const how =
+    (one ? 'The button opens the document’s page' : 'Each button opens that document’s page') +
+    ' in the members’ portal. Sign in with your portal email address and password (not your Free Flight ones), open the document, then tick “I have read this”. Your record is updated straight away.';
+  const already = `If you have read ${one ? 'it' : 'them'} already, ${one ? 'it still needs' : 'they still need'} your tick on the portal to be recorded.`;
+  const office = `Any trouble signing in: ${contacts.office.email} or ${contacts.office.tel}.`;
+  const by = p.sentBy ? `Sent by ${p.sentBy} for the club.` : '';
+  const label = (i: ReminderItem) => (i.version ? `${i.title} (${i.version})` : i.title);
+  const note = (i: ReminderItem) => (i.who ? `For ${i.who.toLowerCase()}. ${i.why}` : i.why);
+
+  const text = [
+    `Dear ${p.firstName},`,
+    '',
+    intro,
+    '',
+    ...p.items.flatMap((i) => [label(i), note(i), `Open it and confirm: ${confirmLink(i.key)}`, '']),
+    how,
+    '',
+    already,
+    '',
+    office,
+    by,
+    '',
+    'Derbyshire & Lancashire Gliding Club',
+  ]
+    .filter((l, n, all) => !(l === '' && all[n - 1] === ''))
+    .join('\n');
+
+  const html = `<!doctype html><html lang="en"><body style="margin:0;padding:24px;background:#EEF2F7;font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.5;color:#101828">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px">
+<p style="margin:0 0 16px">Dear ${esc(p.firstName)},</p>
+<p style="margin:0 0 20px">${esc(intro)}</p>
+${p.items
+  .map(
+    (i) => `<div style="border:1px solid #D5DEEA;border-radius:12px;padding:18px;margin:0 0 16px">
+<p style="margin:0 0 4px;font-size:19px;font-weight:bold;color:#14365A">${esc(label(i))}</p>
+<p style="margin:0 0 14px;color:#3D4A5C">${esc(note(i))}</p>
+<a href="${esc(confirmLink(i.key))}" style="display:inline-block;background:#14365A;color:#ffffff;font-weight:bold;text-decoration:none;padding:13px 22px;border-radius:999px">Open it and confirm</a>
+</div>`,
+  )
+  .join('\n')}
+<p style="margin:20px 0 12px">${esc(how)}</p>
+<p style="margin:0 0 12px">${esc(already)}</p>
+<p style="margin:0 0 12px;color:#3D4A5C">${esc(office)}${by ? ` ${esc(by)}` : ''}</p>
+<p style="margin:20px 0 0;color:#3D4A5C">Derbyshire &amp; Lancashire Gliding Club</p>
+</div></body></html>`;
+
+  return { subject, text, html };
 }

@@ -474,6 +474,30 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
   page tells members that controllers can see the record.
 - Only a controller can open that page. If the CFI should see it, a controller makes the
   CFI a controller — there is no separate "can see the reading record" mark yet.
+- **A controller can email a reminder from that page.** Under a member's "What is
+  outstanding" each document has "Email it to them", and there is one button for
+  everything outstanding (one email, not eight). The manuals for students and for
+  particular duties are offered separately and never counted as outstanding — the
+  controller knows who drives the winch; the portal does not. It needs the club's email
+  sending (`RESEND_API_KEY`, `MAIL_FROM`); until then the buttons are greyed out and the
+  page says why. Each send is noted in the table `reading_reminders` (migration 007), so
+  the row says "Emailed 25 Nov 2026", and the same thing cannot be sent twice within
+  five minutes.
+- **The email does not attach the manual, and does not confirm anything.** Its button
+  opens `/account/reading?doc=…` — that one document's page in the portal — where the
+  member opens it and ticks it, signed in, exactly as on the Documents page. That is
+  deliberate: the portal always shows the current version (an attachment is out of date
+  the day a manual is re-issued), some of the reading is a page rather than a file, and a
+  tick only means something if the member made it. **Do not add a link that confirms by
+  being clicked**: mail scanners open every link in an email, and anybody the email was
+  forwarded to could press it. A controller cannot tick for a member either.
+- A member who is not signed in when they press the button is sent to sign in and then
+  brought back to the document (`afterSignIn` in `src/lib/auth.ts`). That is the only
+  address the sign-in page will send anybody on to; anything else becomes the dashboard,
+  so the club's sign-in page cannot be used to bounce somebody to another website.
+- The wording of the reminder is `readingReminder()` in `src/lib/mail.ts`. It uses the
+  titles and the one-line reasons from `required-reading.ts` and quotes nothing from the
+  documents themselves.
 - Every visitor to the page is now a signed-in member, so the ticks always work (given
   migration 004 has been run).
 
@@ -550,6 +574,8 @@ The code that does all this is `src/app/(portal)/admin/members/actions.ts`. **Ev
 there begins with `requireController()`**, which asks Supabase who is signed in; without
 that, anybody could call them. Do not add one that skips it, and never import
 `src/lib/supabase/admin.ts` (the secret key) into a component that runs in the browser.
+The check itself lives in `src/lib/controller.ts`, and the reading reminders
+(`src/app/(portal)/admin/reading/actions.ts`) begin with it too.
 
 **Three things found on the first day, 25 November 2026 — do not undo them.**
 
@@ -771,7 +797,9 @@ src/
 │   ├── login/  join/      Sign-in, and "Ask to join". The only other public pages
 │   ├── (portal)/          Every members' page. layout.tsx has the nav + footer
 │   │   ├── admin/members/ Controllers only: add, approve, invite and remove members
-│   │   ├── admin/reading/ Controllers only: who has confirmed the required reading
+│   │   ├── admin/reading/ Controllers only: who has confirmed the required reading,
+│   │   │                  and the button that emails a member a reminder
+│   │   ├── account/reading/   Where a reminder's button lands: read one document and tick it
 │   │   └── account/password/  Choose or change your portal password
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
 ├── components/
@@ -840,6 +868,7 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] Before inviting everybody: get the current membership from the membership secretary
       and paste it into "Add names", and have somebody check the thirty marked "check first"
 - [x] `supabase/migrations/006_portal_roll.sql` — applied 25 November 2026
+- [x] `supabase/migrations/007_reading_reminders.sql` — applied 25 November 2026
 - [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them
 - [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
       from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone

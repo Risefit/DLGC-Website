@@ -1,10 +1,10 @@
 'use server';
 
 import type { User } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/server';
 import { adminClient, banned, everyUser, logSupabaseProblem, temporaryPassword } from '@/lib/supabase/admin';
 import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 import { invitation, mailReady, sendMail } from '@/lib/mail';
+import { requireController, refusal } from '@/lib/controller';
 
 /**
  * WHAT A CONTROLLER CAN DO — add a member, approve or decline a request, give
@@ -13,8 +13,8 @@ import { invitation, mailReady, sendMail } from '@/lib/mail';
  *
  * Every one of these runs on the server with the secret key, so every one of
  * them starts by asking Supabase who is signed in and refusing anybody who is
- * not a controller. The check is `requireController()`; nothing below it may
- * be reached without it. Do not add an action that skips it.
+ * not a controller. The check is `requireController()` (src/lib/controller.ts);
+ * nothing below it may be reached without it. Do not add an action that skips it.
  *
  * Members' names and email addresses are personal data. They are held in
  * Supabase and shown only on the Members page; they are never written into
@@ -68,24 +68,7 @@ export type Outcome =
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-async function requireController() {
-  const supabase = await createClient();
-  const admin = adminClient();
-  if (!supabase || !admin) throw new Error('not-configured');
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user || !isController(user)) throw new Error('not-allowed');
-  return { me: user, admin };
-}
-
-const refuse = (e: unknown): Outcome => ({
-  ok: false,
-  message:
-    e instanceof Error && e.message === 'not-configured'
-      ? 'The Members page needs SUPABASE_SERVICE_ROLE_KEY set in Vercel.'
-      : 'Only a controller can do that. Sign in again and retry.',
-});
+const refuse = (e: unknown): Outcome => ({ ok: false, message: refusal(e, 'The Members page') });
 
 /** Everything the Members page shows. */
 export async function loadMembers(): Promise<

@@ -4,7 +4,14 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { isMember, mustChangePassword, temporaryExpired, PASSWORD_PAGE, TEMP_PASSWORD_DAYS } from '@/lib/auth';
+import {
+  afterSignIn,
+  isMember,
+  mustChangePassword,
+  temporaryExpired,
+  PASSWORD_PAGE,
+  TEMP_PASSWORD_DAYS,
+} from '@/lib/auth';
 
 /**
  * The sign-in form. Signs in with Supabase, then goes on to the dashboard —
@@ -20,7 +27,11 @@ import { isMember, mustChangePassword, temporaryExpired, PASSWORD_PAGE, TEMP_PAS
  * to it by the page.
  */
 export default function SignInForm({ officeTel }: { officeTel: string }) {
-  const why = useSearchParams().get('why');
+  const params = useSearchParams();
+  const why = params.get('why');
+  // Came from the button in a reminder email: go back to that document afterwards.
+  const onward = afterSignIn(params.get('next'));
+  const toReading = onward !== '/dashboard';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // A temporary password is twelve odd characters read off a text message.
@@ -88,12 +99,17 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
       return;
     }
 
-    window.location.assign(mustChangePassword(data.user) ? PASSWORD_PAGE : '/dashboard');
+    window.location.assign(mustChangePassword(data.user) ? PASSWORD_PAGE : onward);
   }
 
   return (
     <div className="card p-6">
       <h2 className="text-xl">Sign in</h2>
+      {toReading && (
+        <p className="mt-2 rounded-card border-l-4 border-sky bg-skyTint px-4 py-3 text-sm text-ink">
+          Sign in and you will be taken straight to the document the club has asked you to read.
+        </p>
+      )}
       <p className="mt-1 text-sm text-inkMuted">
         Use your portal email and password. This is <strong>not</strong> your Free Flight login —
         that system has its own separate sign-in.

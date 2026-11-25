@@ -5,6 +5,7 @@ import { requiredReading } from '@/content/required-reading';
 import { getUser } from '@/lib/supabase/server';
 import { adminClient, banned, everyUser, logSupabaseProblem } from '@/lib/supabase/admin';
 import { isController, isMember } from '@/lib/auth';
+import { mailReady } from '@/lib/mail';
 
 export const metadata = { title: 'Required reading: who has confirmed' };
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,11 @@ export const dynamic = 'force-dynamic';
  * ONLY THE CURRENT VERSION COUNTS. A confirmation is recorded against one
  * version of a document. When a manual is re-issued its tick no longer counts
  * here and the member shows as outstanding again, which is the point.
+ *
+ * A CONTROLLER CAN EMAIL A REMINDER from here (actions.ts beside this file):
+ * one document, or everything a member has outstanding. The email has a button
+ * for each document which opens /account/reading, where the member reads it
+ * and ticks it themselves. Nobody can tick on a member's behalf.
  *
  * Anybody who is not a controller gets "page not found". The page is told who
  * is asking by Supabase, then reads with the server's secret key — a member's
@@ -37,6 +43,8 @@ export default async function ReadingRecordPage() {
   const admin = adminClient();
   let problem: string | null = null;
   let readers: ReaderRow[] = [];
+  // member → document → when a controller last emailed them about it
+  const reminded: Record<string, Record<string, string>> = {};
 
   if (!admin) {
     problem = 'This page needs SUPABASE_SERVICE_ROLE_KEY set in Vercel.';
@@ -63,6 +71,18 @@ export default async function ReadingRecordPage() {
         const mine = byUser.get(t.user_id) ?? {};
         mine[t.doc_key] = t.confirmed_at;
         byUser.set(t.user_id, mine);
+      }
+
+      // Reminders already emailed. If the table is not there yet (migration 007),
+      // the page still works; it just cannot say what has been sent.
+      const { data: notes } = await admin
+        .from('reading_reminders')
+        .select('user_id, doc_key, sent_at')
+        .order('sent_at', { ascending: true })
+        .limit(5000);
+      for (const n of (notes ?? []) as { user_id: string; doc_key: string; sent_at: string }[]) {
+        if (!current.has(n.doc_key)) continue;
+        (reminded[n.user_id] ??= {})[n.doc_key] = n.sent_at;
       }
 
       readers = users
@@ -102,11 +122,16 @@ export default async function ReadingRecordPage() {
         </p>
       ) : (
         <>
-          <Section title="Member by member" description="Find a member, or see everybody who still has something to confirm.">
+          <Section
+            title="Member by member"
+            description="Find a member, or see everybody who still has something to confirm. Open “What is outstanding” to email a member the documents they have not confirmed."
+          >
             <ReadingRecord
               readers={readers}
               items={items.map(({ key, title, everyone, who }) => ({ key, title, everyone, who }))}
               everyoneKeys={everyoneKeys}
+              reminded={reminded}
+              mail={mailReady()}
             />
           </Section>
 

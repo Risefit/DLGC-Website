@@ -70,5 +70,16 @@ export const temporaryExpired = (user: Marks) => {
 export const PUBLIC_PATHS = ['/', '/login', '/join'];
 export const PASSWORD_PAGE = '/account/password';
 
+/**
+ * Where the button in a reading-reminder email lands. The sign-in form will
+ * send a member on to this page after signing in, and to NOWHERE else it is
+ * asked to: `afterSignIn` accepts this one address (with its ?doc=… part) and
+ * turns everything else into the dashboard, so a doctored link cannot use the
+ * club's sign-in page to send somebody to another website.
+ */
+export const READING_PAGE = '/account/reading';
+export const afterSignIn = (next: string | null | undefined) =>
+  typeof next === 'string' && /^\/account\/reading(\?doc=[A-Za-z0-9%:._~-]{1,300})?$/.test(next) ? next : '/dashboard';
+
 /** The rule for a password a member chooses. Said the same way on the page and checked on the server. */
 export const MIN_PASSWORD = 10;

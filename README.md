@@ -80,6 +80,11 @@ carries on with whoever is left. A temporary password lasts 14 days.
 
 **Who has read what.** Controllers have **My sign-in → Reading record** (`/admin/reading`).
 A member sees their own tally on the dashboard and under **My sign-in → My required reading**.
+With email set up, a controller can press "Email it to them" beside a document a member has
+not confirmed. The email's button opens that document in the portal, where the member reads
+it and ticks it; the manual is not attached and nothing is confirmed by the email itself.
+`supabase/migrations/007_reading_reminders.sql` keeps a note of what was sent (run on
+25 November 2026).
 
 This login is completely separate from Free Flight (AwareIM). Different system, different
 database, different password. The login page says so, because members will otherwise assume
