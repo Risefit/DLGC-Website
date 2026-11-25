@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PageHeader, Section } from '@/components/ui';
 import RequiredReading from '@/components/RequiredReading';
-import { requiredReading, requiredOfEveryone } from '@/content/required-reading';
+import { requiredReading, readingRule } from '@/content/required-reading';
 
 export const metadata = { title: 'Read and confirm' };
 
@@ -51,7 +51,7 @@ export default async function ReadAndConfirmPage({ searchParams }: { searchParam
         <Section title={item.title} description={item.who ? `For ${item.who.toLowerCase()}.` : undefined}>
           <RequiredReading
             groups={[{ group: group.group, blurb: group.blurb, items: [item] }]}
-            everyoneKeys={requiredOfEveryone.map((i) => i.key)}
+            rule={readingRule}
           />
           <p className="mt-8">
             <Link href="/documents#required-reading" className="pill-line">

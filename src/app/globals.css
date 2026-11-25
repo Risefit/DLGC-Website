@@ -107,6 +107,17 @@
     @apply min-h-[44px] inline-flex items-center;
   }
 
+  /* A compact control for a dense list — the roles and buttons beside each
+     name on the Members page. Still 44px tall wherever a finger does the
+     pressing (rule 7 of CLAUDE.md); only with a mouse, which can hit a small
+     target, does it drop to 34px. Use .tap everywhere else. */
+  .tap-sm {
+    @apply min-h-[44px] inline-flex items-center;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tap-sm { min-height: 34px; }
+  }
+
   .prose-club {
     @apply max-w-prose2 leading-relaxed;
     /* Old notices quote bare URLs inline. Without this one line they push the

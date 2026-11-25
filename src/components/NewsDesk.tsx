@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useId, useState, useTransition } from 'react';
 import {
+  newsUploads,
   saveNotice,
   showNotice,
   takenDown,
@@ -10,6 +11,18 @@ import {
   type NoticeOutcome,
 } from '@/app/(portal)/club-life/news/actions';
 import type { PostedNotice } from '@/lib/news';
+import { createClient } from '@/lib/supabase/client';
+import {
+  FILE_TYPES,
+  MAX_FILE,
+  MAX_NOTICE_FILES,
+  MAX_NOTICE_PHOTOS,
+  MAX_PHOTO,
+  MB,
+  PHOTO_TYPES,
+  uploadProblem,
+  type UploadKind,
+} from '@/lib/uploads';
 import { useIsController } from '@/lib/use-controller';
 
 /**
@@ -30,6 +43,13 @@ import { useIsController } from '@/lib/use-controller';
  *
  * Notices that came across from the old site are in src/content/news.ts and
  * have no buttons; they are edited in that file.
+ *
+ * PHOTOGRAPHS AND FILES. The form takes a few of each. They are sent straight
+ * from the controller's browser to the private store (src/lib/uploads.ts says
+ * why), each with a one-time permission from the server, and only then is the
+ * notice saved — the server checks every one before it accepts it. Each needs
+ * a few words: for a photograph, what it shows (that is what a member who
+ * cannot see it is read); for a file, what it is.
  *
  * THE HOUSE STYLE still applies, and the form says so: dated, attributed,
  * warm and specific; links named for what they open.
@@ -78,8 +98,35 @@ export function NoticeForm({
   const [body, setBody] = useState(notice?.body ?? '');
   const [links, setLinks] = useState(notice?.links.length ? notice.links : [{ label: '', href: '' }]);
   const [pinned, setPinned] = useState(notice?.pinned ?? false);
+  // What the notice already carries, and what has been chosen to add.
+  const [kept, setKept] = useState(notice?.attachments ?? []);
+  const [adding, setAdding] = useState<{ file: File; kind: UploadKind; label: string }[]>([]);
+  const [progress, setProgress] = useState('');
   const [pending, startTransition] = useTransition();
   const [problem, setProblem] = useState<NoticeOutcome | null>(null);
+
+  const count = (kind: UploadKind) => kept.filter((a) => a.kind === kind).length + adding.filter((a) => a.kind === kind).length;
+
+  /** Files chosen in one of the two pickers. Anything that cannot go is refused here, before any upload. */
+  function choose(kind: UploadKind, list: FileList | null) {
+    if (!list) return;
+    setProblem(null);
+    const room = (kind === 'photo' ? MAX_NOTICE_PHOTOS : MAX_NOTICE_FILES) - count(kind);
+    const chosen = [...list];
+    const bad = chosen.map((f) => uploadProblem(kind, f)).find(Boolean);
+    if (bad) return setProblem({ ok: false, message: bad });
+    if (chosen.length > room) {
+      return setProblem({
+        ok: false,
+        message: `A notice can carry up to ${kind === 'photo' ? `${MAX_NOTICE_PHOTOS} photographs` : `${MAX_NOTICE_FILES} files`}.`,
+      });
+    }
+    setAdding((all) => [
+      ...all,
+      // A file starts with its own name as what it is called; a photograph has to be described.
+      ...chosen.map((file) => ({ file, kind, label: kind === 'file' ? file.name.replace(/\.[A-Za-z0-9]+$/, '').replace(/[_-]+/g, ' ').trim() : '' })),
+    ]);
+  }
 
   const setLink = (i: number, part: 'label' | 'href', value: string) =>
     setLinks((all) => all.map((l, n) => (n === i ? { ...l, [part]: value } : l)));
@@ -87,18 +134,142 @@ export function NoticeForm({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     setProblem(null);
-    const input: NoticeInput = { date, title, from, body, links, pinned };
+    const unnamed = adding.find((a) => a.label.trim().length < 3);
+    if (unnamed) {
+      return setProblem({
+        ok: false,
+        message: unnamed.kind === 'photo' ? 'Say in a few words what each photograph shows.' : 'Say in a few words what each file is.',
+      });
+    }
     startTransition(async () => {
       let outcome: NoticeOutcome;
       try {
+        // 1. Put the new photographs and files in the store, straight from this browser.
+        const add: { kind: UploadKind; path: string; label: string }[] = [];
+        if (adding.length > 0) {
+          setProgress('Getting ready to upload…');
+          const tickets = await newsUploads(adding.map((a) => ({ kind: a.kind, name: a.file.name, type: a.file.type, size: a.file.size })));
+          if (!tickets.ok) {
+            setProgress('');
+            return setProblem(tickets);
+          }
+          const supabase = createClient();
+          if (!supabase) {
+            setProgress('');
+            return setProblem({ ok: false, message: 'Files cannot be uploaded from this copy of the site.' });
+          }
+          for (let i = 0; i < adding.length; i++) {
+            setProgress(`Uploading ${i + 1} of ${adding.length}: ${adding[i].file.name}`);
+            const { error } = await supabase.storage
+              .from('news')
+              .uploadToSignedUrl(tickets.tickets[i].path, tickets.tickets[i].token, adding[i].file, { contentType: adding[i].file.type });
+            if (error) {
+              setProgress('');
+              return setProblem({
+                ok: false,
+                message: `“${adding[i].file.name}” could not be uploaded (${error.message}). Nothing has been published; what you typed is still here.`,
+              });
+            }
+            add.push({ kind: adding[i].kind, path: tickets.tickets[i].path, label: adding[i].label.trim() });
+          }
+          setProgress('Saving the notice…');
+        }
+        // 2. Save the notice. The server checks each file before it accepts it.
+        const input: NoticeInput = { date, title, from, body, links, pinned, attachments: { keep: kept.map((a) => a.n), add } };
         outcome = await saveNotice(input, notice?.id);
       } catch {
         outcome = { ok: false, message: 'That did not go through. Check your connection and try again — what you typed is still here.' };
       }
+      setProgress('');
       if (outcome.ok) onSaved(outcome);
       else setProblem(outcome);
     });
   }
+
+  const fileBox =
+    'w-full rounded-lg border-2 border-dashed border-skyLine bg-cloud px-4 py-3 text-ink file:mr-4 file:rounded-lg file:border-0 file:bg-navy file:px-4 file:py-2 file:font-medium file:text-white';
+  const size = (b: number) => (b >= MB ? `${(b / MB).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
+
+  /** One of the two pickers, with what is already on the notice and what has been chosen. */
+  const attach = (kind: UploadKind) => {
+    const photo = kind === 'photo';
+    const max = photo ? MAX_NOTICE_PHOTOS : MAX_NOTICE_FILES;
+    const mine = adding.map((a, i) => ({ a, i })).filter(({ a }) => a.kind === kind);
+    const old = kept.filter((a) => a.kind === kind);
+    return (
+      <fieldset>
+        <legend className={label}>
+          {photo ? 'Photographs' : 'Files'} <span className="font-normal text-inkMuted">(optional)</span>
+        </legend>
+        <p id={`${id}-${kind}-hint`} className={hint}>
+          {photo
+            ? `Up to ${max}. JPG, PNG or WEBP, each up to ${MAX_PHOTO / MB} MB — straight off a phone is fine; the portal makes a smaller copy and takes out where it was taken.`
+            : `Up to ${max}, each up to ${MAX_FILE / MB} MB. A PDF opens in the member’s browser; a Word, Excel or PowerPoint file downloads, so use a PDF where you can.`}
+        </p>
+        {(old.length > 0 || mine.length > 0) && (
+          <ul className="mb-3 space-y-3">
+            {old.map((a) => (
+              <li key={`k${a.n}`} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-card border border-skyLine bg-white px-4 py-3">
+                <span className="min-w-0">
+                  <span className="block font-medium text-navy">{a.label}</span>
+                  <span className="block text-sm text-inkMuted">Already on the notice</span>
+                </span>
+                <button type="button" className={small} onClick={() => setKept((all) => all.filter((x) => x.n !== a.n))}>
+                  Take it off<span className="sr-only">: {a.label}</span>
+                </button>
+              </li>
+            ))}
+            {mine.map(({ a, i }) => (
+              <li key={`a${i}`} className="grid gap-2 rounded-card border border-skyLine bg-white px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                <div>
+                  <label htmlFor={`${id}-a${i}`} className="mb-1 block text-sm font-medium text-navy">
+                    {photo ? 'What this photograph shows' : 'What this file is'}
+                    <span className="ml-2 font-normal text-inkMuted">
+                      {a.file.name} · {size(a.file.size)}
+                    </span>
+                  </label>
+                  <input
+                    id={`${id}-a${i}`}
+                    type="text"
+                    required
+                    minLength={3}
+                    maxLength={140}
+                    autoComplete="off"
+                    value={a.label}
+                    onChange={(e) => setAdding((all) => all.map((x, n) => (n === i ? { ...x, label: e.target.value } : x)))}
+                    className={box}
+                  />
+                </div>
+                <button type="button" className={small} onClick={() => setAdding((all) => all.filter((_, n) => n !== i))}>
+                  Take it off<span className="sr-only">: {a.file.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {count(kind) < max && (
+          <>
+            <label htmlFor={`${id}-${kind}`} className="sr-only">
+              {photo ? 'Choose photographs to add' : 'Choose files to add'}
+            </label>
+            <input
+              id={`${id}-${kind}`}
+              type="file"
+              multiple
+              accept={photo ? PHOTO_TYPES.join(',') : Object.keys(FILE_TYPES).join(',')}
+              aria-describedby={`${id}-${kind}-hint`}
+              // Cleared after each choice, so the same file can be picked again after being taken off.
+              onChange={(e) => {
+                choose(kind, e.target.files);
+                e.target.value = '';
+              }}
+              className={fileBox}
+            />
+          </>
+        )}
+      </fieldset>
+    );
+  };
 
   return (
     <form onSubmit={submit} className="card space-y-5 p-5 lg:p-6" aria-label={notice ? `Edit “${notice.title}”` : 'Add a notice'}>
@@ -230,6 +401,9 @@ export function NoticeForm({
         )}
       </fieldset>
 
+      {attach('photo')}
+      {attach('file')}
+
       <div>
         <label htmlFor={`${id}-pin`} className="tap cursor-pointer gap-3 font-medium text-navy">
           <input
@@ -248,6 +422,9 @@ export function NoticeForm({
       </div>
 
       <Said outcome={problem} />
+      <p aria-live="polite" className={progress ? 'font-medium text-navy' : 'sr-only'}>
+        {progress}
+      </p>
 
       <div className="flex flex-wrap gap-3">
         <button type="submit" className="pill-solid disabled:opacity-50" disabled={pending}>

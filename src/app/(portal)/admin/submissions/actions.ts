@@ -61,7 +61,7 @@ export async function decideSubmission(id: number, publish: boolean, edits?: Edi
       if (row.kind === 'photo' && !row.image_path) return no('There is no photograph with this one, so there is nothing to show.');
       // The copies for showing: smaller, and without the phone's location data.
       if (row.image_path && !row.shown_path) {
-        const copies = await makeShownCopies(admin, id, row.image_path as string);
+        const copies = await makeShownCopies(admin, 'submissions', row.image_path as string, `shown/${id}`);
         if (copies) Object.assign(change, { shown_path: copies.shown, thumb_path: copies.thumb });
       }
     }

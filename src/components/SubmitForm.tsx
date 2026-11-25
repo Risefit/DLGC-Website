@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 /**
  * Member submission form — used for both flying blog stories and gallery
@@ -36,6 +37,42 @@ export default function SubmitForm({
     try {
       const data = new FormData(form);
       data.set('kind', kind);
+
+      // A photograph goes straight to the private store, not through the
+      // portal: one off a phone is bigger than the portal's host will take in
+      // a single request. The form then only says where it is.
+      const picture = data.get('image');
+      if (picture instanceof File && picture.size > 0) {
+        if (picture.size > 15 * 1024 * 1024) {
+          setState('error');
+          setMessage('That photograph is over 15 MB. Please send a smaller version.');
+          return;
+        }
+        const ticket = await fetch('/api/submit/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ kind, name: picture.name, type: picture.type, size: picture.size }),
+        }).then((r) => r.json());
+        const supabase = createClient();
+        if (!ticket?.ok || !supabase) {
+          setState('error');
+          setMessage(ticket?.message ?? 'The photograph could not be uploaded. Please try again.');
+          return;
+        }
+        const { error } = await supabase.storage
+          .from('submissions')
+          .uploadToSignedUrl(ticket.path, ticket.token, picture, { contentType: picture.type });
+        if (error) {
+          setState('error');
+          setMessage('The photograph could not be uploaded. Check your connection and try again — what you wrote is still here.');
+          return;
+        }
+        data.delete('image');
+        data.set('imagePath', ticket.path);
+      } else {
+        data.delete('image');
+      }
+
       const res = await fetch('/api/submit', { method: 'POST', body: data });
       const json = await res.json();
       if (res.ok && json.ok) {
@@ -146,7 +183,7 @@ export default function SubmitForm({
                      file:mr-4 file:rounded-lg file:border-0 file:bg-sky file:px-4 file:py-2
                      file:font-medium file:text-white hover:file:bg-skyDark"
         />
-        <p className="mt-1 text-xs text-slate2">JPG, PNG, WEBP or GIF, up to 8 MB.</p>
+        <p className="mt-1 text-xs text-slate2">JPG, PNG, WEBP or GIF, up to 15 MB. Straight off a phone is fine.</p>
       </div>
 
       {state === 'error' && (

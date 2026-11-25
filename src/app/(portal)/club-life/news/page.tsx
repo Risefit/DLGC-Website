@@ -8,6 +8,8 @@ export const metadata = { title: 'News and Notices' };
 
 /** Rebuilt at once when a controller posts, and hourly in any case. */
 export const revalidate = 3600;
+// Saving a notice with photographs makes their smaller copies, which takes a moment.
+export const maxDuration = 60;
 
 /**
  * The page shows this year only. Older items move to /archive/news

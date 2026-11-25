@@ -8,7 +8,7 @@ import { rotaQuarters } from '@/content/roster';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
 import { opensNewTab } from '@/lib/files';
 import ReadingStatus from '@/components/ReadingStatus';
-import { requiredOfEveryone } from '@/content/required-reading';
+import { readingRule } from '@/content/required-reading';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -119,7 +119,7 @@ export default async function Dashboard() {
         </p>
 
         {/* The member's own tally of the required reading. Shows nothing until it is known. */}
-        <ReadingStatus keys={requiredOfEveryone.map((i) => i.key)} />
+        <ReadingStatus rule={readingRule} />
 
       </Band>
 

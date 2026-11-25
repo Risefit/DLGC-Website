@@ -11,6 +11,15 @@
  *   file('…')  one particular document, by its id in documents-imported.ts
  *   page(…)    a page of this portal
  *
+ * READING THAT GOES WITH A DUTY. An item in the last group carries `roles`: the
+ * duties (src/lib/roles.ts) whose members are asked to confirm it. A member who
+ * holds one of those roles — ticked on My profile, or set by a controller on
+ * the Members page — has the item added to their own list and their count.
+ * Everybody else still sees it, as reading for a duty they do not do. WHICH
+ * MANUAL GOES WITH WHICH ROLE WAS ALSO A FIRST DRAFT (a trainee is asked to
+ * read the same manual as the person training them); the CFI and the duty
+ * leads should correct it here.
+ *
  * A CONFIRMATION BELONGS TO ONE VERSION. Each item has a `key`; for a document
  * it is the id of that file, so when a manual is re-issued under a new file
  * its key changes and every member is asked to confirm again, without anybody
@@ -23,6 +32,7 @@
 
 import { current, doc, type Doc } from './documents';
 import { currentCfiNotices } from './notices';
+import type { ReadingRule, RoleId } from '@/lib/roles';
 
 export type ReadingItem = {
   /** What a confirmation is recorded against. Changes when the document does. */
@@ -34,20 +44,28 @@ export type ReadingItem = {
   why: string;
   /** Who it applies to, when that is narrower than the group. */
   who?: string;
+  /** The duties it is required reading for. None: it is not tied to a duty. */
+  roles?: RoleId[];
 };
 
 export type ReadingGroup = { group: string; blurb: string; items: ReadingItem[] };
 
-const fromDoc = (d: Doc, why: string, who?: string): ReadingItem => ({
+const fromDoc = (d: Doc, why: string, who?: string, roles?: RoleId[]): ReadingItem => ({
   key: d.id,
   title: d.title,
   href: d.href,
   version: d.version,
   why,
   who,
+  roles,
 });
-const slot = (s: string, why: string, who?: string) => fromDoc(current(s), why, who);
-const file = (id: string, why: string, who?: string) => fromDoc(doc(id), why, who);
+const slot = (s: string, why: string, who?: string, roles?: RoleId[]) => fromDoc(current(s), why, who, roles);
+const file = (id: string, why: string, who?: string, roles?: RoleId[]) => fromDoc(doc(id), why, who, roles);
+
+// The three duty teams. A trainee reads what the people training them read.
+const WINCH: RoleId[] = ['winch-master', 'winch-trainer', 'winch-driver', 'winch-trainee'];
+const LAUNCH: RoleId[] = ['launch-master', 'launch-marshal'];
+const CLERKS: RoleId[] = ['head-clerk', 'clerk', 'trainee-clerk'];
 const page = (name: string, issue: string, title: string, href: string, why: string, version?: string): ReadingItem => ({
   key: `page:${name}:${issue}`,
   title,
@@ -101,13 +119,27 @@ export const requiredReading: ReadingGroup[] = [
     group: 'If you do one of these duties',
     blurb: 'Only the ones that apply to the duty you do.',
     items: [
-      slot('launch-marshals-manual', 'Running the launch point safely and efficiently.', 'Launch marshals'),
-      slot('launch-speeds', 'Launch speeds by glider type.', 'Launch marshals and winch drivers'),
-      slot('winch-operating-manual', 'Operating the winch.', 'Winch drivers'),
-      file('manuals-dutyclerkmanual2018-pdf', 'The duty clerk’s job through the day.', 'Duty clerks'),
+      slot('launch-marshals-manual', 'Running the launch point safely and efficiently.', 'Launch marshals', LAUNCH),
+      slot('launch-speeds', 'Launch speeds by glider type.', 'Launch marshals and winch drivers', [...LAUNCH, ...WINCH]),
+      slot('winch-operating-manual', 'Operating the winch.', 'Winch drivers', WINCH),
+      file('manuals-dutyclerkmanual2018-pdf', 'The duty clerk’s job through the day.', 'Duty clerks', CLERKS),
     ],
   },
 ];
 
 /** How many items apply to everybody — the first two groups. */
 export const requiredOfEveryone = requiredReading.slice(0, 2).flatMap((g) => g.items);
+
+/**
+ * Who is asked to confirm what, as plain keys: everybody's documents, and the
+ * extra ones for each duty. This is what the pages hand to the browser so a
+ * member's count can follow the roles they hold (src/lib/roles.ts has
+ * `requiredKeys`, which does the adding up).
+ */
+export const readingRule: ReadingRule = (() => {
+  const byRole: ReadingRule['byRole'] = {};
+  for (const item of requiredReading.flatMap((g) => g.items)) {
+    for (const role of item.roles ?? []) (byRole[role] ??= []).push(item.key);
+  }
+  return { everyone: requiredOfEveryone.map((i) => i.key), byRole };
+})();

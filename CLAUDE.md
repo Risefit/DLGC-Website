@@ -115,6 +115,15 @@ begins with `requireController()` like every controller action).
   shows news asks `newsView()` there** — do not import the `news` array into a page.
 - What is typed is plain text and is shown as text. A link must start `https://` or,
   for a portal page, `/`; "this link" is refused as a link's name (rule 3).
+- **A notice can carry photographs and files** — up to four of each (JPG, PNG or WEBP up
+  to 15 MB; PDF, Word, Excel, PowerPoint, text or CSV up to 25 MB). Each needs a few
+  words: what a photograph shows (it is the caption, and what a member who cannot see it
+  is read), or what a file is (it becomes the button's name). They are kept in the
+  private store `news` (migration 010) and opened through `/files/news/<notice>/<n>`,
+  which gives a signed-in member a ten-minute link, and only while the notice is
+  showing. A photograph is shown from a smaller copy with the camera's location data
+  removed, never the original. Taking one off a notice stops it showing; the file stays
+  in the store. A PDF opens in the browser; the other kinds download, so prefer a PDF.
 - "Worth knowing now" shows on the two newest notices that carry it, whoever marked
   them. The form says so.
 - The pages are built ahead and kept. Posting, editing or taking down tells the site to
@@ -421,6 +430,17 @@ an open publish button would lose it.
   picture route names the two kinds it is for (`'blog'`, `'photo'`). Do not write one
   that reads `submissions` without that — a safety report is for the Safety Officer
   alone, and some are anonymous.
+- **Uploads do not travel through the portal.** The host refuses a request over about
+  4.5 MB, and a phone photograph is often bigger. So the server gives the browser a
+  one-time permission to put one file at one address in the private store, the browser
+  puts it there, and the form then says where it is. The server checks the file is
+  really there, at an address it made, and is the kind and size allowed, before saving
+  anything (`src/lib/uploads.ts`; `/api/submit/upload` for members' photographs,
+  `newsUploads()` for a controller's notice). **Do not trust the address a form sends** —
+  it is checked against the pattern the server uses, or one member could point a
+  submission at another's picture. The stores also refuse the wrong kind of file
+  themselves (migration 010). The safety report form is unchanged: its photograph
+  still travels with the report.
 - **Pictures stay private.** They are in the private `submissions` store; a page shows
   one through `/files/sent-in/<id>`, which gives a signed-in member a ten-minute link
   and only once the picture is approved (a controller can also see one that is waiting).
@@ -512,20 +532,23 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
 - A member sees only their own ticks, in three places: the list itself (top of the
   Documents page, with the date beside each), a line on the dashboard ("Required reading:
   3 of 8 still to confirm"), and **My sign-in → My required reading**. The count is of the
-  documents that apply to every member — the first two groups in the list.
+  documents that apply to every member — the first two groups in the list — **plus the
+  manuals for the roles that member holds** (next section). One function does the adding
+  up everywhere: `requiredKeys` in `src/lib/roles.ts`.
 - **Who has confirmed what** is the controllers' page `/admin/reading` (**My sign-in →
   Reading record**, or the link at the top of the Members page): member by member, and
   document by document. Only the current version of a document counts there, so a
-  re-issued manual shows everybody as outstanding again. Nobody is marked as outstanding
-  for a duty's manual, because the portal does not know who does which duty. The Documents
-  page tells members that controllers can see the record.
+  re-issued manual shows everybody as outstanding again. A member is marked as outstanding
+  for a duty's manual only if they hold a role for that duty, so two members can be
+  "3 of 8" and "3 of 10". The Documents page tells members that controllers can see the
+  record.
 - Only a controller can open that page. If the CFI should see it, a controller makes the
   CFI a controller — there is no separate "can see the reading record" mark yet.
 - **A controller can email a reminder from that page.** Under a member's "What is
   outstanding" each document has "Email it to them", and there is one button for
-  everything outstanding (one email, not eight). The manuals for students and for
-  particular duties are offered separately and never counted as outstanding — the
-  controller knows who drives the winch; the portal does not. It needs the club's email
+  everything outstanding (one email, not eight). The manuals for students, and for duties
+  the member holds no role for, are offered separately and never counted as outstanding.
+  It needs the club's email
   sending (`RESEND_API_KEY`, `MAIL_FROM`); until then the buttons are greyed out and the
   page says why. Each send is noted in the table `reading_reminders` (migration 007), so
   the row says "Emailed 25 Nov 2026", and the same thing cannot be sent twice within
@@ -548,6 +571,58 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
 - Every visitor to the page is now a signed-in member, so the ticks always work (given
   migration 004 has been run).
 
+### Roles, and My profile
+Added November 2026 at Phil's request. The nine roles are his list, in three teams:
+winch master, winch trainer, winch driver, winch trainee · launch master, launch
+marshal · head clerk, clerk, trainee clerk. They are defined once, in `src/lib/roles.ts`.
+
+- **Who sets a role.** The member, on **My sign-in → My profile** (`/account/profile`),
+  by ticking it; or a controller, on the Members page, by clicking it in the member's
+  block (click again to take it off; it saves at once). It is one list — either can
+  change what the other set. The table notes who changed it last.
+- **What a role does.** It shows beside the name on the Members page and the reading
+  record, and it adds that duty's manuals to the member's required reading. Which manual
+  goes with which role is the `roles` on each item of the last group in
+  `src/content/required-reading.ts`. **That pairing was a first draft by the website
+  editor** (every winch role reads the Winch Operating Manual and Launch Speeds; both
+  launch roles read the Launch Marshals Manual and Launch Speeds; every clerk role reads
+  the Duty Clerk Manual). The CFI and the duty leads should correct it there.
+- **What a role does not do.** It is not a record that anybody is qualified, cleared or
+  current, and the pages say so. **It opens nothing.** Who may see or do what is decided
+  by the marks in `src/lib/auth.ts` and by `requireController()`; never write code that
+  lets a role unlock anything, because a member can tick any role for themselves.
+- **To add or rename a role:** `ROLES` in `src/lib/roles.ts`, the same list in a new
+  migration (the database refuses a role it does not know — see 011), and its manuals in
+  `required-reading.ts`.
+
+**The profile's emergency details** — emergency contact, next of kin, the member's own
+mobile, blood type, and "anything a first-aider should know" — are the most personal
+thing the portal holds. Blood type and the note are health information, and the contacts
+are other people's names and numbers. The rules, none of them optional:
+
+- Every field is optional, and the page tells the member who can see it before they type.
+- **No browser can read the table** (`portal_profiles`: row-level security on, no
+  policies). The member's own reach them through the server (`src/lib/profile.ts`); a
+  member's action starts with `requireMember()` (`src/lib/member.ts`) and uses the
+  signed-in person's id and nothing the form sends.
+- **A controller sees one member's at a time, on purpose.** "Emergency details" beside a
+  name fetches that member's; the Members page itself only knows *whether* somebody has
+  given any. Each opening is noted in `portal_profile_views` (who, whose, when — not the
+  details), and if it cannot be noted the details are not shown. Do not add a list,
+  an export or a search of emergency details.
+- Nothing of them goes in a log, an email, a commit or this repository (rule 6).
+- A member who clears every box has the row deleted, not blanked.
+- It is separate from Free Flight, which holds the club's membership records and may
+  hold a next of kin already. Nothing is copied either way; the page tells members to
+  keep both up to date.
+- **Before the membership is invited, somebody on the committee should check this
+  against the club's Data Protection Policy** — health information needs a stated reason
+  and the member's clear agreement, and the policy should say the portal holds it.
+
+Roles are in `portal_member_roles`, which a member's own browser may read (their own row
+only — the tally on every page needs it) and nobody's browser may write. All three
+tables are migration 011.
+
 ### The portal is members only — who gets in, and how
 Switched on in November 2026 at Phil's request. `src/lib/auth.ts` has the rules and
 `middleware.ts` is the lock; read the comments at the top of each before changing either.
@@ -568,8 +643,10 @@ from **My sign-in → Members**:
   password, shown once**, for the controller to pass on in person, by telephone or by text.
 - *Waiting to join* — requests from the front page (table `portal_requests`, migration
   005). Approve makes the account the same way; Decline makes nothing.
-- *New temporary password* — for somebody who has forgotten theirs. There is no "email me
-  a reset link" yet.
+- *Temp password* — a new temporary password for somebody who has forgotten theirs. There
+  is no "email me a reset link" yet.
+- *Roles* — the nine duties, clickable in each member's block. See "Roles, and My profile".
+- *Emergency details* — shown for a member who has given some. See the same section.
 - *The club's list* — see the next section.
 - *Remove access / Restore access*, and *Make a controller*. A controller cannot remove
   themselves, so there is always one.
@@ -816,6 +893,9 @@ These come from the audit of the old site. Each one fixes a specific, observed f
 6. **No member personal data in this repository.** Phone numbers and email addresses live in
    Free Flight. If a directory is ever added here it must be opt-in per field.
 7. **Touch targets at least 44×44px** with real spacing. `.tap` in `globals.css` enforces the minimum.
+   `.tap-sm` is the one compact control, for the roles and buttons beside each name on the
+   Members page: 44px wherever a finger does the pressing, 34px only with a mouse. Do not
+   use it elsewhere.
 8. **Every link in the content of a page** — external or not — gets `target="_blank"
    rel="noopener noreferrer"` and a visible "opens in a new tab" cue; navigation stays in
    the same tab. See "Which tab a link opens in". (One exception: plain Free Flight
@@ -847,6 +927,7 @@ src/
 │   │   ├── admin/reading/ Controllers only: who has confirmed the required reading,
 │   │   │                  and the button that emails a member a reminder
 │   │   ├── admin/submissions/  Controllers only: approve what members send in
+│   │   ├── account/profile/   My profile: the duties I do, and my emergency details
 │   │   ├── account/reading/   Where a reminder's button lands: read one document and tick it
 │   │   └── account/password/  Choose or change your portal password
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
@@ -868,7 +949,11 @@ src/
 │                          mail.ts (the one place that sends email), news.ts (all the
 │                          news, file and posted), sent-in.ts (approved stories and
 │                          photographs), controller.ts (the check every controller
-│                          action starts with)
+│                          action starts with), uploads.ts (what may be uploaded),
+│                          photos.ts (the smaller copies of a picture), roles.ts (the
+│                          nine duties and what reading they add), profile.ts (a
+│                          member's emergency details), member.ts (the check a
+│                          member's own action starts with)
 └── app/files/             The one route every old-site file goes through
 middleware.ts              THE LOCK. Every request passes through it
 next.config.mjs            Redirects for merged and moved pages
@@ -921,8 +1006,16 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
       and paste it into "Add names", and have somebody check the thirty marked "check first"
 - [x] `supabase/migrations/006_portal_roll.sql` — applied 25 November 2026
 - [x] `supabase/migrations/007_reading_reminders.sql` — applied 25 November 2026
-- [x] `supabase/migrations/008_portal_news.sql` and `009_submission_decisions.sql` —
-      applied 25 November 2026
+- [x] `supabase/migrations/008_portal_news.sql`, `009_submission_decisions.sql` and
+      `010_news_attachments.sql` — applied 25 November 2026
+- [ ] **Run `supabase/migrations/011_roles_and_profiles.sql`** in the Supabase SQL editor.
+      Until then roles cannot be saved and My profile says it cannot be opened; everything
+      else works as before
+- [ ] **CFI and duty leads to check which manuals go with which role**
+      (`src/content/required-reading.ts`) — a first draft by the website editor
+- [ ] **Committee to check the profile's emergency details against the Data Protection
+      Policy** before members are invited (blood type and medical notes are health
+      information), and to say whether anybody besides controllers should see them
 - [ ] Decide which is the club's noticeboard while the old site is still running: news
       posted on the portal does not appear on the old site, or the other way about
 - [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them

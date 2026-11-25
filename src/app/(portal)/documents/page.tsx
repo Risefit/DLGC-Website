@@ -1,6 +1,6 @@
 import { PageHeader, BandSection } from '@/components/ui';
 import RequiredReading from '@/components/RequiredReading';
-import { requiredReading, requiredOfEveryone } from '@/content/required-reading';
+import { requiredReading, readingRule } from '@/content/required-reading';
 import DocumentLibrary from '@/components/DocumentLibrary';
 import { type Tier } from '@/content/documents';
 
@@ -46,7 +46,7 @@ export default async function DocumentsPage({
         }
         description="The manuals, rules and procedures members are asked to read. Open each one, then tick to confirm you have read it. When one is re-issued you will be asked again. Your ticks are a record: you can see them here at any time, and so can the club’s portal controllers."
       >
-        <RequiredReading groups={requiredReading} everyoneKeys={requiredOfEveryone.map((i) => i.key)} />
+        <RequiredReading groups={requiredReading} rule={readingRule} />
       </BandSection>
       </DocumentLibrary>
     </>

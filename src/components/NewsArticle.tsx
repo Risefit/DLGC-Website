@@ -38,6 +38,34 @@ export default function NewsArticle({
         ))}
       </div>
 
+      {/* Photographs a controller attached to the notice. Private, behind the
+          sign-in, so a plain <img>: the member's own browser fetches them. */}
+      {item.photos && item.photos.length > 0 && (
+        <ul className={`mt-4 grid gap-4 ${item.photos.length > 1 ? 'sm:grid-cols-2' : ''}`}>
+          {item.photos.map((p) => (
+            <li key={p.src}>
+              <figure>
+                <a href={p.src} target="_blank" rel="noopener noreferrer" className="block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.photos!.length > 1 ? p.small : p.src}
+                    alt={p.alt}
+                    loading="lazy"
+                    className={
+                      item.photos!.length > 1
+                        ? 'aspect-[4/3] w-full rounded-card border border-skyLine bg-sunken object-cover'
+                        : 'max-h-[32rem] w-auto max-w-full rounded-card border border-skyLine'
+                    }
+                  />
+                  <span className="sr-only">Open the photograph full size (opens in a new tab)</span>
+                </a>
+                <figcaption className="mt-1.5 text-sm text-inkMuted">{p.alt}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {/* The old site wrote every one of these as "this link", which told a
           member nothing. Named, bold and obvious here. Long labels wrap rather
           than pushing the page sideways on a phone. */}

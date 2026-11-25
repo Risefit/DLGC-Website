@@ -50,6 +50,7 @@ export default async function MembersPage() {
           requests={loaded.requests}
           requestsReady={loaded.requestsReady}
           list={loaded.list}
+          rolesReady={loaded.rolesReady}
         />
       ) : (
         <p role="alert" className="card border-l-4 border-bad p-5 text-bad">

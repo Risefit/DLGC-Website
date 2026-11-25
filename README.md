@@ -86,11 +86,23 @@ it and ticks it; the manual is not attached and nothing is confirmed by the emai
 `supabase/migrations/007_reading_reminders.sql` keeps a note of what was sent (run on
 25 November 2026).
 
+**Roles, and My profile.** Each member has a profile (**My sign-in → My profile**) where
+they tick the duties they do — winch master, winch trainer, winch driver, winch trainee,
+launch master, launch marshal, head clerk, clerk, trainee clerk — and can give an emergency
+contact, next of kin, blood type and anything a first-aider should know. A controller can
+set the same roles by clicking them beside a member's name on the Members page. **A
+member's required reading follows their roles**: the manuals for each duty are added to
+their list, their tally, and the controllers' reading record. A role opens nothing and is
+not a record of qualification. Emergency details are seen by the member, and by a
+controller who opens them for one named member (each time is noted). All of it is in
+`supabase/migrations/011_roles_and_profiles.sql`, which has to be run once in the Supabase
+SQL editor before roles and profiles work. None of it comes from or goes to Free Flight.
+
 **What controllers can do without touching the code** (all from the site, signed in):
 post, edit and take down news on the News page (`/club-life/news` → Add a notice);
 approve or decline the flying-blog stories and photographs members send in
 (My sign-in → Sent in by members); see who has confirmed the required reading; add,
-invite and remove members. `supabase/migrations/008_portal_news.sql` and
+invite and remove members, and set the duties each one does. `supabase/migrations/008_portal_news.sql` and
 `009_submission_decisions.sql` are the tables behind the first two (run on
 25 November 2026). Safety reports are not among them: those go to the Safety Officer.
 

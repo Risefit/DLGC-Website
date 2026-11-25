@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useReadingProgress } from '@/lib/reading-progress';
+import type { ReadingRule } from '@/lib/roles';
 
 /**
  * One line on the dashboard: have I confirmed all the required reading?
@@ -10,10 +11,11 @@ import { useReadingProgress } from '@/lib/reading-progress';
  * known, so the page does not jump for a member whose count cannot be read.
  * The list itself, with the tick boxes and the dates, is at the top of the
  * Documents page — this only says how far the member has got and takes them
- * there.
+ * there. The count includes the manuals for any duties on the member's
+ * profile.
  */
-export default function ReadingStatus({ keys }: { keys: string[] }) {
-  const progress = useReadingProgress(keys);
+export default function ReadingStatus({ rule }: { rule: ReadingRule }) {
+  const progress = useReadingProgress(rule);
   if (!progress) return null;
   const { done, total } = progress;
   const left = total - done;

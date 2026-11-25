@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { isPortalPage } from '@/lib/files';
 import type { ReadingGroup, ReadingItem } from '@/content/required-reading';
+import { requiredKeys, roleLabel, type ReadingRule } from '@/lib/roles';
+import { useMyRoles } from '@/lib/my-roles';
 
 /**
  * REQUIRED READING — open it, then tick to say you have read it.
@@ -21,6 +23,13 @@ import type { ReadingGroup, ReadingItem } from '@/content/required-reading';
  *     everybody's, on /admin/reading — the page says so, because a member is
  *     entitled to know who can see the record.
  *
+ * THE LIST FOLLOWS THE MEMBER'S ROLES. A manual that goes with a duty (an item
+ * with `roles`) is moved up into "For the duties on your profile" for a member
+ * who holds one of those roles, and is counted with everybody's. The roles are
+ * the member's own, read by src/lib/my-roles.ts; they are ticked on My profile
+ * or set by a controller. Everybody else still sees the manual lower down, as
+ * reading for a duty they do not do, with a way to My profile.
+ *
  * Not signed in, the list still works as a reading list; the tick box is
  * replaced by a link to sign in.
  */
@@ -34,12 +43,13 @@ const when = (iso: string) =>
 
 export default function RequiredReading({
   groups,
-  everyoneKeys,
+  rule,
 }: {
   groups: ReadingGroup[];
-  /** Keys of the items that apply to every member, for the progress line. */
-  everyoneKeys: string[];
+  /** Which documents are asked of everybody and of each duty, for the progress line. */
+  rule: ReadingRule;
 }) {
+  const roles = useMyRoles();
   const [state, setState] = useState<State>('loading');
   const [confirmed, setConfirmed] = useState<Record<string, string>>({});
   const [opened, setOpened] = useState<Set<string>>(new Set());
@@ -102,24 +112,55 @@ export default function RequiredReading({
     window.dispatchEvent(new Event('dlgc:reading-changed'));
   }
 
-  const doneOfEveryone = useMemo(
-    () => everyoneKeys.filter((k) => confirmed[k]).length,
-    [everyoneKeys, confirmed],
-  );
+  // What this member is asked to confirm: everybody's, and their duties'.
+  const mine = useMemo(() => requiredKeys(rule, roles ?? []), [rule, roles]);
+  const forDuties = mine.length - rule.everyone.length;
+  const doneOfMine = useMemo(() => mine.filter((k) => confirmed[k]).length, [mine, confirmed]);
+
+  // The same groups, with the manuals for this member's duties lifted out into
+  // a group of their own, placed straight after the groups that are everybody's.
+  const shown = useMemo(() => {
+    const held = new Set<string>(roles ?? []);
+    const lifted: ReadingItem[] = [];
+    const rest: (ReadingGroup & { duties: boolean })[] = [];
+    for (const g of groups) {
+      const forMe = g.items.filter((i) => i.roles?.some((r) => held.has(r)));
+      lifted.push(...forMe);
+      const others = g.items.filter((i) => !forMe.includes(i));
+      if (others.length > 0) rest.push({ ...g, items: others, duties: others.some((i) => (i.roles?.length ?? 0) > 0) });
+    }
+    if (lifted.length === 0) return rest;
+    const everyone = new Set(rule.everyone);
+    const at = rest.findIndex((g) => !g.items.some((i) => everyone.has(i.key)));
+    const because = [...held].map(roleLabel).join(', ');
+    const own = {
+      group: 'For the duties on your profile',
+      blurb: `Your profile says: ${because}. These count towards your required reading.`,
+      items: lifted,
+      duties: true,
+    };
+    return at === -1 ? [...rest, own] : [...rest.slice(0, at), own, ...rest.slice(at)];
+  }, [groups, roles, rule]);
 
   return (
     <div>
-      {state === 'ready' && (
+      {state === 'ready' && roles !== null && (
         <p className="mb-6 text-inkMuted" aria-live="polite">
-          {doneOfEveryone === everyoneKeys.length ? (
+          {doneOfMine === mine.length ? (
             <>
-              <strong className="text-good">You have confirmed all {everyoneKeys.length}</strong> that apply to every
-              member.
+              <strong className="text-good">You have confirmed all {mine.length}</strong> that apply to{' '}
+              {forDuties > 0 ? 'you' : 'every member'}.
             </>
           ) : (
             <>
-              You have confirmed <strong className="text-navy">{doneOfEveryone} of the {everyoneKeys.length}</strong>{' '}
-              that apply to every member. Open each one, then tick it.
+              You have confirmed <strong className="text-navy">{doneOfMine} of the {mine.length}</strong>{' '}
+              that apply to {forDuties > 0 ? 'you' : 'every member'}. Open each one, then tick it.
+            </>
+          )}
+          {forDuties > 0 && (
+            <>
+              {' '}
+              That is the {rule.everyone.length} for every member and {forDuties} for the duties on your profile.
             </>
           )}
         </p>
@@ -141,10 +182,23 @@ export default function RequiredReading({
       )}
 
       <div className="space-y-9">
-        {groups.map((g) => (
+        {shown.map((g) => (
           <section key={g.group} aria-label={g.group}>
             <h3 className="text-xl">{g.group}</h3>
-            <p className="mb-3 mt-0.5 text-sm text-inkMuted">{g.blurb}</p>
+            <p className="mb-3 mt-0.5 text-sm text-inkMuted">
+              {g.blurb}
+              {g.duties && state !== 'signed-out' && (
+                <>
+                  {' '}
+                  <Link href="/account/profile#duties" className="link">
+                    {g.group === 'For the duties on your profile'
+                      ? 'Change the duties on my profile'
+                      : 'Tick the duties you do on My profile'}
+                  </Link>
+                  {g.group === 'For the duties on your profile' ? '.' : ' and their manuals join your list.'}
+                </>
+              )}
+            </p>
             <ul className="card divide-y divide-skyLine overflow-hidden">
               {g.items.map((item) => {
                 const isPage = isPortalPage(item.href);

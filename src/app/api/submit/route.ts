@@ -43,6 +43,8 @@ import { safetyRecipients } from '@/lib/safety-mail';
 export const runtime = 'nodejs';
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+/** A photograph that went straight to the store (the Flying Blog and Gallery forms). */
+const MAX_DIRECT_BYTES = 15 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 /**
@@ -114,7 +116,7 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-  if (kind === 'photo' && !(file instanceof File)) {
+  if (kind === 'photo' && !(file instanceof File) && !form.get('imagePath')) {
     return NextResponse.json({ ok: false, message: 'Please choose a photograph.' }, { status: 400 });
   }
   if (kind === 'advert' && (!title || body.length < 10)) {
@@ -132,7 +134,33 @@ export async function POST(request: Request) {
 
   let imagePath: string | null = null;
 
-  if (file instanceof File && file.size > 0) {
+  /**
+   * A photograph the member's browser has already put in the store, with a
+   * permission from /api/submit/upload — the way the Flying Blog and Gallery
+   * forms send one, because a phone photograph is too big to come through
+   * here. The form only says WHERE it is; that is checked, not trusted: the
+   * address has to be one that route makes, for this kind of submission, and
+   * the file has to be there, be a picture, and be within the size allowed.
+   */
+  const uploaded = String(form.get('imagePath') ?? '');
+  if (uploaded && (kind === 'blog' || kind === 'photo')) {
+    if (!new RegExp(`^${kind}/\\d{13}-[0-9a-f]{8}-[a-z0-9._-]{1,90}$`).test(uploaded)) {
+      return NextResponse.json({ ok: false, message: 'The photograph did not upload properly. Please choose it again.' }, { status: 400 });
+    }
+    const { data: info, error } = await supabase.storage.from('submissions').info(uploaded);
+    const meta = (info ?? {}) as { size?: number; contentType?: string; metadata?: { size?: number; mimetype?: string } };
+    const size = Number(meta.size ?? meta.metadata?.size ?? 0);
+    const type = String(meta.contentType ?? meta.metadata?.mimetype ?? '');
+    if (error || !info || !(size > 0)) {
+      return NextResponse.json({ ok: false, message: 'The photograph did not finish uploading. Please choose it again.' }, { status: 400 });
+    }
+    if (!ALLOWED.includes(type) || size > MAX_DIRECT_BYTES) {
+      return NextResponse.json({ ok: false, message: 'Please send a JPG, PNG, WEBP or GIF of up to 15 MB.' }, { status: 415 });
+    }
+    imagePath = uploaded;
+  }
+
+  if (!imagePath && file instanceof File && file.size > 0) {
     if (file.size > MAX_IMAGE_BYTES) {
       return NextResponse.json(
         { ok: false, message: 'That image is over 8 MB. Please send a smaller version.' },

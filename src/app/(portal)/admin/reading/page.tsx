@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import { PageHeader, Section } from '@/components/ui';
 import ReadingRecord, { type ReaderRow } from '@/components/ReadingRecord';
-import { requiredReading } from '@/content/required-reading';
+import { requiredReading, readingRule } from '@/content/required-reading';
 import { getUser } from '@/lib/supabase/server';
 import { adminClient, banned, everyUser, logSupabaseProblem } from '@/lib/supabase/admin';
 import { isController, isMember } from '@/lib/auth';
 import { mailReady } from '@/lib/mail';
+import { cleanRoles, type RoleId } from '@/lib/roles';
 
 export const metadata = { title: 'Required reading: who has confirmed' };
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,11 @@ export const dynamic = 'force-dynamic';
  * Every member who can sign in, and which of the required documents they have
  * ticked as read (src/content/required-reading.ts is the list; the ticks are
  * rows in the Supabase table reading_confirmations).
+ *
+ * WHAT IS ASKED OF EACH MEMBER FOLLOWS THEIR ROLES. Everybody is asked for the
+ * first two groups of the list. A member who holds a role (ticked on My
+ * profile, or set on the Members page) is asked for that duty's manuals as
+ * well, and is shown as outstanding until they have confirmed those too.
  *
  * ONLY THE CURRENT VERSION COUNTS. A confirmation is recorded against one
  * version of a document. When a manual is re-issued its tick no longer counts
@@ -35,9 +41,16 @@ export default async function ReadingRecordPage() {
   if (!isController(user)) notFound();
 
   const items = requiredReading.flatMap((g, gi) =>
-    g.items.map((i) => ({ key: i.key, title: i.title, version: i.version ?? null, group: g.group, everyone: gi < 2, who: i.who ?? null })),
+    g.items.map((i) => ({
+      key: i.key,
+      title: i.title,
+      version: i.version ?? null,
+      group: g.group,
+      everyone: gi < 2,
+      who: i.who ?? null,
+      roles: (i.roles ?? []) as RoleId[],
+    })),
   );
-  const everyoneKeys = items.filter((i) => i.everyone).map((i) => i.key);
   const current = new Set(items.map((i) => i.key));
 
   const admin = adminClient();
@@ -85,6 +98,11 @@ export default async function ReadingRecordPage() {
         (reminded[n.user_id] ??= {})[n.doc_key] = n.sent_at;
       }
 
+      // Who does which duty. If the table is not there yet (migration 011),
+      // nobody has a role and the record is of everybody's documents only.
+      const { data: roleRows } = await admin.from('portal_member_roles').select('user_id, roles').limit(5000);
+      const rolesOf = new Map((roleRows ?? []).map((r) => [r.user_id as string, cleanRoles(r.roles)]));
+
       readers = users
         .map((u) => ({
           id: u.id,
@@ -92,6 +110,7 @@ export default async function ReadingRecordPage() {
           email: u.email ?? '',
           signedIn: Boolean(u.last_sign_in_at),
           confirmed: byUser.get(u.id) ?? {},
+          roles: rolesOf.get(u.id) ?? [],
         }))
         .sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
     } catch (e) {
@@ -102,6 +121,8 @@ export default async function ReadingRecordPage() {
   }
 
   const count = (key: string) => readers.filter((r) => r.confirmed[key]).length;
+  // For a duty's manual: the members who hold one of its roles, and how many of those have confirmed.
+  const holders = (roles: RoleId[]) => readers.filter((r) => r.roles.some((x) => roles.includes(x)));
 
   return (
     <>
@@ -113,7 +134,7 @@ export default async function ReadingRecordPage() {
             Required reading: <em>who has confirmed</em>
           </>
         }
-        lead="Every member with a sign-in, and which of the required documents they have ticked as read. Only the current version of each document counts."
+        lead="Every member with a sign-in, and which of the required documents they have ticked as read. A member with a role is asked for that duty’s manuals too. Only the current version of each document counts."
       />
 
       {problem ? (
@@ -129,7 +150,7 @@ export default async function ReadingRecordPage() {
             <ReadingRecord
               readers={readers}
               items={items.map(({ key, title, everyone, who }) => ({ key, title, everyone, who }))}
-              everyoneKeys={everyoneKeys}
+              rule={readingRule}
               reminded={reminded}
               mail={mailReady()}
             />
@@ -149,18 +170,37 @@ export default async function ReadingRecordPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-skyLine">
-                  {items.map((i) => (
+                  {items.map((i) => {
+                    const duty = i.roles.length > 0 ? holders(i.roles) : null;
+                    return (
                     <tr key={i.key}>
                       <th scope="row" className="px-5 py-3 font-medium text-navy">
                         {i.title}
                         {i.version && <span className="block text-sm font-normal text-slate2">{i.version}</span>}
                       </th>
                       <td className="px-5 py-3 text-sm text-inkMuted">{i.who ?? (i.everyone ? 'Everybody' : i.group.replace(/^If you are /, 'Anyone '))}</td>
-                      <td className="whitespace-nowrap px-5 py-3 text-right text-navy">
-                        <strong>{count(i.key)}</strong> of {readers.length}
+                      <td className="px-5 py-3 text-right text-navy">
+                        {duty ? (
+                          <>
+                            <span className="whitespace-nowrap">
+                              <strong>{duty.filter((r) => r.confirmed[i.key]).length}</strong> of the {duty.length} with
+                              that role
+                            </span>
+                            {count(i.key) > duty.filter((r) => r.confirmed[i.key]).length && (
+                              <span className="block text-sm text-slate2">
+                                and {count(i.key) - duty.filter((r) => r.confirmed[i.key]).length} without it
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="whitespace-nowrap">
+                            <strong>{count(i.key)}</strong> of {readers.length}
+                          </span>
+                        )}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

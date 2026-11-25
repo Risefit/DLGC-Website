@@ -5,11 +5,14 @@ import { adminClient, banned, everyUser, logSupabaseProblem, temporaryPassword }
 import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 import { invitation, mailReady, sendMail } from '@/lib/mail';
 import { requireController, refusal } from '@/lib/controller';
+import { cleanRoles, isRole, roleLabel, type RoleId } from '@/lib/roles';
+import { readProfile, readRoles, writeRoles, type Profile } from '@/lib/profile';
 
 /**
  * WHAT A CONTROLLER CAN DO — add a member, approve or decline a request, give
- * a new temporary password, take access away, make another controller, and
- * invite people from the club's list (one at a time, or everybody at once).
+ * a new temporary password, take access away, make another controller, set the
+ * duties a member does, open a member's emergency details, and invite people
+ * from the club's list (one at a time, or everybody at once).
  *
  * Every one of these runs on the server with the secret key, so every one of
  * them starts by asking Supabase who is signed in and refusing anybody who is
@@ -31,7 +34,19 @@ export type Member = {
   added: string | null;
   lastSignIn: string | null;
   you: boolean;
+  /** The duties they do (src/lib/roles.ts). Set here or by the member on My profile. */
+  roles: RoleId[];
+  /** true when they have filled in emergency details on My profile */
+  details: boolean;
 };
+
+/** What comes back when a controller clicks a role beside a member's name. */
+export type RoleOutcome = { ok: true; roles: RoleId[] } | { ok: false; message: string };
+
+/** What comes back when a controller opens a member's emergency details. */
+export type DetailsOutcome =
+  | { ok: true; name: string; /** null: they have not filled any in */ details: Profile | null }
+  | { ok: false; message: string };
 
 /** Somebody on the club's list who has not been invited yet. */
 export type ListPerson = {
@@ -72,7 +87,15 @@ const refuse = (e: unknown): Outcome => ({ ok: false, message: refusal(e, 'The M
 
 /** Everything the Members page shows. */
 export async function loadMembers(): Promise<
-  | { ok: true; members: Member[]; requests: JoinRequest[]; requestsReady: boolean; list: ClubListData }
+  | {
+      ok: true;
+      members: Member[];
+      requests: JoinRequest[];
+      requestsReady: boolean;
+      list: ClubListData;
+      /** false until supabase/migrations/011_roles_and_profiles.sql has been run */
+      rolesReady: boolean;
+    }
   | { ok: false; message: string }
 > {
   let ctx;
@@ -95,6 +118,13 @@ export async function loadMembers(): Promise<
       message: `The portal could not read the list of members from Supabase (${why}). Check that SUPABASE_SERVICE_ROLE_KEY in Vercel is the secret key of the project members sign in to, then redeploy.`,
     };
   }
+  // Who does which duty, and who has filled in emergency details. Only the
+  // fact that details exist is read here — never the details themselves.
+  const { data: roleRows, error: roleError } = await admin.from('portal_member_roles').select('user_id, roles').limit(5000);
+  const { data: detailRows } = await admin.from('portal_profiles').select('user_id').limit(5000);
+  const rolesOf = new Map((roleRows ?? []).map((r) => [r.user_id as string, cleanRoles(r.roles)]));
+  const hasDetails = new Set((detailRows ?? []).map((r) => r.user_id as string));
+
   const members: Member[] = users
     .map((u) => ({
       id: u.id,
@@ -106,6 +136,8 @@ export async function loadMembers(): Promise<
       added: u.created_at ?? null,
       lastSignIn: u.last_sign_in_at ?? null,
       you: u.id === me.id,
+      roles: rolesOf.get(u.id) ?? [],
+      details: hasDetails.has(u.id),
     }))
     .sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
 
@@ -119,6 +151,7 @@ export async function loadMembers(): Promise<
     ok: true,
     members,
     list: await loadList(admin, users),
+    rolesReady: !roleError,
     requestsReady: !error,
     requests: (data ?? []).map((r) => ({
       id: r.id as number,
@@ -299,6 +332,87 @@ export async function setController(userId: string, on: boolean): Promise<Outcom
     return { ok: true, message: on ? 'They are now a controller.' : 'They are no longer a controller.' };
   } catch (e) {
     return refuse(e);
+  }
+}
+
+/**
+ * Give a member a role, or take it off — one click on the Members page.
+ *
+ * A role adds that duty's manuals to the member's required reading and shows
+ * beside their name. It opens nothing and is not a record of qualification
+ * (src/lib/roles.ts). The member can change the same roles on My profile.
+ *
+ * It answers with the member's roles as they now stand, so the page shows
+ * what was really saved — including a role the member ticked for themselves
+ * since the page was opened.
+ */
+export async function setMemberRole(userId: string, role: string, on: boolean): Promise<RoleOutcome> {
+  try {
+    const { me, admin } = await requireController();
+    if (typeof userId !== 'string' || !isRole(role) || typeof on !== 'boolean') {
+      return { ok: false, message: 'That is not one of the club’s roles. Reload the page.' };
+    }
+    const { data, error: findError } = await admin.auth.admin.getUserById(userId);
+    if (findError || !data.user) return { ok: false, message: 'That member could not be found.' };
+    if (!isMember(data.user) || banned(data.user)) {
+      return { ok: false, message: 'Restore their access first; a role is for somebody who can sign in.' };
+    }
+    try {
+      const held = await readRoles(admin, userId);
+      const next = cleanRoles(on ? [...held, role] : held.filter((r) => r !== role));
+      if (next.join('|') !== held.join('|')) await writeRoles(admin, userId, next, me.id);
+      return { ok: true, roles: next };
+    } catch (e) {
+      logSupabaseProblem('members page, setting a role', { message: e instanceof Error ? e.message : undefined });
+      return {
+        ok: false,
+        message: `${roleLabel(role)} could not be saved. If roles have never worked, run supabase/migrations/011_roles_and_profiles.sql.`,
+      };
+    }
+  } catch (e) {
+    return { ok: false, message: refusal(e, 'The Members page') };
+  }
+}
+
+/**
+ * Open ONE member's emergency details: who to ring, next of kin, blood type
+ * and what they have said a first-aider should know.
+ *
+ * This is the most personal thing the portal holds, and some of it is health
+ * information. It is fetched only when a controller asks for one named
+ * member; it is never part of the list. Each time details are shown, who
+ * looked and whose they were is noted in portal_profile_views (not the
+ * details themselves), so the club can answer "who has seen mine?".
+ *
+ * For an emergency, or to check a member's contact is still right. Nothing
+ * here is written to a log.
+ */
+export async function emergencyDetails(userId: string): Promise<DetailsOutcome> {
+  try {
+    const { me, admin } = await requireController();
+    if (typeof userId !== 'string') return { ok: false, message: 'That member could not be found.' };
+    const { data, error: findError } = await admin.auth.admin.getUserById(userId);
+    if (findError || !data.user) return { ok: false, message: 'That member could not be found.' };
+    const name = typeof data.user.user_metadata?.name === 'string' && data.user.user_metadata.name ? data.user.user_metadata.name : data.user.email ?? 'This member';
+
+    let details: Profile | null;
+    try {
+      details = await readProfile(admin, userId);
+    } catch (e) {
+      logSupabaseProblem('members page, opening emergency details', { message: e instanceof Error ? e.message : undefined });
+      return { ok: false, message: 'The emergency details could not be read just now. Try again.' };
+    }
+    if (!details) return { ok: true, name, details: null };
+
+    // Noted before anything is shown. If it cannot be noted, nothing is shown.
+    const { error: noteError } = await admin.from('portal_profile_views').insert({ subject_id: userId, viewer_id: me.id });
+    if (noteError) {
+      logSupabaseProblem('members page, noting that emergency details were opened', noteError);
+      return { ok: false, message: 'The emergency details could not be opened just now. Try again.' };
+    }
+    return { ok: true, name, details };
+  } catch (e) {
+    return { ok: false, message: refusal(e, 'The Members page') };
   }
 }
 

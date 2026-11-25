@@ -23,6 +23,9 @@ import { portalise } from '@/lib/files';
 
 export type NewsLink = { label: string; href: string };
 
+/** A photograph shown with a notice. Only notices posted from the portal have them. */
+export type NewsPhoto = { src: string; small: string; alt: string };
+
 export type NewsItem = {
   date: string;          // ISO, for sorting
   displayDate: string;   // as the club writes it
@@ -30,6 +33,7 @@ export type NewsItem = {
   from?: string;
   body: string[];
   links?: NewsLink[];
+  photos?: NewsPhoto[];
   pinned?: boolean;
 };
 

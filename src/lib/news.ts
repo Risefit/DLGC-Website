@@ -1,5 +1,6 @@
 import { news as fileNews, type NewsItem, type NewsLink } from '@/content/news';
 import { adminClient, logSupabaseProblem } from '@/lib/supabase/admin';
+import { FILE_TYPES, type UploadKind } from '@/lib/uploads';
 
 /**
  * ALL THE NEWS — the notices in src/content/news.ts, and the ones controllers
@@ -37,7 +38,33 @@ export type PostedNotice = {
   body: string; // paragraphs separated by an empty line
   links: NewsLink[];
   pinned: boolean;
+  /** Photographs and files on the notice, by position. Where they are stored is not sent to a browser. */
+  attachments: { n: number; kind: UploadKind; label: string }[];
 };
+
+/** A photograph or file on a notice, as the database keeps it. Never sent to a browser. */
+export type StoredAttachment = {
+  kind: UploadKind;
+  /** what it shows, or what it is called */
+  label: string;
+  path: string;
+  type: string;
+  size: number;
+  /** for a photograph: the copies made for showing */
+  shown?: string;
+  thumb?: string;
+};
+
+/** The address of a notice's photograph or file. Only a signed-in member can open it (src/app/files/news). */
+export const noticeFile = (id: number, n: number, small = false) => `/files/news/${id}/${n}${small ? '?size=small' : ''}`;
+
+export const storedAttachments = (v: unknown): StoredAttachment[] =>
+  Array.isArray(v)
+    ? v.filter(
+        (a): a is StoredAttachment =>
+          Boolean(a) && (a.kind === 'photo' || a.kind === 'file') && typeof a.path === 'string' && typeof a.label === 'string',
+      )
+    : [];
 
 export type ShownNews = NewsItem & { /** set on a notice posted from the portal */ posted?: PostedNotice };
 
@@ -66,6 +93,7 @@ type Row = {
   body: string;
   links: unknown;
   pinned: boolean;
+  attachments?: unknown;
 };
 
 const cleanLinks = (v: unknown): NewsLink[] =>
@@ -83,6 +111,7 @@ export const toPosted = (r: Row): PostedNotice => ({
   body: r.body,
   links: cleanLinks(r.links),
   pinned: r.pinned,
+  attachments: storedAttachments(r.attachments).map((a, n) => ({ n, kind: a.kind, label: a.label })),
 });
 
 /** Notices posted from the portal that are currently showing, newest first. */
@@ -92,7 +121,7 @@ async function postedNews(): Promise<ShownNews[]> {
   try {
     const { data, error } = await admin
       .from('portal_news')
-      .select('id, news_date, title, from_name, body, links, pinned')
+      .select('*')
       .eq('status', 'published')
       .order('news_date', { ascending: false })
       .order('id', { ascending: false })
@@ -104,13 +133,23 @@ async function postedNews(): Promise<ShownNews[]> {
     }
     return ((data ?? []) as Row[]).map((r) => {
       const posted = toPosted(r);
+      const stored = storedAttachments(r.attachments);
+      // A file is one more link under the notice; a photograph is shown in it.
+      const files: NewsLink[] = stored.flatMap((a, n) =>
+        a.kind === 'file' ? [{ label: `${a.label} (${FILE_TYPES[a.type] ?? 'file'})`, href: noticeFile(r.id, n) }] : [],
+      );
+      const photos = stored.flatMap((a, n) =>
+        a.kind === 'photo' ? [{ src: noticeFile(r.id, n), small: noticeFile(r.id, n, true), alt: a.label }] : [],
+      );
+      const links = [...posted.links, ...files];
       return {
         date: posted.date,
         displayDate: clubDate(posted.date),
         title: posted.title,
         ...(posted.from ? { from: posted.from } : {}),
         body: paragraphs(posted.body),
-        ...(posted.links.length ? { links: posted.links } : {}),
+        ...(links.length ? { links } : {}),
+        ...(photos.length ? { photos } : {}),
         ...(posted.pinned ? { pinned: true } : {}),
         posted,
       };

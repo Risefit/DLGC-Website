@@ -2,24 +2,26 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { sendReadingReminder } from '@/app/(portal)/admin/reading/actions';
+import { requiredKeys, roleLabel, type ReadingRule, type RoleId } from '@/lib/roles';
 
 /**
  * The member-by-member half of the controllers' reading record
  * (/admin/reading). The page above it does the reading from Supabase and hands
  * the rows down; this only searches, filters and lays them out.
  *
- * "Everybody's" documents are the ones every member is asked to confirm (the
- * first two groups in src/content/required-reading.ts). The count beside each
- * name is of those. Documents for one duty or for students are shown when a
- * member has ticked them, but nobody is marked as outstanding for a duty they
- * may not do.
+ * WHAT IS ASKED OF A MEMBER is everybody's documents (the first two groups in
+ * src/content/required-reading.ts) plus the manuals for the roles that member
+ * holds — ticked on My profile or set on the Members page. The count beside
+ * each name is of those, so two members can be "3 of 8" and "3 of 10". A
+ * duty's manual is never counted against somebody who does not hold the role,
+ * though it is shown if they have ticked it anyway.
  *
  * EMAILING A REMINDER. Under "What is outstanding" each document has a button
  * that emails it to the member, and there is one button for everything they
- * have outstanding (one email, not several). The documents for students and
- * for particular duties are offered separately: they are never counted as
- * outstanding, and never go in the "all" email, because the portal does not
- * know who does which duty — the controller does. The email's button opens the
+ * have outstanding (one email, not several). The documents for students, and
+ * for duties the member has no role for, are offered separately: they are
+ * never counted as outstanding, and never go in the "all" email. The email's
+ * button opens the
  * document's page in the portal, where the member reads and ticks it. It needs
  * the club's email sending; until that is set up the buttons are greyed out
  * and the page says why. Once sent, the row says when.
@@ -32,6 +34,8 @@ export type ReaderRow = {
   signedIn: boolean;
   /** document key → when it was confirmed (current versions only) */
   confirmed: Record<string, string>;
+  /** the duties they do, which add those duties' manuals to what is asked of them */
+  roles: RoleId[];
 };
 
 type Item = { key: string; title: string; everyone: boolean; who: string | null };
@@ -43,13 +47,14 @@ const day = (iso: string) =>
 export default function ReadingRecord({
   readers,
   items,
-  everyoneKeys,
+  rule,
   reminded,
   mail,
 }: {
   readers: ReaderRow[];
   items: Item[];
-  everyoneKeys: string[];
+  /** which documents are asked of everybody, and which go with each role */
+  rule: ReadingRule;
   /** member → document → when a controller last emailed them about it */
   reminded: Record<string, Record<string, string>>;
   /** true when the club's email sending is set up */
@@ -118,10 +123,11 @@ export default function ReadingRecord({
   const rows = useMemo(
     () =>
       readers.map((r) => {
-        const done = everyoneKeys.filter((k) => r.confirmed[k]).length;
-        return { ...r, done, complete: done === everyoneKeys.length };
+        const asked = requiredKeys(rule, r.roles);
+        const done = asked.filter((k) => r.confirmed[k]).length;
+        return { ...r, asked, done, complete: done === asked.length };
       }),
-    [readers, everyoneKeys],
+    [readers, rule],
   );
 
   const complete = rows.filter((r) => r.complete).length;
@@ -145,8 +151,8 @@ export default function ReadingRecord({
     <div>
       <p className="mb-5 max-w-prose2 text-ink">
         <strong className="text-navy">{complete}</strong> of {rows.length}{' '}
-        {rows.length === 1 ? 'member has' : 'members have'} confirmed all {everyoneKeys.length} documents that apply to
-        everybody. <strong className="text-navy">{started}</strong> {started === 1 ? 'has' : 'have'} made a start and{' '}
+        {rows.length === 1 ? 'member has' : 'members have'} confirmed everything asked of them: the{' '}
+        {rule.everyone.length} documents that apply to everybody, and the manuals for any role they hold. <strong className="text-navy">{started}</strong> {started === 1 ? 'has' : 'have'} made a start and{' '}
         <strong className="text-navy">{notStarted}</strong> {notStarted === 1 ? 'has' : 'have'} confirmed none yet.
       </p>
 
@@ -193,18 +199,25 @@ export default function ReadingRecord({
       ) : (
         <ul className="card mt-3 divide-y divide-skyLine overflow-hidden" aria-live="polite">
           {shown.map((r) => {
-            const missing = items.filter((i) => i.everyone && !r.confirmed[i.key]);
+            const asked = new Set(r.asked);
+            const missing = items.filter((i) => asked.has(i.key) && !r.confirmed[i.key]);
             const ticked = items.filter((i) => r.confirmed[i.key]);
-            const forSome = items.filter((i) => !i.everyone && !r.confirmed[i.key]);
+            const forSome = items.filter((i) => !asked.has(i.key) && !r.confirmed[i.key]);
             return (
               <li key={r.id} className="px-5 py-4">
                 <div className="grid gap-x-6 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
                   <div className="min-w-0">
                     <p className="font-semibold text-navy">{r.name || 'No name given'}</p>
                     <p className="break-all text-sm text-ink">{r.email}</p>
+                    {r.roles.length > 0 && (
+                      <p className="mt-0.5 text-sm text-inkMuted">
+                        <span className="sr-only">Roles: </span>
+                        {r.roles.map(roleLabel).join(' · ')}
+                      </p>
+                    )}
                   </div>
                   <p className={`text-sm font-semibold ${r.complete ? 'text-good' : 'text-navy'}`}>
-                    {r.complete ? 'All confirmed' : `${r.done} of ${everyoneKeys.length} confirmed`}
+                    {r.complete ? `All ${r.asked.length} confirmed` : `${r.done} of ${r.asked.length} confirmed`}
                     {!r.signedIn && <span className="block font-normal text-slate2">Has not signed in yet</span>}
                   </p>
                 </div>
@@ -236,9 +249,10 @@ export default function ReadingRecord({
                     )}
                     {forSome.length > 0 && (
                       <div>
-                        <p className="font-semibold text-navy">For students and particular duties</p>
+                        <p className="font-semibold text-navy">For students, and duties they have no role for</p>
                         <p className="text-xs text-slate2">
-                          Not counted as outstanding. Send one only if it applies to this member.
+                          Not counted as outstanding. If one applies, give them the role on the Members page, or send
+                          it from here.
                         </p>
                         <ul className="mt-1 divide-y divide-skyLine text-ink">{forSome.map((i) => sendRow(r, i))}</ul>
                       </div>

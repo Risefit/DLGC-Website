@@ -8,6 +8,7 @@ import { isController } from '@/lib/auth';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
 import { useReadingProgress } from '@/lib/reading-progress';
+import type { ReadingRule } from '@/lib/roles';
 
 /**
  * SIX ITEMS, ON PURPOSE. The old site failed with forty flat links; ten was
@@ -149,14 +150,14 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
 function PortalAccount({
   onNavigate,
   wide = false,
-  readingKeys,
+  readingRule,
 }: {
   onNavigate?: () => void;
   wide?: boolean;
-  /** The documents every member is asked to confirm — for "My required reading". */
-  readingKeys: string[];
+  /** Which documents are asked of everybody and of each duty — for "My required reading". */
+  readingRule: ReadingRule;
 }) {
-  const reading = useReadingProgress(readingKeys);
+  const reading = useReadingProgress(readingRule);
   const readingNote = reading
     ? reading.done === reading.total
       ? `all ${reading.total} confirmed`
@@ -281,6 +282,10 @@ function PortalAccount({
           My required reading
           <span className="text-sm font-normal text-white/80">{readingNote}</span>
         </Link>
+        <Link href="/account/profile" onClick={onNavigate} className={`${button} flex-col !gap-0 text-center`}>
+          My profile
+          <span className="text-sm font-normal text-white/80">my duties and emergency contact</span>
+        </Link>
         <Link href="/account/password" onClick={onNavigate} className={button}>
           Change my portal password
         </Link>
@@ -386,6 +391,17 @@ function PortalAccount({
             </li>
             <li>
               <Link
+                href="/account/profile"
+                onClick={() => setOpen(false)}
+                role="menuitem"
+                className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+              >
+                My profile
+                <span className="ml-2 text-xs font-normal text-slate2">my duties and emergency contact</span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/account/password"
                 onClick={() => setOpen(false)}
                 role="menuitem"
@@ -422,7 +438,9 @@ function Waiting({ n }: { n: number }) {
   );
 }
 
-export default function Nav({ readingKeys = [] }: { readingKeys?: string[] }) {
+const NO_READING: ReadingRule = { everyone: [], byRole: {} };
+
+export default function Nav({ readingRule = NO_READING }: { readingRule?: ReadingRule }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -466,7 +484,7 @@ export default function Nav({ readingKeys = [] }: { readingKeys?: string[] }) {
 
           <div className="flex shrink-0 items-center gap-2">
             <div className="hidden items-center gap-3 lg:flex">
-              <PortalAccount readingKeys={readingKeys} />
+              <PortalAccount readingRule={readingRule} />
               <AwareIMMenu />
             </div>
             <button
@@ -543,7 +561,7 @@ export default function Nav({ readingKeys = [] }: { readingKeys?: string[] }) {
             ))}
           </ul>
           <div className="mx-auto mt-4 max-w-7xl space-y-3 px-4">
-            <PortalAccount wide readingKeys={readingKeys} onNavigate={() => setMobileOpen(false)} />
+            <PortalAccount wide readingRule={readingRule} onNavigate={() => setMobileOpen(false)} />
             <AwareIMMenu onNavigate={() => setMobileOpen(false)} />
           </div>
         </nav>
