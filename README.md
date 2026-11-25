@@ -45,6 +45,9 @@ settings are missing the portal stays shut.
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | its anon / publishable key |
 | `SUPABASE_URL` | the project URL again |
 | `SUPABASE_SERVICE_ROLE_KEY` | its secret key. Never give this a `NEXT_PUBLIC_` name |
+| `RESEND_API_KEY` | the club's Resend key. Needed before invitations can be emailed |
+| `MAIL_FROM` | the sender, on a domain verified in Resend, e.g. `DLGC Members Portal <noreply@portal.glidingclub.org.uk>` |
+| `PORTAL_URL` | optional: the address members are sent to in an invitation. Left out, the Vercel project's own address is used |
 
 **In Supabase, once:**
 
@@ -66,6 +69,17 @@ settings are missing the portal stays shut.
 That is the only account made by hand. Sign in, open **My sign-in → Members**, and add
 everybody else there: each gets a temporary password for you to pass on, and has to choose
 their own the first time they sign in. Requests from "Ask to join" wait on the same page.
+
+**Inviting the membership.** `supabase/migrations/006_portal_roll.sql` makes the club's
+list (run on 25 November 2026). The names are loaded straight into Supabase or pasted in
+on the Members page — never put in this repository. On the Members page a controller
+invites one person at a time, or, once `RESEND_API_KEY` and `MAIL_FROM` are set,
+everybody who is ready in one go. Resend's free plan sends 100 emails a day, so a full
+invitation of the membership takes two days; press the button again the next day and it
+carries on with whoever is left. A temporary password lasts 14 days.
+
+**Who has read what.** Controllers have **My sign-in → Reading record** (`/admin/reading`).
+A member sees their own tally on the dashboard and under **My sign-in → My required reading**.
 
 This login is completely separate from Free Flight (AwareIM). Different system, different
 database, different password. The login page says so, because members will otherwise assume

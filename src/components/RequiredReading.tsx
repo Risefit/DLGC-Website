@@ -17,8 +17,9 @@ import type { ReadingGroup, ReadingItem } from '@/content/required-reading';
  *   - A confirmation is a record. Once given it shows the date and cannot be
  *     un-ticked here; the database refuses changes too.
  *   - It belongs to one version: re-issue a manual and everyone is asked again.
- *   - A member sees only their own confirmations. Who has confirmed what is
- *     read in the Supabase dashboard, by whoever the committee nominates.
+ *   - A member sees only their own confirmations. The portal's controllers see
+ *     everybody's, on /admin/reading — the page says so, because a member is
+ *     entitled to know who can see the record.
  *
  * Not signed in, the list still works as a reading list; the tick box is
  * replaced by a link to sign in.
@@ -97,6 +98,8 @@ export default function RequiredReading({
       return;
     }
     setConfirmed((c) => ({ ...c, [data.doc_key as string]: data.confirmed_at as string }));
+    // The count under "My sign-in" follows along.
+    window.dispatchEvent(new Event('dlgc:reading-changed'));
   }
 
   const doneOfEveryone = useMemo(

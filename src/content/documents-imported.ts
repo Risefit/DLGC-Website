@@ -2,7 +2,8 @@
  * IMPORTED DOCUMENT MANIFEST — generated from the old site's full mirror.
  *
  * 571 documents recovered from dlgc.org.uk/members (mirror taken 17 Aug 2026),
- * plus 16 published there between then and 16 Nov 2026 (added by hand),
+ * plus 16 published there between then and 16 Nov 2026 and 3 more by 25 Nov
+ * 2026 (added by hand),
  * deduplicated across the dlgc.org.uk and www.dlgc.org.uk copies. Nothing was
  * discarded — every file the old site held appears here exactly once.
  *
@@ -31,6 +32,10 @@
 import type { Doc } from './documents';
 
 export const importedDocuments: (Doc & { bytes?: number; series?: string })[] = [
+  // ── Added 25 November 2026: the old site's new Policies folder (two new policies, and the child protection policy it lists) ──
+  { id: 'policies-security-camera-policy-v-1-0-pdf', title: 'Security Camera Policy V1.0', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/policies/Security%20Camera%20Policy%20-%20V%201.0.pdf', note: 'New in November 2026. The security cameras on the club premises.', version: '2026', format: 'PDF', bytes: 349440 },
+  { id: 'policies-drugs-and-alcohol-policy-v1-0-3-pdf', title: 'Drugs and Alcohol Policy V1.0', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/policies/Drugs_and_Alcohol_Policy_v1.0_3.pdf', note: 'New in November 2026. The club’s approach to drugs and alcohol.', version: '2026', format: 'PDF', bytes: 112554 },
+  { id: 'policies-chld-prtctn-plcy-iss2-sgnd-pdf', title: 'Child Protection Policy, Issue 2 (signed)', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/policies/Chld_Prtctn_Plcy_Iss2_sgnd.pdf', note: 'The version the club’s Policies list links to. It is dated July 2009; a version dated April 2017 is also held. The Child Protection Officer should confirm which is in force.', version: '2009', format: 'PDF', bytes: 50451 },
   // ── Added 16 November 2026: files published on the old site since the August mirror ──
   // ── Added 24 November 2026: the Non-SSR map, which the old site linked under the wrong folder ──
   { id: 'derbyshire-nonssr-area-pdf', title: 'Derbyshire Non-SSR Area', category: 'Operational Notices', tier: 'reference', audience: ['Solo pilots'], href: '/legacy/members/Derbyshire%20NonSSR%20Area%20.pdf', note: 'Overview of the areas where transponders are not required. The old site linked to this under the wrong folder, so the link was dead.', series: 'Airspace Notices', version: '2012', format: 'PDF', bytes: 978157 },
@@ -348,7 +353,7 @@ export const importedDocuments: (Doc & { bytes?: number; series?: string })[] = 
   { id: 'misc-pages-dlgc-2023-summer-schedule-v6-lm-pdf', title: 'DLGC 2023 Summer Schedule (V6- LM)', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/DLGC%202023%20Summer%20Schedule%20%28V6-%20LM%29.pdf', series: 'Summer Schedules', version: '2023', format: 'PDF', bytes: 185742 },
   { id: 'pdfs-dlgc-gtr-notes-feb-2022-pdf', title: 'DLGC GTR Notes - Feb 2022', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/pdfs/DLGC%20GTR%20Notes%20-%20Feb%202022.pdf', version: '2022', format: 'PDF', bytes: 1350779 },
   { id: 'pdfs-tmg-email-cfi-11-aug-2022-pdf', title: 'TMG Email CFI 11 Aug 2022', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/pdfs/TMG%20Email%20CFI%2011%20Aug%202022.pdf', version: '2022', format: 'PDF', bytes: 122698 },
-  { id: 'misc-pages-chldprtctplcyapr2017-pdf', title: 'ChldPrtctPlcyApr2017', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/ChldPrtctPlcyApr2017.pdf', version: '2017', format: 'PDF', bytes: 245263 },
+  { id: 'misc-pages-chldprtctplcyapr2017-pdf', title: 'Child Protection Policy (April 2017)', category: 'Policies', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/ChldPrtctPlcyApr2017.pdf', version: '2017', format: 'PDF', bytes: 245263 },
   { id: 'misc-pages-sftymesurssysrevmar2015-pdf', title: 'SftyMesursSysRevMar2015', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/SftyMesursSysRevMar2015.pdf', version: '2015', format: 'PDF', bytes: 138855 },
   { id: 'misc-pages-perclean-3-2014-pdf', title: 'Perclean 3-2014', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/PERCLEAN%203-2014.pdf', version: '2014', format: 'PDF', bytes: 22002 },
   { id: 'misc-pages-dlgc-sportdvlpmntplanapril2013-revd-pdf', title: 'DLGC SportDvlpmntPlanApril2013.revD', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/DLGC%20SportDvlpmntPlanApril2013.revD.pdf', version: '2013', format: 'PDF', bytes: 81188 },
@@ -356,7 +361,7 @@ export const importedDocuments: (Doc & { bytes?: number; series?: string })[] = 
   { id: 'misc-pages-dlgc-ltd-vision-and-strategy-v1-0-pdf', title: 'DLGC Ltd Vision and Strategy v1.0', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/DLGC%20Ltd%20Vision%20and%20Strategy%20v1.0.pdf', format: 'PDF', bytes: 313534 },
   { id: 'misc-pages-duty-swapping-pdf', title: 'Duty Swapping', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/Duty%20Swapping.pdf', format: 'PDF', bytes: 551833 },
   { id: 'misc-pages-email-cfi-to-all-pilots-15-11-24-pdf', title: 'Email CFI to all Pilots 15.11.24', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/Email%20CFI%20to%20all%20Pilots%2015.11.24.pdf', format: 'PDF', bytes: 98330 },
-  { id: 'misc-pages-equity-and-opportunities-policy-pdf', title: 'Equity and Opportunities Policy', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/Equity%20and%20Opportunities%20Policy.pdf', format: 'PDF', bytes: 1989306 },
+  { id: 'misc-pages-equity-and-opportunities-policy-pdf', title: 'Equity and Opportunities Policy', category: 'Policies', tier: 'reference', audience: ['All members'], href: '/legacy/members/misc_pages/Equity%20and%20Opportunities%20Policy.pdf', format: 'PDF', bytes: 1989306 },
   { id: 'misc-pages-fai-oo-pilot-guide-pdf', title: 'FAI OO & Pilot guide', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/FAI%20OO%20%26%20Pilot%20guide.pdf', format: 'PDF', bytes: 3557181 },
   { id: 'misc-pages-fai-sporting-code-gliders-23-pdf', title: 'FAI Sporting code Gliders 23', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/FAI%20Sporting%20code%20Gliders%2023.pdf', format: 'PDF', bytes: 779237 },
   { id: 'misc-pages-fees-chart-pdf', title: 'Fees Chart', category: 'Administrative', tier: 'archive', audience: ['All members'], href: '/legacy/members/misc_pages/Fees%20Chart.pdf', format: 'PDF', bytes: 97320 },

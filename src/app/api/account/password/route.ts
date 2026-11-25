@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient } from '@/lib/supabase/admin';
-import { isMember, MIN_PASSWORD } from '@/lib/auth';
+import { isMember, MIN_PASSWORD, temporaryExpired } from '@/lib/auth';
 
 /**
  * A MEMBER CHOOSES THEIR OWN PASSWORD.
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user || !isMember(user)) return no('Sign in to the portal first.', 401);
+  if (temporaryExpired(user)) return no('That temporary password has run out. Ask the club for a new one.', 401);
 
   let body: Record<string, unknown>;
   try {
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
 
   const { error } = await admin.auth.admin.updateUserById(user.id, {
     password,
-    app_metadata: { ...(user.app_metadata ?? {}), must_change_password: false },
+    app_metadata: { ...(user.app_metadata ?? {}), must_change_password: false, temp_password_at: null },
   });
   if (error) {
     // Supabase explains weak or leaked passwords in plain words; pass that on.

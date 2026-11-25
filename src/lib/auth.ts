@@ -17,6 +17,9 @@
  *   portal_admin           is a controller (may add and remove members)
  *   must_change_password   signed in with a temporary password; sent to
  *                          /account/password until they choose their own
+ *   temp_password_at       when that temporary password was made. It stops
+ *                          working TEMP_PASSWORD_DAYS later, so one sitting
+ *                          unread in an inbox does not stay good for ever
  *
  * ── Separate from Free Flight ──────────────────────────────────────────────
  * This sign-in has nothing to do with AwareIM (Free Flight). They share no
@@ -48,6 +51,20 @@ type Marks = { app_metadata?: Record<string, unknown> | null } | null | undefine
 export const isMember = (user: Marks) => user?.app_metadata?.portal_member === true;
 export const isController = (user: Marks) => isMember(user) && user?.app_metadata?.portal_admin === true;
 export const mustChangePassword = (user: Marks) => user?.app_metadata?.must_change_password === true;
+
+/**
+ * A temporary password lasts this many days. After that the member is told it
+ * has run out and a controller makes another. An account made before November
+ * 2026 carries no date and is not affected.
+ */
+export const TEMP_PASSWORD_DAYS = 14;
+export const temporaryExpired = (user: Marks) => {
+  if (!mustChangePassword(user)) return false;
+  const made = user?.app_metadata?.temp_password_at;
+  if (typeof made !== 'string') return false;
+  const at = Date.parse(made);
+  return Number.isFinite(at) && Date.now() - at > TEMP_PASSWORD_DAYS * 86_400_000;
+};
 
 /** Pages anybody may see. Everything else is for members. */
 export const PUBLIC_PATHS = ['/', '/login', '/join'];

@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js';
 
 /**
  * THE SERVER'S OWN SUPABASE CLIENT — it holds the secret key.
@@ -28,6 +28,24 @@ export function adminClient(): SupabaseClient | null {
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
+
+/** Every account in the project, a page at a time. Throws if Supabase refuses. */
+export async function everyUser(admin: SupabaseClient): Promise<User[]> {
+  const all: User[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw new Error(error.message);
+    all.push(...data.users);
+    if (data.users.length < 200) break;
+  }
+  return all;
+}
+
+/** True while an account is shut out ("Remove access" on the Members page). */
+export const banned = (u: User) => {
+  const until = (u as User & { banned_until?: string | null }).banned_until;
+  return Boolean(until && new Date(until).getTime() > Date.now());
+};
 
 /**
  * Write down why Supabase refused, where the website editor can find it

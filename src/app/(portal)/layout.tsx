@@ -5,11 +5,13 @@ import { contacts, club } from '@/content/site';
 import SocialButtons from '@/components/SocialButtons';
 import { charities } from '@/content/community';
 import MembersAdminTab from '@/components/MembersAdminTab';
+import { requiredOfEveryone } from '@/content/required-reading';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col overflow-x-clip">
-      <Nav />
+      {/* The keys of the required reading, so the menu can say how far the member has got. */}
+      <Nav readingKeys={requiredOfEveryone.map((i) => i.key)} />
       <MembersAdminTab />
 
 

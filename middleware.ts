@@ -12,6 +12,7 @@ import { createServerClient } from '@supabase/ssr';
  *   not signed in               → the front page (or "not signed in" for /api)
  *   signed in, not a member     → the sign-in page, which says why
  *   temporary password          → /account/password, until they choose their own
+ *   temporary password, expired → the sign-in page, which says it has run out
  *
  * It fails SHUT. If the Supabase settings are missing on the live site, nobody
  * gets in; the portal is never left open by accident.
@@ -22,6 +23,7 @@ import { createServerClient } from '@supabase/ssr';
 
 const PUBLIC = new Set(['/', '/login', '/join']);
 const PASSWORD_PAGE = '/account/password';
+const TEMP_PASSWORD_DAYS = 14; // the same number as in src/lib/auth.ts
 
 function isPublic(path: string) {
   return (
@@ -103,6 +105,14 @@ export async function middleware(request: NextRequest) {
 
   if (!user) return away('/');
   if (!member) return away('/login', 'not-a-member');
+
+  // A temporary password that has sat unused too long no longer opens anything,
+  // not even the page for choosing a new one. A controller makes another.
+  const made = user.app_metadata?.temp_password_at;
+  const madeAt = typeof made === 'string' ? Date.parse(made) : NaN;
+  if (temporary && Number.isFinite(madeAt) && Date.now() - madeAt > TEMP_PASSWORD_DAYS * 86_400_000) {
+    return away('/login', 'expired');
+  }
 
   if (temporary && path !== PASSWORD_PAGE && path !== '/api/account/password') {
     return away(PASSWORD_PAGE);

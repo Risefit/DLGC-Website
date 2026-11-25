@@ -7,6 +7,8 @@ import { upcomingEvents, eventDate, startOfToday } from '@/content/site';
 import { rotaQuarters } from '@/content/roster';
 import { safetySpot, safetySpotIntro, charities } from '@/content/community';
 import { opensNewTab } from '@/lib/files';
+import ReadingStatus from '@/components/ReadingStatus';
+import { requiredOfEveryone } from '@/content/required-reading';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -114,6 +116,9 @@ export default function Dashboard() {
           The Daily Flying Planner and your flying account are in Free Flight, which has its own
           sign-in and opens in a new tab.
         </p>
+
+        {/* The member's own tally of the required reading. Shows nothing until it is known. */}
+        <ReadingStatus keys={requiredOfEveryone.map((i) => i.key)} />
 
       </Band>
 

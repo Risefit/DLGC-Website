@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { isMember, mustChangePassword, PASSWORD_PAGE } from '@/lib/auth';
+import { isMember, mustChangePassword, temporaryExpired, PASSWORD_PAGE, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 
 /**
  * The sign-in form. Signs in with Supabase, then goes on to the dashboard —
@@ -27,12 +27,22 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
   // Typed blind, as dots, nobody can tell whether it went in right — or, as
   // the first member to try it found, whether it went in at all.
   const [show, setShow] = useState(false);
+  const EXPIRED = `That temporary password has run out — they last ${TEMP_PASSWORD_DAYS} days. Ask the club office for a new one.`;
   const [error, setError] = useState<string | null>(
     why === 'not-a-member'
       ? 'That sign-in does not have access to the portal. If you think it should, ask the club office.'
-      : null,
+      : why === 'expired'
+        ? EXPIRED
+        : null,
   );
   const [busy, setBusy] = useState(false);
+
+  // Sent back here because the temporary password had run out: finish the job
+  // and sign them out, so the browser is not left holding a sign-in that opens
+  // nothing.
+  useEffect(() => {
+    if (why === 'expired') createClient()?.auth.signOut();
+  }, [why]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,6 +78,13 @@ export default function SignInForm({ officeTel }: { officeTel: string }) {
       await supabase.auth.signOut();
       setBusy(false);
       setError('That sign-in does not have access to the portal. If you think it should, ask the club office.');
+      return;
+    }
+
+    if (temporaryExpired(data.user)) {
+      await supabase.auth.signOut();
+      setBusy(false);
+      setError(EXPIRED);
       return;
     }
 

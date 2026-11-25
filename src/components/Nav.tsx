@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { isController } from '@/lib/auth';
 import { useState, useRef, useEffect } from 'react';
 import { awareimLinks, AWAREIM_BASE } from '@/content/awareim';
+import { useReadingProgress } from '@/lib/reading-progress';
 
 /**
  * SIX ITEMS, ON PURPOSE. The old site failed with forty flat links; ten was
@@ -145,7 +146,22 @@ function AwareIMMenu({ onNavigate }: { onNavigate?: () => void }) {
  * nothing on each page — and the Members page checks for itself, on the
  * server, that whoever opens it really is a controller.
  */
-function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; wide?: boolean }) {
+function PortalAccount({
+  onNavigate,
+  wide = false,
+  readingKeys,
+}: {
+  onNavigate?: () => void;
+  wide?: boolean;
+  /** The documents every member is asked to confirm — for "My required reading". */
+  readingKeys: string[];
+}) {
+  const reading = useReadingProgress(readingKeys);
+  const readingNote = reading
+    ? reading.done === reading.total
+      ? `all ${reading.total} confirmed`
+      : `${reading.total - reading.done} of ${reading.total} still to confirm`
+    : 'what you have confirmed';
   const [email, setEmail] = useState<string | null>(null);
   const [controller, setController] = useState(false);
   const [ready, setReady] = useState(false);
@@ -243,6 +259,15 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
             {waiting > 0 && <Waiting n={waiting} />}
           </Link>
         )}
+        {controller && (
+          <Link href="/admin/reading" onClick={onNavigate} className={button}>
+            Reading record: who has confirmed
+          </Link>
+        )}
+        <Link href="/documents#required-reading" onClick={onNavigate} className={`${button} flex-col !gap-0 text-center`}>
+          My required reading
+          <span className="text-sm font-normal text-white/80">{readingNote}</span>
+        </Link>
         <Link href="/account/password" onClick={onNavigate} className={button}>
           Change my portal password
         </Link>
@@ -301,6 +326,30 @@ function PortalAccount({ onNavigate, wide = false }: { onNavigate?: () => void; 
                 </Link>
               </li>
             )}
+            {controller && (
+              <li>
+                <Link
+                  href="/admin/reading"
+                  onClick={() => setOpen(false)}
+                  role="menuitem"
+                  className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+                >
+                  Reading record
+                  <span className="ml-2 text-xs font-normal text-slate2">who has confirmed what</span>
+                </Link>
+              </li>
+            )}
+            <li>
+              <Link
+                href="/documents#required-reading"
+                onClick={() => setOpen(false)}
+                role="menuitem"
+                className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
+              >
+                My required reading
+                <span className="ml-2 text-xs font-normal text-slate2">{readingNote}</span>
+              </Link>
+            </li>
             <li>
               <Link
                 href="/account/password"
@@ -339,7 +388,7 @@ function Waiting({ n }: { n: number }) {
   );
 }
 
-export default function Nav() {
+export default function Nav({ readingKeys = [] }: { readingKeys?: string[] }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -383,7 +432,7 @@ export default function Nav() {
 
           <div className="flex shrink-0 items-center gap-2">
             <div className="hidden items-center gap-3 lg:flex">
-              <PortalAccount />
+              <PortalAccount readingKeys={readingKeys} />
               <AwareIMMenu />
             </div>
             <button
@@ -460,7 +509,7 @@ export default function Nav() {
             ))}
           </ul>
           <div className="mx-auto mt-4 max-w-7xl space-y-3 px-4">
-            <PortalAccount wide onNavigate={() => setMobileOpen(false)} />
+            <PortalAccount wide readingKeys={readingKeys} onNavigate={() => setMobileOpen(false)} />
             <AwareIMMenu onNavigate={() => setMobileOpen(false)} />
           </div>
         </nav>

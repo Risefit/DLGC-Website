@@ -9,16 +9,19 @@ import {
   newTemporaryPassword,
   setAccess,
   setController,
+  type ClubListData,
   type JoinRequest,
   type Member,
   type Outcome,
 } from '@/app/(portal)/admin/members/actions';
 import { Badge } from '@/components/ui';
+import ClubList from '@/components/ClubList';
 
 /**
- * The Members page as a controller uses it. Three parts, in the order they are
- * needed: people waiting to join, a form to add somebody, and everyone who has
- * a sign-in.
+ * The Members page as a controller uses it. Four parts, in the order they are
+ * needed: people waiting to join, a form to add somebody, the club's list of
+ * people still to invite (src/components/ClubList.tsx), and everyone who has a
+ * sign-in.
  *
  * A TEMPORARY PASSWORD IS SHOWN ONCE, in the panel at the top, straight after
  * it is made. It is not stored anywhere it could be read again — if it is
@@ -33,10 +36,12 @@ export default function MemberAdmin({
   members,
   requests,
   requestsReady,
+  list,
 }: {
   members: Member[];
   requests: JoinRequest[];
   requestsReady: boolean;
+  list: ClubListData;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -236,6 +241,9 @@ export default function MemberAdmin({
           </button>
         </form>
       </section>
+
+      {/* ── The club's list: people still to invite ────────────────────── */}
+      <ClubList list={list} run={run} pending={pending} busy={busy} />
 
       {/* ── Everyone with a sign-in ────────────────────────────────────── */}
       <section aria-labelledby="members-h">

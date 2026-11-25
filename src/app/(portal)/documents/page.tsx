@@ -44,7 +44,7 @@ export default async function DocumentsPage({
             Required <em>reading</em>
           </>
         }
-        description="The manuals, rules and procedures members are asked to read. Open each one, then tick to confirm you have read it. When one is re-issued you will be asked again."
+        description="The manuals, rules and procedures members are asked to read. Open each one, then tick to confirm you have read it. When one is re-issued you will be asked again. Your ticks are a record: you can see them here at any time, and so can the club’s portal controllers."
       >
         <RequiredReading groups={requiredReading} everyoneKeys={requiredOfEveryone.map((i) => i.key)} />
       </BandSection>

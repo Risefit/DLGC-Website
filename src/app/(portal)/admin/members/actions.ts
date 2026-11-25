@@ -2,12 +2,14 @@
 
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
-import { adminClient, logSupabaseProblem, temporaryPassword } from '@/lib/supabase/admin';
-import { isController, isMember } from '@/lib/auth';
+import { adminClient, banned, everyUser, logSupabaseProblem, temporaryPassword } from '@/lib/supabase/admin';
+import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
+import { invitation, mailReady, sendMail } from '@/lib/mail';
 
 /**
  * WHAT A CONTROLLER CAN DO — add a member, approve or decline a request, give
- * a new temporary password, take access away, make another controller.
+ * a new temporary password, take access away, make another controller, and
+ * invite people from the club's list (one at a time, or everybody at once).
  *
  * Every one of these runs on the server with the secret key, so every one of
  * them starts by asking Supabase who is signed in and refusing anybody who is
@@ -30,6 +32,33 @@ export type Member = {
   lastSignIn: string | null;
   you: boolean;
 };
+
+/** Somebody on the club's list who has not been invited yet. */
+export type ListPerson = {
+  id: number;
+  firstName: string;
+  surname: string;
+  email: string | null;
+  /** listed = may be invited · hold = check first · removed = taken off */
+  status: 'listed' | 'hold' | 'removed';
+  note: string | null;
+  /** What stops an invitation as things stand, if anything. */
+  blocker: 'no-email' | 'shared' | null;
+};
+
+export type ClubListData = {
+  /** false until supabase/migrations/006_portal_roll.sql has been run */
+  ready: boolean;
+  people: ListPerson[];
+  /** how many on the list already have a sign-in */
+  invited: number;
+  /** true when RESEND_API_KEY and MAIL_FROM are set, so invitations can be emailed */
+  mail: boolean;
+};
+
+export type BatchOutcome =
+  | { ok: true; sent: number; left: number; /** why it stopped early, if it did */ stopped?: string }
+  | { ok: false; message: string };
 
 export type JoinRequest = { id: number; name: string; email: string; note: string | null; asked: string };
 
@@ -58,25 +87,10 @@ const refuse = (e: unknown): Outcome => ({
       : 'Only a controller can do that. Sign in again and retry.',
 });
 
-async function everyUser(admin: NonNullable<ReturnType<typeof adminClient>>): Promise<User[]> {
-  const all: User[] = [];
-  for (let page = 1; page <= 20; page++) {
-    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
-    if (error) throw new Error(error.message);
-    all.push(...data.users);
-    if (data.users.length < 200) break;
-  }
-  return all;
-}
-
-const banned = (u: User) => {
-  const until = (u as User & { banned_until?: string | null }).banned_until;
-  return Boolean(until && new Date(until).getTime() > Date.now());
-};
-
 /** Everything the Members page shows. */
 export async function loadMembers(): Promise<
-  { ok: true; members: Member[]; requests: JoinRequest[]; requestsReady: boolean } | { ok: false; message: string }
+  | { ok: true; members: Member[]; requests: JoinRequest[]; requestsReady: boolean; list: ClubListData }
+  | { ok: false; message: string }
 > {
   let ctx;
   try {
@@ -121,6 +135,7 @@ export async function loadMembers(): Promise<
   return {
     ok: true,
     members,
+    list: await loadList(admin, users),
     requestsReady: !error,
     requests: (data ?? []).map((r) => ({
       id: r.id as number,
@@ -132,11 +147,16 @@ export async function loadMembers(): Promise<
   };
 }
 
-async function create(
+type Made =
+  | { ok: true; id: string; name: string; email: string; password: string }
+  | { ok: false; message: string; /** the address already has a sign-in */ exists?: boolean };
+
+/** Make the account, with a temporary password. Nothing is sent to anybody. */
+async function makeAccount(
   admin: NonNullable<ReturnType<typeof adminClient>>,
   nameIn: string,
   emailIn: string,
-): Promise<Outcome> {
+): Promise<Made> {
   const name = nameIn.trim().replace(/\s+/g, ' ');
   const email = emailIn.trim().toLowerCase();
   if (name.length < 2 || name.length > 120) return { ok: false, message: 'Please give the member’s name.' };
@@ -145,32 +165,38 @@ async function create(
   }
 
   const password = temporaryPassword();
-  const { error } = await admin.auth.admin.createUser({
+  const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
-    email_confirm: true, // the controller vouches for the address; no email is sent
+    email_confirm: true, // the controller vouches for the address
     user_metadata: { name },
-    app_metadata: { portal_member: true, must_change_password: true },
+    app_metadata: { portal_member: true, must_change_password: true, temp_password_at: new Date().toISOString() },
   });
 
-  if (error) {
-    const said = error.message ?? '';
-    if (!/already|registered|exists/i.test(said)) logSupabaseProblem('members page, creating an account', error);
+  if (error || !data?.user) {
+    const said = error?.message ?? '';
     if (/already|registered|exists/i.test(said)) {
       return {
         ok: false,
+        exists: true,
         message: `${email} already has a sign-in. Find them in the list below — you can give them a new temporary password or restore their access there.`,
       };
     }
+    logSupabaseProblem('members page, creating an account', error);
     return { ok: false, message: said || 'The account could not be created.' };
   }
 
-  return {
-    ok: true,
-    message: `${name} now has a sign-in.`,
-    password,
-    forName: name,
-  };
+  return { ok: true, id: data.user.id, name, email, password };
+}
+
+async function create(
+  admin: NonNullable<ReturnType<typeof adminClient>>,
+  nameIn: string,
+  emailIn: string,
+): Promise<Outcome> {
+  const made = await makeAccount(admin, nameIn, emailIn);
+  if (!made.ok) return { ok: false, message: made.message };
+  return { ok: true, message: `${made.name} now has a sign-in.`, password: made.password, forName: made.name };
 }
 
 /** Add a member directly. */
@@ -236,7 +262,11 @@ export async function newTemporaryPassword(userId: string): Promise<Outcome> {
     const password = temporaryPassword();
     const { error } = await admin.auth.admin.updateUserById(userId, {
       password,
-      app_metadata: { ...(data.user.app_metadata ?? {}), must_change_password: true },
+      app_metadata: {
+        ...(data.user.app_metadata ?? {}),
+        must_change_password: true,
+        temp_password_at: new Date().toISOString(),
+      },
     });
     if (error) return { ok: false, message: error.message || 'The password could not be changed.' };
     const name = typeof data.user.user_metadata?.name === 'string' ? data.user.user_metadata.name : data.user.email ?? 'them';
@@ -284,6 +314,351 @@ export async function setController(userId: string, on: boolean): Promise<Outcom
     });
     if (error) return { ok: false, message: error.message || 'That could not be saved.' };
     return { ok: true, message: on ? 'They are now a controller.' : 'They are no longer a controller.' };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * THE CLUB'S LIST — people the club means to invite (table portal_roll).
+ *
+ * Being on the list gives nobody a sign-in. A controller invites from it: one
+ * person, or everybody who is ready. Inviting makes the account exactly as
+ * "Add a member" does. If the club's email sending is set up the temporary
+ * password is emailed to the member; if not, it is shown to the controller
+ * once, to pass on by hand.
+ *
+ * Inviting EVERYBODY needs the email sending — nobody can hand out a hundred
+ * and fifty passwords. It is done a few at a time (BATCH), called again and
+ * again by the page until nobody is left, so it never runs out of time and can
+ * be stopped and picked up later. If an email cannot be sent, that person's
+ * account is taken back so they are simply still "not yet invited".
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+type Admin = NonNullable<ReturnType<typeof adminClient>>;
+type ListRow = {
+  id: number;
+  first_name: string;
+  surname: string;
+  email: string | null;
+  status: string;
+  note: string | null;
+};
+
+const BATCH = 5;
+const fullName = (r: { first_name: string; surname: string }) => `${r.first_name} ${r.surname}`.trim();
+const lower = (e: string | null | undefined) => (e ?? '').trim().toLowerCase();
+
+/** Rows not yet invited, with anybody who has since been given a sign-in settled first. */
+async function openRows(admin: Admin, users: User[]): Promise<{ ready: boolean; rows: ListRow[]; invited: number }> {
+  const { data, error } = await admin
+    .from('portal_roll')
+    .select('id, first_name, surname, email, status, note')
+    .in('status', ['listed', 'hold', 'removed'])
+    .order('surname', { ascending: true })
+    .order('first_name', { ascending: true });
+  if (error) return { ready: false, rows: [], invited: 0 };
+
+  // Somebody on the list who already has a sign-in (added by hand, or approved
+  // from "Ask to join") is not waiting for an invitation. Say so on their row.
+  const accounts = new Map(users.filter((u) => u.email).map((u) => [lower(u.email), u.id]));
+  const rows: ListRow[] = [];
+  for (const r of (data ?? []) as ListRow[]) {
+    const has = r.email ? accounts.get(lower(r.email)) : undefined;
+    if (has && r.status !== 'removed') {
+      await admin
+        .from('portal_roll')
+        .update({ status: 'invited', user_id: has, invited_at: new Date().toISOString() })
+        .eq('id', r.id);
+    } else {
+      rows.push(r);
+    }
+  }
+
+  const { count } = await admin.from('portal_roll').select('id', { count: 'exact', head: true }).eq('status', 'invited');
+  return { ready: true, rows, invited: count ?? 0 };
+}
+
+/** An address two people on the list both give cannot be either one's sign-in. */
+function sharedAddresses(rows: ListRow[]) {
+  const seen = new Map<string, number>();
+  for (const r of rows) {
+    if (r.email && r.status !== 'removed') seen.set(lower(r.email), (seen.get(lower(r.email)) ?? 0) + 1);
+  }
+  return new Set([...seen].filter(([, n]) => n > 1).map(([e]) => e));
+}
+
+const blockerOf = (r: ListRow, shared: Set<string>): ListPerson['blocker'] =>
+  !r.email ? 'no-email' : shared.has(lower(r.email)) ? 'shared' : null;
+
+async function loadList(admin: Admin, users: User[]): Promise<ClubListData> {
+  const { ready, rows, invited } = await openRows(admin, users);
+  const shared = sharedAddresses(rows);
+  return {
+    ready,
+    invited,
+    mail: mailReady(),
+    people: rows.map((r) => ({
+      id: r.id,
+      firstName: r.first_name,
+      surname: r.surname,
+      email: r.email,
+      status: r.status as ListPerson['status'],
+      note: r.note,
+      blocker: blockerOf(r, shared),
+    })),
+  };
+}
+
+const markInvited = (admin: Admin, rowId: number, userId: string | null, by: string) =>
+  admin
+    .from('portal_roll')
+    .update({ status: 'invited', user_id: userId, invited_at: new Date().toISOString(), invited_by: by })
+    .eq('id', rowId);
+
+/**
+ * Make one person's account and, when email is set up, send them their
+ * invitation. `emailed` says which way the password went.
+ */
+async function inviteRow(
+  admin: Admin,
+  row: ListRow,
+  by: string,
+): Promise<
+  | { ok: true; emailed: boolean; name: string; password: string }
+  | { ok: false; message: string; quota?: boolean; skipped?: boolean }
+> {
+  const name = fullName(row);
+  const made = await makeAccount(admin, name, row.email ?? '');
+  if (!made.ok) {
+    if (made.exists) {
+      // Somebody got there first; they have a sign-in, which is what was wanted.
+      await markInvited(admin, row.id, null, by);
+      return { ok: false, skipped: true, message: `${name} already has a sign-in.` };
+    }
+    return { ok: false, message: `${name}: ${made.message}` };
+  }
+
+  if (!mailReady()) {
+    await markInvited(admin, row.id, made.id, by);
+    return { ok: true, emailed: false, name, password: made.password };
+  }
+
+  const sent = await sendMail({
+    to: made.email,
+    ...invitation({ firstName: row.first_name, email: made.email, password: made.password, days: TEMP_PASSWORD_DAYS }),
+  });
+  if (!sent.ok) {
+    // No email, so no invitation: take the account back and leave them on the list.
+    const { error } = await admin.auth.admin.deleteUser(made.id);
+    if (error) logSupabaseProblem('members page, taking back an account after a failed email', error);
+    return { ok: false, quota: sent.quota, message: sent.reason };
+  }
+  await markInvited(admin, row.id, made.id, by);
+  return { ok: true, emailed: true, name, password: made.password };
+}
+
+/** Invite one person from the list. */
+export async function inviteFromList(id: number): Promise<Outcome> {
+  try {
+    const { me, admin } = await requireController();
+    const { rows } = await openRows(admin, await everyUser(admin));
+    const row = rows.find((r) => r.id === id);
+    if (!row || row.status === 'removed') return { ok: false, message: 'That person is no longer waiting on the list.' };
+    const blocker = blockerOf(row, sharedAddresses(rows));
+    if (blocker === 'no-email') return { ok: false, message: 'Add an email address for them first.' };
+    if (blocker === 'shared') {
+      return { ok: false, message: 'Somebody else on the list has the same address. Each sign-in needs its own — change one of them first.' };
+    }
+    const done = await inviteRow(admin, row, me.id);
+    if (!done.ok) return { ok: false, message: done.message };
+    return done.emailed
+      ? { ok: true, message: `An invitation has been emailed to ${done.name}.` }
+      : { ok: true, message: `${done.name} now has a sign-in.`, password: done.password, forName: done.name };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/**
+ * Invite the next few people who are ready. The page calls this repeatedly
+ * until `left` is 0 or `stopped` says why it cannot go on.
+ */
+export async function inviteBatch(): Promise<BatchOutcome> {
+  try {
+    const { me, admin } = await requireController();
+    if (!mailReady()) {
+      return { ok: false, message: 'Inviting everybody needs the club’s email sending set up first (RESEND_API_KEY and MAIL_FROM in Vercel).' };
+    }
+    const { rows } = await openRows(admin, await everyUser(admin));
+    const shared = sharedAddresses(rows);
+    const ready = rows.filter((r) => r.status === 'listed' && blockerOf(r, shared) === null);
+
+    let sent = 0;
+    let handled = 0;
+    for (const row of ready.slice(0, BATCH)) {
+      const done = await inviteRow(admin, row, me.id);
+      if (done.ok) {
+        sent++;
+        handled++;
+        continue;
+      }
+      if (done.skipped) {
+        handled++;
+        continue;
+      }
+      return { ok: true, sent, left: ready.length - handled, stopped: done.message };
+    }
+    return { ok: true, sent, left: ready.length - handled };
+  } catch (e) {
+    return refuse(e) as { ok: false; message: string };
+  }
+}
+
+/** Send the controller the invitation as a member would get it, with a made-up password. */
+export async function sendSample(): Promise<Outcome> {
+  try {
+    const { me } = await requireController();
+    if (!mailReady()) return { ok: false, message: 'Email sending is not set up yet.' };
+    if (!me.email) return { ok: false, message: 'Your sign-in has no email address.' };
+    const first = typeof me.user_metadata?.name === 'string' && me.user_metadata.name ? me.user_metadata.name.split(' ')[0] : 'member';
+    const mail = invitation({ firstName: first, email: me.email, password: 'abcd-efgh-jkmn', days: TEMP_PASSWORD_DAYS });
+    const sent = await sendMail({
+      to: me.email,
+      subject: `[Sample] ${mail.subject}`,
+      text: `THIS IS A SAMPLE. The password below is made up and opens nothing.\n\n${mail.text}`,
+    });
+    return sent.ok
+      ? { ok: true, message: `A sample invitation has been sent to ${me.email}. Nobody else was emailed.` }
+      : { ok: false, message: sent.reason };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/** Give somebody on the list an email address, or correct it. */
+export async function setListEmail(id: number, emailIn: string): Promise<Outcome> {
+  try {
+    const { admin } = await requireController();
+    const email = emailIn.trim().toLowerCase();
+    if (!EMAIL.test(email) || email.length > 254) {
+      return { ok: false, message: 'That does not look like an email address. Please check it.' };
+    }
+    const { error } = await admin.from('portal_roll').update({ email }).eq('id', id).in('status', ['listed', 'hold']);
+    if (error) return { ok: false, message: 'That could not be saved. Try again.' };
+    // The note on a listed row only ever said the address was missing or shared.
+    // (On a held row it says why they are held, so that one stays.)
+    await admin.from('portal_roll').update({ note: null }).eq('id', id).eq('status', 'listed');
+    return { ok: true, message: 'Email address saved.' };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/** Take somebody off the list, put them back, or release somebody held for checking. */
+export async function setListStatus(id: number, to: 'listed' | 'removed'): Promise<Outcome> {
+  try {
+    const { admin } = await requireController();
+    if (to !== 'listed' && to !== 'removed') return { ok: false, message: 'That could not be saved.' };
+    const { error } = await admin
+      .from('portal_roll')
+      .update({ status: to })
+      .eq('id', id)
+      .in('status', ['listed', 'hold', 'removed']);
+    if (error) return { ok: false, message: 'That could not be saved. Try again.' };
+    return {
+      ok: true,
+      message: to === 'removed' ? 'Taken off the list. Nothing was sent to them.' : 'They are on the list and may be invited.',
+    };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/**
+ * Add people to the list from pasted text — one person per line, as it comes
+ * out of a spreadsheet or an export: "First name, Surname, email". Commas,
+ * tabs or semicolons between the parts; the email may be missing. Anybody
+ * whose address is already on the list, or already has a sign-in, is left out.
+ */
+export async function addToList(text: string): Promise<Outcome> {
+  try {
+    const { admin } = await requireController();
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return { ok: false, message: 'Paste at least one line: first name, surname, email address.' };
+    if (lines.length > 500) return { ok: false, message: 'That is more than 500 lines. Please paste it in smaller pieces.' };
+
+    const { data: existing, error: readError } = await admin
+      .from('portal_roll')
+      .select('first_name, surname, email, status');
+    if (readError) return { ok: false, message: 'The list could not be read. Has migration 006 been run in Supabase?' };
+    const users = await everyUser(admin);
+    const knownEmail = new Set([
+      ...((existing ?? []) as ListRow[]).filter((r) => r.email).map((r) => lower(r.email)),
+      ...users.map((u) => lower(u.email)),
+    ]);
+    const knownName = new Set(((existing ?? []) as ListRow[]).filter((r) => !r.email).map((r) => fullName(r).toLowerCase()));
+
+    const add: { first_name: string; surname: string; email: string | null; source: string }[] = [];
+    const unread: number[] = [];
+    let already = 0;
+    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    lines.forEach((line, i) => {
+      const found = line.match(/[^\s<>,;"']+@[^\s<>,;"']+\.[^\s<>,;"']{2,}/);
+      const email = found ? found[0].toLowerCase() : null;
+      const rest = (found ? line.replace(found[0], ' ') : line).replace(/[<>"]/g, ' ');
+      const parts = rest.split(/[,;\t]/).map((p) => p.trim().replace(/\s+/g, ' ')).filter(Boolean);
+      // A heading row ("First name, Surname, Email") is not a person.
+      if (!email && /^(first\s*name|name|surname|e-?mail)/i.test(parts[0] ?? '')) return;
+      let first = '';
+      let sur = '';
+      if (parts.length >= 2) {
+        [first, sur] = parts;
+      } else if (parts.length === 1) {
+        const words = parts[0].split(' ');
+        sur = words.length > 1 ? words.pop()! : '';
+        first = words.join(' ');
+      }
+      // A name is letters (any alphabet), with spaces, hyphens, apostrophes and full stops.
+      const nameLike = /^\p{L}[\p{L}\p{M} .'’-]*$/u;
+      if (
+        !first ||
+        first.length > 80 ||
+        sur.length > 80 ||
+        !nameLike.test(first) ||
+        (sur !== '' && !nameLike.test(sur)) ||
+        (email && (!EMAIL.test(email) || email.length > 254))
+      ) {
+        unread.push(i + 1);
+        return;
+      }
+      const nameKey = `${first} ${sur}`.trim().toLowerCase();
+      if (email ? knownEmail.has(email) : knownName.has(nameKey)) {
+        already++;
+        return;
+      }
+      if (email) knownEmail.add(email);
+      else knownName.add(nameKey);
+      add.push({ first_name: first, surname: sur, email, source: `Pasted in by a controller, ${today}` });
+    });
+
+    if (add.length > 0) {
+      const { error } = await admin.from('portal_roll').insert(add);
+      if (error) {
+        logSupabaseProblem('members page, adding to the list', error);
+        return { ok: false, message: 'Those could not be added. Nothing was saved; try again.' };
+      }
+    }
+    const bits = [
+      `${add.length} added to the list.`,
+      already > 0 ? `${already} left out — already on the list or already signed up.` : '',
+      unread.length > 0
+        ? `${unread.length} could not be read (line${unread.length === 1 ? '' : 's'} ${unread.slice(0, 12).join(', ')}${unread.length > 12 ? '…' : ''}).`
+        : '',
+      add.length > 0 ? 'Nobody has been invited.' : '',
+    ].filter(Boolean);
+    return { ok: add.length > 0 || unread.length === 0, message: bits.join(' ') };
   } catch (e) {
     return refuse(e);
   }

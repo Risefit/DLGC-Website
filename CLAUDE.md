@@ -462,10 +462,18 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
 - **A confirmation belongs to one version.** Re-issue a manual the usual way (new row, same
   `slot`) and every member is asked again automatically. For a portal page in the list,
   change its `issue` value. The CFI's notices reset themselves when a notice is added.
-- A member sees only their own ticks. **Who has confirmed what** is read in Supabase →
-  Table Editor → `reading_confirmations` (it shows each member's sign-in address, the
-  document, its version and the date). That table holds members' addresses, so only the
-  people the committee nominates should have the Supabase login.
+- A member sees only their own ticks, in three places: the list itself (top of the
+  Documents page, with the date beside each), a line on the dashboard ("Required reading:
+  3 of 8 still to confirm"), and **My sign-in → My required reading**. The count is of the
+  documents that apply to every member — the first two groups in the list.
+- **Who has confirmed what** is the controllers' page `/admin/reading` (**My sign-in →
+  Reading record**, or the link at the top of the Members page): member by member, and
+  document by document. Only the current version of a document counts there, so a
+  re-issued manual shows everybody as outstanding again. Nobody is marked as outstanding
+  for a duty's manual, because the portal does not know who does which duty. The Documents
+  page tells members that controllers can see the record.
+- Only a controller can open that page. If the CFI should see it, a controller makes the
+  CFI a controller — there is no separate "can see the reading record" mark yet.
 - Every visitor to the page is now a signed-in member, so the ticks always work (given
   migration 004 has been run).
 
@@ -490,13 +498,53 @@ from **My sign-in → Members**:
 - *Waiting to join* — requests from the front page (table `portal_requests`, migration
   005). Approve makes the account the same way; Decline makes nothing.
 - *New temporary password* — for somebody who has forgotten theirs. There is no "email me
-  a reset link" yet, because the club's email sending is not set up.
+  a reset link" yet.
+- *The club's list* — see the next section.
 - *Remove access / Restore access*, and *Make a controller*. A controller cannot remove
   themselves, so there is always one.
 
 A member on a temporary password is taken to `/account/password` and can go nowhere else
 until they have chosen their own (10 characters or more). Anybody can change theirs later
 from **My sign-in → Change my password**.
+
+**A temporary password lasts 14 days** (`TEMP_PASSWORD_DAYS` in `src/lib/auth.ts`, and the
+same number in `middleware.ts`). After that the sign-in page says it has run out and a
+controller makes another. This is there because invitations are emailed: a password
+sitting unread in an inbox must not stay good for ever.
+
+### The club's list, and inviting everybody
+The Supabase table `portal_roll` (migration 006) is the list of members the club means to
+invite: first name, surname, email address. **Being on it gives nobody a sign-in**, and
+nothing is sent to anybody until a controller presses a button. It was loaded on
+25 November 2026 from the club's own Members' Directory of April 2026 (chairman's
+approval, as reported by Phil) — 191 people. **Nothing in it came from Free Flight.**
+
+On the Members page (`src/components/ClubList.tsx`) a controller can:
+
+- *Invite one person.* Always works. With email set up the invitation is emailed;
+  without it the temporary password is shown once, as for "Add a member".
+- *Invite everybody who is ready.* **Only when email is set up** (`RESEND_API_KEY` and
+  `MAIL_FROM` in Vercel); until then the button is greyed out and says why. It asks "are
+  you sure", then works through the list five at a time, showing how far it has got. It
+  can be stopped, and pressing it again carries on — nobody is invited twice. If an email
+  cannot be sent, that person's account is taken back and they stay on the list.
+- *Email me a sample first* — sends the controller the invitation with a made-up password.
+- *Add or change an address*, *take somebody off*, *put them back*.
+- *Add names* — paste "first name, surname, email", one person to a line. This is how an
+  export from the membership secretary goes in. Anybody already listed is left out.
+
+Who is **not** included when everybody is invited: people with no email address, two
+people sharing one address (each sign-in needs its own), and anybody marked "check first"
+— the thirty who were in the September 2025 directory but not the April 2026 one.
+
+The wording of the invitation is `invitation()` in `src/lib/mail.ts`. It gives the
+portal's address (`PORTAL_URL` in Vercel if set, otherwise the Vercel project's own
+address), says the password lasts 14 days, and says the portal is separate from Free
+Flight. **Resend's free plan sends 100 emails a day**, so the first full invitation takes
+two days, or a month of the paid plan; the page stops cleanly and says so.
+
+**The names are never in this repository** (rule 6). Not in a migration, a test, a commit
+message or these notes. They go straight into Supabase, or in through the paste box.
 
 The code that does all this is `src/app/(portal)/admin/members/actions.ts`. **Every action
 there begins with `requireController()`**, which asks Supabase who is signed in; without
@@ -722,7 +770,8 @@ src/
 │   ├── page.tsx           The public front page — sign in, or ask to join
 │   ├── login/  join/      Sign-in, and "Ask to join". The only other public pages
 │   ├── (portal)/          Every members' page. layout.tsx has the nav + footer
-│   │   ├── admin/members/ Controllers only: add, approve and remove members
+│   │   ├── admin/members/ Controllers only: add, approve, invite and remove members
+│   │   ├── admin/reading/ Controllers only: who has confirmed the required reading
 │   │   └── account/password/  Choose or change your portal password
 │   └── globals.css        Base type, focus rings, bands, .card/.link/.tap/.pill helpers
 ├── components/
@@ -738,7 +787,8 @@ src/
 │   ├── site.ts            Fees, calendar, weather links, contacts, Find It A–Z
 │   ├── awareim.ts         The ONLY place AwareIM URLs appear
 │   └── retired/           Kept, not used
-├── lib/                   auth.ts (who gets in), Supabase clients, files.ts (old-site files)
+├── lib/                   auth.ts (who gets in), Supabase clients, files.ts (old-site files),
+│                          mail.ts (the one place that sends email)
 └── app/files/             The one route every old-site file goes through
 middleware.ts              THE LOCK. Every request passes through it
 next.config.mjs            Redirects for merged and moved pages
@@ -783,9 +833,13 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [ ] In Supabase → Authentication, turn OFF "Allow new users to sign up". A self-made
       account cannot get into the portal (it is not a member), but there is no reason to
       allow them at all
-- [ ] Email for the portal (`RESEND_API_KEY`, `MAIL_FROM`, the club domain's DNS records):
-      then a member could reset a forgotten password themselves, and a controller could be
-      told when somebody asks to join. Until then both go through a controller by hand
+- [ ] Email for the portal (`RESEND_API_KEY`, `MAIL_FROM`, the club domain's DNS records).
+      **The bulk invitation waits on this.** After it: a member resetting a forgotten
+      password themselves, and a controller being told when somebody asks to join — neither
+      is built yet
+- [ ] Before inviting everybody: get the current membership from the membership secretary
+      and paste it into "Add names", and have somebody check the thirty marked "check first"
+- [x] `supabase/migrations/006_portal_roll.sql` — applied 25 November 2026
 - [ ] Move the two Bronze Theory Zoom recordings (596 MB) somewhere that can hold them
 - [ ] **Safety Officer to verify `/safety/emergency`** — all four procedures are transcribed
       from the old site (MainGd.asp and its EmrgcyGdnc pages), but several hospital telephone
