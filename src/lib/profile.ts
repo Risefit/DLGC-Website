@@ -180,6 +180,9 @@ export async function writeProfile(admin: SupabaseClient, userId: string, p: Pro
   if (error) throw new Error(error.message);
 }
 
+/** What writeRoles throws when the database has not been told it may hold the newer roles. */
+export const ROLE_NOT_ALLOWED_YET = 'role-not-allowed-yet';
+
 /** The roles one member holds. Throws if the table cannot be read. */
 export async function readRoles(admin: SupabaseClient, userId: string): Promise<RoleId[]> {
   const { data, error } = await admin.from('portal_member_roles').select('roles').eq('user_id', userId).maybeSingle();
@@ -192,5 +195,7 @@ export async function writeRoles(admin: SupabaseClient, userId: string, roles: R
   const { error } = await admin
     .from('portal_member_roles')
     .upsert({ user_id: userId, roles: cleanRoles(roles), updated_at: new Date().toISOString(), updated_by: by }, { onConflict: 'user_id' });
-  if (error) throw new Error(error.message);
+  // 23514: the database's own check turned the roles away. That happens only
+  // when a role was added to src/lib/roles.ts before migration 012 was run.
+  if (error) throw new Error(error.code === '23514' ? ROLE_NOT_ALLOWED_YET : error.message);
 }

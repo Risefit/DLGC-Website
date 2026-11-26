@@ -20,6 +20,7 @@ import {
 import { Badge } from '@/components/ui';
 import ClubList from '@/components/ClubList';
 import { ROLES, TEAMS, type RoleId } from '@/lib/roles';
+import { ROLES_CHANGED } from '@/lib/my-roles';
 
 /**
  * The Members page as a controller uses it. Four parts, in the order they are
@@ -27,8 +28,8 @@ import { ROLES, TEAMS, type RoleId } from '@/lib/roles';
  * people still to invite (src/components/ClubList.tsx), and everyone who has a
  * sign-in.
  *
- * ROLES. Under each member's name are the club's nine duties, in their three
- * teams. A controller clicks one to give it and clicks again to take it off;
+ * ROLES. Under each member's name are the club's duties, in their teams
+ * (src/lib/roles.ts). A controller clicks one to give it and clicks again to take it off;
  * it is saved at once and that member's required reading follows. A role that
  * is held is filled in AND carries a tick, so it is not told by colour alone.
  * Members can tick their own on My profile, and the two are the same list.
@@ -94,6 +95,9 @@ export default function MemberAdmin({
       }
       if (outcome.ok) {
         setRoleNow((r) => ({ ...r, [m.id]: outcome.roles }));
+        // A controller changing their own role: their own count of required
+        // reading, in the menu above, follows at once.
+        if (m.you) window.dispatchEvent(new Event(ROLES_CHANGED));
       } else {
         setRoleNow((r) => ({ ...r, [m.id]: held }));
         setRoleSaid((r) => ({ ...r, [m.id]: outcome.message }));
@@ -402,7 +406,7 @@ export default function MemberAdmin({
                             aria-pressed={on}
                             disabled={!rolesReady}
                             onClick={() => toggleRole(m, r.id)}
-                            className={`tap-sm gap-1 rounded-full border px-2.5 text-[0.8rem] font-semibold transition-colors disabled:opacity-50 ${
+                            className={`tap-sm min-w-[44px] justify-center gap-1 rounded-full border px-2.5 text-[0.8rem] font-semibold transition-colors disabled:opacity-50 ${
                               on
                                 ? 'border-navy bg-navy text-white hover:bg-skyDark'
                                 : 'border-skyLine bg-white text-navy hover:border-sky'

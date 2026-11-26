@@ -37,6 +37,8 @@ import { useMyRoles } from '@/lib/my-roles';
 type State = 'loading' | 'signed-out' | 'ready' | 'unavailable';
 
 const TABLE = 'reading_confirmations';
+/** The group a member's own duty reading is lifted into. */
+const OWN = 'For the duties on your profile';
 
 const when = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -127,14 +129,14 @@ export default function RequiredReading({
       const forMe = g.items.filter((i) => i.roles?.some((r) => held.has(r)));
       lifted.push(...forMe);
       const others = g.items.filter((i) => !forMe.includes(i));
-      if (others.length > 0) rest.push({ ...g, items: others, duties: others.some((i) => (i.roles?.length ?? 0) > 0) });
+      if (others.length > 0) rest.push({ ...g, items: others, duties: g.duties === true });
     }
     if (lifted.length === 0) return rest;
     const everyone = new Set(rule.everyone);
     const at = rest.findIndex((g) => !g.items.some((i) => everyone.has(i.key)));
     const because = [...held].map(roleLabel).join(', ');
     const own = {
-      group: 'For the duties on your profile',
+      group: OWN,
       blurb: `Your profile says: ${because}. These count towards your required reading.`,
       items: lifted,
       duties: true,
@@ -191,11 +193,11 @@ export default function RequiredReading({
                 <>
                   {' '}
                   <Link href="/account/profile#duties" className="link">
-                    {g.group === 'For the duties on your profile'
+                    {g.group === OWN
                       ? 'Change the duties on my profile'
                       : 'Tick the duties you do on My profile'}
                   </Link>
-                  {g.group === 'For the duties on your profile' ? '.' : ' and their manuals join your list.'}
+                  {g.group === OWN ? '.' : ' and their manuals join your list.'}
                 </>
               )}
             </p>

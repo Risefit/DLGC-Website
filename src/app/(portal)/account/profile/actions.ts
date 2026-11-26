@@ -2,7 +2,7 @@
 
 import { requireMember } from '@/lib/member';
 import { logSupabaseProblem } from '@/lib/supabase/admin';
-import { checkProfile, readRoles, writeProfile, writeRoles } from '@/lib/profile';
+import { checkProfile, readRoles, ROLE_NOT_ALLOWED_YET, writeProfile, writeRoles } from '@/lib/profile';
 import { cleanRoles, type RoleId } from '@/lib/roles';
 
 /**
@@ -53,6 +53,13 @@ export async function saveMyProfile(input: { roles?: unknown; profile?: unknown 
     await writeProfile(admin, me.id, checked.profile);
   } catch (e) {
     logSupabaseProblem('my profile, saving', { message: e instanceof Error ? e.message : undefined });
+    if (e instanceof Error && e.message === ROLE_NOT_ALLOWED_YET) {
+      return {
+        ok: false,
+        message:
+          'The flying duties (instructing, introductory flights, mutual flying) cannot be saved yet: the club’s website editor has one more step to finish. Nothing was changed. Untick those for now and save again.',
+      };
+    }
     return { ok: false, message: 'Your profile could not be saved just now. Nothing was changed. Please try again.' };
   }
 

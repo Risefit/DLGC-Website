@@ -11,14 +11,20 @@
  *   file('…')  one particular document, by its id in documents-imported.ts
  *   page(…)    a page of this portal
  *
- * READING THAT GOES WITH A DUTY. An item in the last group carries `roles`: the
- * duties (src/lib/roles.ts) whose members are asked to confirm it. A member who
+ * READING THAT GOES WITH A DUTY. An item can carry `roles`: the duties
+ * (src/lib/roles.ts) whose members are asked to confirm it. The last two
+ * groups are made of these, and the Student Pilots Guide carries the
+ * instructing roles because an instructor needs to know what a student is told. A member who
  * holds one of those roles — ticked on My profile, or set by a controller on
  * the Members page — has the item added to their own list and their count.
  * Everybody else still sees it, as reading for a duty they do not do. WHICH
  * MANUAL GOES WITH WHICH ROLE WAS ALSO A FIRST DRAFT (a trainee is asked to
- * read the same manual as the person training them); the CFI and the duty
- * leads should correct it here.
+ * read the same manual as the person training them; the instructing roles were
+ * given the club's own documents on introductory flights, trial lessons and
+ * the pre-solo exercises, chosen by reading what each says it is for; mutual
+ * flyers were given the CFI's two mutual-flying documents). The CFI
+ * and the duty leads should correct it here. The BGA's own instructor manuals
+ * are not on the list: they are not the club's to issue.
  *
  * A CONFIRMATION BELONGS TO ONE VERSION. Each item has a `key`; for a document
  * it is the id of that file, so when a manual is re-issued under a new file
@@ -48,7 +54,13 @@ export type ReadingItem = {
   roles?: RoleId[];
 };
 
-export type ReadingGroup = { group: string; blurb: string; items: ReadingItem[] };
+export type ReadingGroup = {
+  group: string;
+  blurb: string;
+  items: ReadingItem[];
+  /** true for a group of duty reading: the page offers the way to My profile under it */
+  duties?: boolean;
+};
 
 const fromDoc = (d: Doc, why: string, who?: string, roles?: RoleId[]): ReadingItem => ({
   key: d.id,
@@ -66,6 +78,13 @@ const file = (id: string, why: string, who?: string, roles?: RoleId[]) => fromDo
 const WINCH: RoleId[] = ['winch-master', 'winch-trainer', 'winch-driver', 'winch-trainee'];
 const LAUNCH: RoleId[] = ['launch-master', 'launch-marshal'];
 const CLERKS: RoleId[] = ['head-clerk', 'clerk', 'trainee-clerk'];
+// Instructing. "Instructors" are the three grades; introductory flights are
+// flown by them and by Introductory Flight Pilots.
+const INSTRUCTORS: RoleId[] = ['basic-instructor', 'flight-instructor', 'cfi'];
+const INTRO_FLIGHTS: RoleId[] = [...INSTRUCTORS, 'ifp'];
+const TEACHING: RoleId[] = ['flight-instructor', 'cfi'];
+// Two approved pilots sharing a club two-seater, with no instruction given.
+const MUTUAL: RoleId[] = ['mutual-flyer'];
 const page = (name: string, issue: string, title: string, href: string, why: string, version?: string): ReadingItem => ({
   key: `page:${name}:${issue}`,
   title,
@@ -113,11 +132,51 @@ export const requiredReading: ReadingGroup[] = [
   {
     group: 'If you are learning to fly',
     blurb: 'For students working towards solo and the Sailplane Pilot Licence.',
-    items: [slot('student-pilots-guide', 'How training works at Camphill, from first flight to licence.')],
+    items: [
+      slot('student-pilots-guide', 'How training works at Camphill, from first flight to licence.', 'Students and instructors', INSTRUCTORS),
+    ],
+  },
+  {
+    group: 'If you instruct, fly introductory flights or fly mutual',
+    blurb: 'For instructors, Introductory Flight Pilots and mutual flyers.',
+    duties: true,
+    items: [
+      file(
+        'pdfs-introductory-flights-pdf',
+        'How introductory flights are booked and flown.',
+        'Instructors and Introductory Flight Pilots',
+        INTRO_FLIGHTS,
+      ),
+      file(
+        'pdfs-dlgc-trial-lessons-guidelines-pdf',
+        'What a visitor is told on the day, and what they should take away from it.',
+        'Instructors and Introductory Flight Pilots',
+        INTRO_FLIGHTS,
+      ),
+      file(
+        'manuals-training-exercises-v1-pdf',
+        'The pre-solo exercises, and how the training record card is used.',
+        'Flight Instructors and the CFI',
+        TEACHING,
+      ),
+      file(
+        'pdfs-mf-requirements-v4-pdf',
+        'Who may share a flight in a club two-seater, and on what terms.',
+        'Mutual flyers',
+        MUTUAL,
+      ),
+      file(
+        'pdfs-mf-prep-brfingrecrd-v3-pdf',
+        'What the two pilots prepare and brief before a mutual flight.',
+        'Mutual flyers',
+        MUTUAL,
+      ),
+    ],
   },
   {
     group: 'If you do one of these duties',
     blurb: 'Only the ones that apply to the duty you do.',
+    duties: true,
     items: [
       slot('launch-marshals-manual', 'Running the launch point safely and efficiently.', 'Launch marshals', LAUNCH),
       slot('launch-speeds', 'Launch speeds by glider type.', 'Launch marshals and winch drivers', [...LAUNCH, ...WINCH]),

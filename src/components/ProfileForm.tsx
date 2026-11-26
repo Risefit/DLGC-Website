@@ -9,7 +9,7 @@ import { ROLES_CHANGED } from '@/lib/my-roles';
 /**
  * MY PROFILE, as the member fills it in. One form, one Save button.
  *
- *   - The duties I do: nine tick boxes in the club's three duty teams. Ticking
+ *   - The duties I do: a tick box for each role, in the club's teams. Ticking
  *     one adds that duty's manuals to the member's required reading, and the
  *     count in the menu and on the dashboard follows as soon as it is saved
  *     (the form tells the rest of the page with a `dlgc:roles-changed` event).
@@ -145,7 +145,7 @@ export default function ProfileForm({
           . A portal controller can set these for you as well. Ticking a duty here does not clear you to do it; the
           CFI and the duty’s own lead decide that.
         </p>
-        <div className="card grid gap-x-8 gap-y-5 p-5 sm:grid-cols-3">
+        <div className="card grid gap-x-8 gap-y-5 p-5 sm:grid-cols-2">
           {TEAMS.map((team) => (
             <fieldset key={team}>
               <legend className="mb-1 font-semibold text-navy">{TEAM_NAMES[team]}</legend>

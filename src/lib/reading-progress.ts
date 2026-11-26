@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { requiredKeys, type ReadingRule } from '@/lib/roles';
 import { useMyRoles } from '@/lib/my-roles';
@@ -16,12 +17,18 @@ import { useMyRoles } from '@/lib/my-roles';
  * role is ticked on My profile or set by a controller. The database only ever
  * lets a member's browser read that member's own ticks and own roles.
  *
+ * THE COUNT HERE AND THE LIST ON THE DOCUMENTS PAGE MUST AGREE. The roles come
+ * from one shared place (src/lib/my-roles.ts), and the ticks are read again
+ * whenever the member moves to another page, comes back to the tab, or ticks
+ * something — so the menu cannot go on showing yesterday's answer.
+ *
  * `null` means "not known" — still loading, not signed in, or the table is not
  * there — and whatever shows the number should then show nothing at all.
  */
 export function useReadingProgress(rule: ReadingRule): { done: number; total: number } | null {
   const [ticked, setTicked] = useState<string[] | null>(null);
   const roles = useMyRoles();
+  const pathname = usePathname();
 
   useEffect(() => {
     const supabase = createClient();
@@ -41,12 +48,15 @@ export function useReadingProgress(rule: ReadingRule): { done: number; total: nu
     // Ticking a document on the Documents page tells every other part of the
     // page that is showing the count.
     const again = () => load();
+    const back = () => document.visibilityState === 'visible' && load();
     window.addEventListener('dlgc:reading-changed', again);
+    document.addEventListener('visibilitychange', back);
     return () => {
       live = false;
       window.removeEventListener('dlgc:reading-changed', again);
+      document.removeEventListener('visibilitychange', back);
     };
-  }, []);
+  }, [pathname]);
 
   if (ticked === null || roles === null) return null;
   const wanted = requiredKeys(rule, roles);

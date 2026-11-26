@@ -1,11 +1,17 @@
 /**
  * THE DUTIES A MEMBER DOES — "roles" on the Members page and on My profile.
  *
- * Nine of them, in the club's three duty teams. The list was given by Phil in
- * November 2026. To add, rename or remove one, edit ROLES below AND the list
- * in supabase/migrations/011_roles_and_profiles.sql (the database refuses a
- * role it has not been told about); then say which manuals it needs, in
- * src/content/required-reading.ts.
+ * Fourteen of them, in four teams: the winch, the launch point, the duty
+ * clerks, and — added a day later — flying: instructing, introductory flights
+ * and mutual flying. The list was given by Phil in November 2026.
+ *
+ * TO ADD, RENAME OR REMOVE ONE, edit ROLES below, then say which manuals it
+ * needs in src/content/required-reading.ts. That is all: since migration 012
+ * the database only checks that a role is a short lower-case name, so a new
+ * one needs nothing run in Supabase. An id is lower-case letters, digits and
+ * hyphens, and must never be reused for a different duty — it is what is
+ * stored against each member. Removing a role from this list simply stops it
+ * being shown or counted; nothing has to be deleted.
  *
  * WHAT A ROLE DOES HERE. Two things only:
  *   - it shows beside the member's name on the Members page;
@@ -13,10 +19,13 @@
  *
  * WHAT IT DOES NOT DO. It is not a record that anybody is qualified, cleared
  * or current — the CFI and each duty's own lead keep that, and the duty rota
- * is made elsewhere. It opens nothing in the portal either: who may see what
- * is decided by the marks in src/lib/auth.ts, never by a role. A member can
- * tick their own on My profile, and a controller can set them on the Members
- * page; either can take one off again.
+ * is made elsewhere. That holds for the flying roles above all: ticking
+ * "Flight Instructor", "Chief Flying Instructor" or "Mutual flyer" here makes
+ * nobody one — the CFI approves mutual flyers, on the club's own form — and
+ * gives them no say over anything on the site. It opens nothing in the portal
+ * either: who may see what is decided by the marks in src/lib/auth.ts, never
+ * by a role. A member can tick their own on My profile, and a controller can
+ * set them on the Members page; either can take one off again.
  *
  * They are kept in the Supabase table portal_member_roles (one row a member),
  * which the member's own browser may read but only the portal's server can
@@ -36,16 +45,22 @@ export const ROLES = [
   { id: 'head-clerk', label: 'Head clerk', short: 'Head clerk', team: 'Clerk' },
   { id: 'clerk', label: 'Clerk', short: 'Clerk', team: 'Clerk' },
   { id: 'trainee-clerk', label: 'Trainee clerk', short: 'Trainee', team: 'Clerk' },
+  { id: 'basic-instructor', label: 'Basic Instructor (BI)', short: 'BI', team: 'Flying' },
+  { id: 'flight-instructor', label: 'Flight Instructor (FI)', short: 'FI', team: 'Flying' },
+  { id: 'cfi', label: 'Chief Flying Instructor (CFI)', short: 'CFI', team: 'Flying' },
+  { id: 'ifp', label: 'Introductory Flight Pilot (IFP)', short: 'IFP', team: 'Flying' },
+  { id: 'mutual-flyer', label: 'Mutual flyer', short: 'Mutual flyer', team: 'Flying' },
 ] as const;
 
 export type RoleId = (typeof ROLES)[number]['id'];
 export type Role = (typeof ROLES)[number];
 
-export const TEAMS = ['Winch', 'Launch', 'Clerk'] as const;
+export const TEAMS = ['Winch', 'Launch', 'Clerk', 'Flying'] as const;
 export const TEAM_NAMES: Record<(typeof TEAMS)[number], string> = {
   Winch: 'On the winch',
   Launch: 'At the launch point',
   Clerk: 'Duty clerk',
+  Flying: 'Instructing, introductory flights and mutual flying',
 };
 
 const KNOWN = new Set<string>(ROLES.map((r) => r.id));

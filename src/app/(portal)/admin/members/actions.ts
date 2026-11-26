@@ -6,7 +6,7 @@ import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 import { invitation, mailReady, sendMail } from '@/lib/mail';
 import { requireController, refusal } from '@/lib/controller';
 import { cleanRoles, isRole, roleLabel, type RoleId } from '@/lib/roles';
-import { readProfile, readRoles, writeRoles, type Profile } from '@/lib/profile';
+import { readProfile, readRoles, ROLE_NOT_ALLOWED_YET, writeRoles, type Profile } from '@/lib/profile';
 
 /**
  * WHAT A CONTROLLER CAN DO — add a member, approve or decline a request, give
@@ -366,7 +366,10 @@ export async function setMemberRole(userId: string, role: string, on: boolean): 
       logSupabaseProblem('members page, setting a role', { message: e instanceof Error ? e.message : undefined });
       return {
         ok: false,
-        message: `${roleLabel(role)} could not be saved. If roles have never worked, run supabase/migrations/011_roles_and_profiles.sql.`,
+        message:
+          e instanceof Error && e.message === ROLE_NOT_ALLOWED_YET
+            ? `${roleLabel(role)} cannot be saved yet: run supabase/migrations/012_more_roles.sql in the Supabase SQL editor, then click it again.`
+            : `${roleLabel(role)} could not be saved. If roles have never worked, run supabase/migrations/011_roles_and_profiles.sql.`,
       };
     }
   } catch (e) {

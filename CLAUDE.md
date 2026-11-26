@@ -572,9 +572,11 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
   migration 004 has been run).
 
 ### Roles, and My profile
-Added November 2026 at Phil's request. The nine roles are his list, in three teams:
+Added November 2026 at Phil's request. The fourteen roles are his list, in four teams:
 winch master, winch trainer, winch driver, winch trainee · launch master, launch
-marshal · head clerk, clerk, trainee clerk. They are defined once, in `src/lib/roles.ts`.
+marshal · head clerk, clerk, trainee clerk · Basic Instructor (BI), Flight Instructor
+(FI), Chief Flying Instructor (CFI), Introductory Flight Pilot (IFP), mutual flyer.
+They are defined once, in `src/lib/roles.ts`.
 
 - **Who sets a role.** The member, on **My sign-in → My profile** (`/account/profile`),
   by ticking it; or a controller, on the Members page, by clicking it in the member's
@@ -582,18 +584,39 @@ marshal · head clerk, clerk, trainee clerk. They are defined once, in `src/lib/
   change what the other set. The table notes who changed it last.
 - **What a role does.** It shows beside the name on the Members page and the reading
   record, and it adds that duty's manuals to the member's required reading. Which manual
-  goes with which role is the `roles` on each item of the last group in
+  goes with which role is the `roles` on each item in
   `src/content/required-reading.ts`. **That pairing was a first draft by the website
-  editor** (every winch role reads the Winch Operating Manual and Launch Speeds; both
-  launch roles read the Launch Marshals Manual and Launch Speeds; every clerk role reads
-  the Duty Clerk Manual). The CFI and the duty leads should correct it there.
+  editor**; the CFI and the duty leads should correct it there:
+
+  | Role | Added to that member's required reading |
+  |---|---|
+  | Any winch role | Winch Operating Manual, Launch Speeds |
+  | Launch master, launch marshal | Launch Marshals Manual, Launch Speeds |
+  | Any clerk role | Duty Clerk Manual |
+  | IFP | Introductory Flights, Trial Lessons Guidelines |
+  | BI | those two, and the Student Pilots Guide |
+  | FI, CFI | those three, and Training (Pre-solo) Exercises |
+  | Mutual flyer | Mutual Flying — Requirements; Mutual Flying — Preparation and Briefing Record |
+
+  The instructing documents were chosen by reading what each says it is for. The BGA's
+  own instructor manuals are not on the list — they are not the club's to issue. The
+  Student Pilots Guide stays, uncounted, in "If you are learning to fly" for everybody
+  else; a group marked `duties: true` is one that offers the way to My profile.
+- **The number is the same everywhere on a page.** The menu, the dashboard line and the
+  list all get the member's roles from one shared place (`src/lib/my-roles.ts`), which
+  asks again whenever the member moves to another page, comes back to the tab, or a role
+  is changed. On the first day the menu said "all 8" beside a list saying "all 12",
+  because the menu had asked once and never again. Do not give a component its own copy.
 - **What a role does not do.** It is not a record that anybody is qualified, cleared or
   current, and the pages say so. **It opens nothing.** Who may see or do what is decided
   by the marks in `src/lib/auth.ts` and by `requireController()`; never write code that
   lets a role unlock anything, because a member can tick any role for themselves.
-- **To add or rename a role:** `ROLES` in `src/lib/roles.ts`, the same list in a new
-  migration (the database refuses a role it does not know — see 011), and its manuals in
-  `required-reading.ts`.
+- **To add a role:** one line in `ROLES` in `src/lib/roles.ts`, and its manuals in
+  `required-reading.ts`. Nothing has to be run in Supabase: since migration 012 the
+  database checks only that a role is a short lower-case name, and the server drops
+  anything not in `ROLES` before saving. Never reuse an id for a different duty. To
+  retire one, take it out of `ROLES`; it stops being shown and counted, and nothing is
+  deleted.
 
 **The profile's emergency details** — emergency contact, next of kin, the member's own
 mobile, blood type, and "anything a first-aider should know" — are the most personal
@@ -621,7 +644,7 @@ are other people's names and numbers. The rules, none of them optional:
 
 Roles are in `portal_member_roles`, which a member's own browser may read (their own row
 only — the tally on every page needs it) and nobody's browser may write. All three
-tables are migration 011.
+tables are migration 011; 012 loosens the check on role names, as above.
 
 ### The portal is members only — who gets in, and how
 Switched on in November 2026 at Phil's request. `src/lib/auth.ts` has the rules and
@@ -645,7 +668,7 @@ from **My sign-in → Members**:
   005). Approve makes the account the same way; Decline makes nothing.
 - *Temp password* — a new temporary password for somebody who has forgotten theirs. There
   is no "email me a reset link" yet.
-- *Roles* — the nine duties, clickable in each member's block. See "Roles, and My profile".
+- *Roles* — the club's duties, clickable in each member's block. See "Roles, and My profile".
 - *Emergency details* — shown for a member who has given some. See the same section.
 - *The club's list* — see the next section.
 - *Remove access / Restore access*, and *Make a controller*. A controller cannot remove
@@ -951,7 +974,7 @@ src/
 │                          photographs), controller.ts (the check every controller
 │                          action starts with), uploads.ts (what may be uploaded),
 │                          photos.ts (the smaller copies of a picture), roles.ts (the
-│                          nine duties and what reading they add), profile.ts (a
+│                          duties and what reading they add), profile.ts (a
 │                          member's emergency details), member.ts (the check a
 │                          member's own action starts with)
 └── app/files/             The one route every old-site file goes through
@@ -1008,9 +1031,10 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [x] `supabase/migrations/007_reading_reminders.sql` — applied 25 November 2026
 - [x] `supabase/migrations/008_portal_news.sql`, `009_submission_decisions.sql` and
       `010_news_attachments.sql` — applied 25 November 2026
-- [ ] **Run `supabase/migrations/011_roles_and_profiles.sql`** in the Supabase SQL editor.
-      Until then roles cannot be saved and My profile says it cannot be opened; everything
-      else works as before
+- [x] `supabase/migrations/011_roles_and_profiles.sql` — run by Phil, 25 November 2026
+- [ ] **Run `supabase/migrations/012_more_roles.sql`** in the Supabase SQL editor. Until
+      then the five flying roles (BI, FI, CFI, IFP, mutual flyer) cannot be saved — the
+      page says so — and the first nine work as before
 - [ ] **CFI and duty leads to check which manuals go with which role**
       (`src/content/required-reading.ts`) — a first draft by the website editor
 - [ ] **Committee to check the profile's emergency details against the Data Protection
