@@ -10,6 +10,7 @@ import {
   newTemporaryPassword,
   setAccess,
   setController,
+  setMemberName,
   setMemberRole,
   type ClubListData,
   type DetailsOutcome,
@@ -34,6 +35,10 @@ import { ROLES_CHANGED } from '@/lib/my-roles';
  * it is saved at once and that member's required reading follows. A role that
  * is held is filled in AND carries a tick, so it is not told by colour alone.
  * Members can tick their own on My profile, and the two are the same list.
+ *
+ * NAMES. "Edit name" beside a member opens a box in their block to correct the
+ * name the portal shows for them. Members can correct their own on My profile.
+ * The email address they sign in with is not changed from here.
  *
  * EMERGENCY DETAILS are not on this list. "Emergency details" beside a member
  * fetches that one member's, shows them here until hidden, and the portal
@@ -79,7 +84,33 @@ export default function MemberAdmin({
   const [, startQuiet] = useTransition();
   const [quietKey, setQuietKey] = useState<string | null>(null);
 
+  // The member whose name is being corrected, and what has been typed so far.
+  const [naming, setNaming] = useState<{ id: string; value: string } | null>(null);
+
   const rolesOf = (m: Member) => roleNow[m.id] ?? m.roles;
+
+  /** Save a corrected name, in place: no jump to the top of the page. */
+  function saveName(m: Member) {
+    if (!naming) return;
+    const value = naming.value;
+    setQuietKey(`n${m.id}`);
+    setOpenSaid((r) => ({ ...r, [m.id]: '' }));
+    startQuiet(async () => {
+      let outcome: Outcome;
+      try {
+        outcome = await setMemberName(m.id, value);
+      } catch {
+        outcome = { ok: false, message: 'That did not go through. Check your connection and try again.' };
+      }
+      setQuietKey(null);
+      if (outcome.ok) {
+        setNaming(null);
+        router.refresh();
+      } else {
+        setOpenSaid((r) => ({ ...r, [m.id]: outcome.message }));
+      }
+    });
+  }
 
   /** One click on a role: shown at once, saved, and put right if the save fails. */
   function toggleRole(m: Member, role: RoleId) {
@@ -379,6 +410,12 @@ export default function MemberAdmin({
                   <span className="sr-only"> from {m.name || m.email}</span>
                 </button>
               )}
+              {naming?.id !== m.id && (
+                <button type="button" className={tiny} onClick={() => setNaming({ id: m.id, value: m.name })}>
+                  {m.name ? 'Edit name' : 'Add name'}
+                  <span className="sr-only"> of {m.name || m.email}</span>
+                </button>
+              )}
               {m.details && !opened[m.id] && (
                 <button type="button" className={tiny} disabled={quietKey === `e${m.id}`} onClick={() => openDetails(m)}>
                   {quietKey === `e${m.id}` ? 'Opening…' : 'Emergency details'}
@@ -392,6 +429,39 @@ export default function MemberAdmin({
             const shown = opened[m.id];
             return (
               <>
+                {naming?.id === m.id && (
+                  <form
+                    className="mt-2.5 flex max-w-xl flex-wrap items-end gap-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      saveName(m);
+                    }}
+                  >
+                    <div className="min-w-0 flex-1 basis-56">
+                      <label htmlFor={`name-${m.id}`} className="mb-1 block text-sm font-medium text-navy">
+                        Name for {m.email}
+                      </label>
+                      <input
+                        id={`name-${m.id}`}
+                        type="text"
+                        required
+                        minLength={2}
+                        maxLength={120}
+                        autoComplete="off"
+                        autoFocus
+                        value={naming.value}
+                        onChange={(e) => setNaming({ id: m.id, value: e.target.value })}
+                        className={box}
+                      />
+                    </div>
+                    <button type="submit" className="pill-solid !min-h-[44px] !py-2 text-sm disabled:opacity-50" disabled={quietKey === `n${m.id}`}>
+                      {quietKey === `n${m.id}` ? 'Saving…' : 'Save name'}
+                    </button>
+                    <button type="button" className={small} onClick={() => setNaming(null)}>
+                      Cancel
+                    </button>
+                  </form>
+                )}
                 <div role="group" aria-label={`Roles of ${m.name || m.email}`} className="mt-2.5 flex flex-wrap gap-x-5 gap-y-1.5">
                   {TEAMS.map((team) => (
                     <div key={team} className="flex flex-wrap items-center gap-1.5">

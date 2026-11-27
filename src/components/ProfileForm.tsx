@@ -18,7 +18,11 @@ import { ROLES_CHANGED } from '@/lib/my-roles';
  *   - In an emergency: who to ring, next of kin if that is somebody else.
  *   - For a first-aider: the member's own mobile, blood type, anything to know.
  *
- * Everything is optional. What is typed goes to the portal's own server and
+ * At the top, the member's own name, which they can correct (it is the label
+ * controllers see beside their email address), and that email address, which
+ * they cannot change here.
+ *
+ * Everything else is optional. What is typed goes to the portal's own server and
  * nowhere else; this component never talks to the database itself.
  *
  * Blood type is a list, with the sign written out in words as well, so it is
@@ -66,6 +70,7 @@ export default function ProfileForm({
 }) {
   const [roles, setRoles] = useState<RoleId[]>(rolesAtStart);
   const [f, setF] = useState<Fields>(profile);
+  const [myName, setMyName] = useState(name);
   const [pending, startTransition] = useTransition();
   const [said, setSaid] = useState<{ ok: boolean; message: string } | null>(null);
 
@@ -90,13 +95,14 @@ export default function ProfileForm({
     startTransition(async () => {
       let r;
       try {
-        r = await saveMyProfile({ roles, profile: f });
+        r = await saveMyProfile({ roles, profile: f, name: myName });
       } catch {
         r = { ok: false as const, message: 'That did not go through. Check your connection and save again.' };
       }
       setSaid({ ok: r.ok, message: r.message });
       if (r.ok) {
         setRoles(r.roles);
+        setMyName(r.name);
         // The count of required reading in the menu follows the new duties.
         window.dispatchEvent(new Event(ROLES_CHANGED));
       }
@@ -130,16 +136,41 @@ export default function ProfileForm({
 
   return (
     <form onSubmit={save} className="max-w-3xl space-y-10" noValidate>
-      <p className="text-inkMuted">
-        Signed in as <strong className="text-navy">{name || 'a member'}</strong>
-        {email && (
-          <>
-            {' '}
-            (<span className="break-all">{email}</span>)
-          </>
-        )}
-        . Everything on this page is optional.
-      </p>
+      {/* ── My name ─────────────────────────────────────────────────────── */}
+      <section aria-labelledby="name-h">
+        <h2 id="name-h" className="sr-only">
+          My name
+        </h2>
+        <div className="card grid gap-x-6 gap-y-4 p-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="my-name" className={label}>
+              My name
+            </label>
+            <input
+              id="my-name"
+              type="text"
+              autoComplete="name"
+              maxLength={120}
+              value={myName}
+              onChange={(e) => {
+                setMyName(e.target.value);
+                setSaid(null);
+              }}
+              aria-describedby="my-name-hint"
+              className={box}
+            />
+            <p id="my-name-hint" className={hint}>
+              As the club knows you. Correct it here if it is wrong.
+            </p>
+          </div>
+          <div>
+            <p className={label}>My email address</p>
+            <p className="break-all py-3 text-ink">{email || 'Not known'}</p>
+            <p className={hint}>This is what you sign in with. It cannot be changed here.</p>
+          </div>
+        </div>
+        <p className="mt-4 text-inkMuted">Everything below is optional.</p>
+      </section>
 
       {/* ── As a pilot, and the duties I do ─────────────────────────────── */}
       <section id="roles" aria-labelledby="pilot-h" className="scroll-mt-6">

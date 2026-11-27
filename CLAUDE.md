@@ -686,6 +686,10 @@ from **My sign-in → Members**:
   005). Approve makes the account the same way; Decline makes nothing.
 - *Temp password* — a new temporary password for somebody who has forgotten theirs. There
   is no "email me a reset link" yet.
+- *Edit name* — correct the name shown for a member (it is kept on the account, as
+  `user_metadata.name`). A member can correct their own at the top of My profile. Neither
+  changes the email address somebody signs in with; **changing that is not built** — it
+  is done in Supabase → Authentication → Users, by whoever looks after the accounts.
 - *Roles* — the club's duties, clickable in each member's block. See "Roles, and My profile".
 - *Emergency details* — shown for a member who has given some. See the same section.
 - *The club's list* — see the next section.

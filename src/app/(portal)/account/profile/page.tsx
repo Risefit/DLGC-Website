@@ -13,7 +13,8 @@ export const dynamic = 'force-dynamic';
 /**
  * MY PROFILE — My sign-in → My profile.
  *
- * Two things a member tells the portal about themselves:
+ * The member's own name, which they can correct, and two things they tell the
+ * portal about themselves:
  *   - the duties they do, which add those duties' manuals to their required
  *     reading (src/lib/roles.ts, src/content/required-reading.ts);
  *   - who to ring in an emergency, their next of kin, blood type and anything

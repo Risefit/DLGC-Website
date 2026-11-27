@@ -142,6 +142,26 @@ export function checkProfile(input: unknown): { ok: true; profile: Profile } | {
   return { ok: true, profile: p };
 }
 
+/**
+ * A MEMBER'S NAME, as shown beside their email address on the Members page,
+ * on the reading record and in "Dear …" on an email from the portal. It is
+ * kept on the account itself (its `user_metadata`), not in a table here. A
+ * member can correct their own on My profile and a controller can correct
+ * anybody's on the Members page.
+ *
+ * A name is one line of 2 to 120 characters. It is a label and nothing more:
+ * no part of the portal decides anything by a name, so calling yourself
+ * "Chief Flying Instructor" changes what a controller reads and nothing else
+ * — and the email address beside it, which a member cannot change, says who
+ * it really is.
+ */
+export function checkName(x: unknown): { ok: true; name: string } | { ok: false; message: string } {
+  const name = line(x);
+  if (name.length < 2) return { ok: false, message: 'Please give your name, as the club knows you.' };
+  if (name.length > 120) return { ok: false, message: 'Please shorten the name: it can be up to 120 characters.' };
+  return { ok: true, name };
+}
+
 export const profileIsEmpty = (p: Profile) => (Object.keys(emptyProfile) as (keyof Profile)[]).every((k) => !p[k]);
 
 /** One member's emergency details, or null if they have given none. Throws if the table cannot be read. */

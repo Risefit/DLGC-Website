@@ -6,7 +6,7 @@ import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 import { invitation, mailReady, sendMail } from '@/lib/mail';
 import { requireController, refusal } from '@/lib/controller';
 import { cleanRoles, isRole, roleLabel, withRole, type RoleId } from '@/lib/roles';
-import { readProfile, readRoles, ROLE_NOT_ALLOWED_YET, writeRoles, type Profile } from '@/lib/profile';
+import { checkName, readProfile, readRoles, ROLE_NOT_ALLOWED_YET, writeRoles, type Profile } from '@/lib/profile';
 
 /**
  * WHAT A CONTROLLER CAN DO — add a member, approve or decline a request, give
@@ -330,6 +330,32 @@ export async function setController(userId: string, on: boolean): Promise<Outcom
     });
     if (error) return { ok: false, message: error.message || 'That could not be saved.' };
     return { ok: true, message: on ? 'They are now a controller.' : 'They are no longer a controller.' };
+  } catch (e) {
+    return refuse(e);
+  }
+}
+
+/**
+ * Correct a member's name — the label beside their email address. Nothing else
+ * about the account changes: not the address they sign in with, not their
+ * access. (A member can correct their own on My profile.)
+ */
+export async function setMemberName(userId: string, nameIn: string): Promise<Outcome> {
+  try {
+    const { admin } = await requireController();
+    if (typeof userId !== 'string') return { ok: false, message: 'That member could not be found.' };
+    const named = checkName(nameIn);
+    if (!named.ok) return { ok: false, message: named.message.replace('your name, as the club knows you', 'a name of two letters or more') };
+    const { data, error: findError } = await admin.auth.admin.getUserById(userId);
+    if (findError || !data.user) return { ok: false, message: 'That member could not be found.' };
+    const { error } = await admin.auth.admin.updateUserById(userId, {
+      user_metadata: { ...(data.user.user_metadata ?? {}), name: named.name },
+    });
+    if (error) {
+      logSupabaseProblem('members page, changing a name', error);
+      return { ok: false, message: 'The name could not be saved. Try again.' };
+    }
+    return { ok: true, message: `Name saved: ${named.name}.` };
   } catch (e) {
     return refuse(e);
   }
