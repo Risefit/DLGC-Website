@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { saveMyProfile } from '@/app/(portal)/account/profile/actions';
-import { ROLES, TEAMS, TEAM_NAMES, type RoleId } from '@/lib/roles';
+import { PILOT_TONE, ROLES, TEAMS, TEAM_NAMES, withRole, type RoleId } from '@/lib/roles';
 import { ROLES_CHANGED } from '@/lib/my-roles';
 
 /**
  * MY PROFILE, as the member fills it in. One form, one Save button.
  *
+ *   - As a pilot: one choice — student pilot, one of the five flying cards, or
+ *     none. Each card has a dot of its own colour beside its name.
  *   - The duties I do: a tick box for each role, in the club's teams. Ticking
  *     one adds that duty's manuals to the member's required reading, and the
  *     count in the menu and on the dashboard follows as soon as it is saved
@@ -69,6 +71,13 @@ export default function ProfileForm({
 
   const set = (key: keyof Fields) => (e: { target: { value: string } }) => {
     setF((was) => ({ ...was, [key]: e.target.value }));
+    setSaid(null);
+  };
+  // The pilot group is one choice: a student, one card, or none of them.
+  const isPilotRole = (r: RoleId) => ROLES.some((x) => x.id === r && x.team === 'Pilot');
+  const pilot = roles.find(isPilotRole);
+  const choosePilot = (id: RoleId | '') => {
+    setRoles((was) => (id ? withRole(was, id, true) : was.filter((r) => !isPilotRole(r))));
     setSaid(null);
   };
   const toggle = (id: RoleId) => {
@@ -132,7 +141,46 @@ export default function ProfileForm({
         . Everything on this page is optional.
       </p>
 
-      {/* ── The duties I do ─────────────────────────────────────────────── */}
+      {/* ── As a pilot, and the duties I do ─────────────────────────────── */}
+      <section id="roles" aria-labelledby="pilot-h" className="scroll-mt-6">
+        <h2 id="pilot-h" className="display text-2xl lg:text-3xl">
+          As a pilot
+        </h2>
+        <p className="mb-4 mt-1 max-w-prose2 text-inkMuted">
+          Choose where you have got to. A student pilot has the Student Pilots Guide added to{' '}
+          <Link href="/documents#required-reading" className="link">
+            their required reading
+          </Link>
+          . Choosing a card here is a note of the card you hold; it does not award one. The CFI issues cards, and the
+          card you carry is what counts.{' '}
+          <Link href="/training#flying-cards" className="link">
+            What each flying card allows
+          </Link>
+        </p>
+        <fieldset className="card p-5">
+          <legend className="sr-only">Where I have got to as a pilot</legend>
+          <div className="grid gap-x-8 sm:grid-cols-2">
+            {[{ id: '', label: 'None of these' }, ...ROLES.filter((r) => r.team === 'Pilot')].map((r) => {
+              const tone = r.id ? PILOT_TONE[r.id as RoleId] : undefined;
+              return (
+                <label key={r.id || 'none'} htmlFor={`pilot-${r.id || 'none'}`} className="tap w-full cursor-pointer gap-3 text-ink">
+                  <input
+                    id={`pilot-${r.id || 'none'}`}
+                    type="radio"
+                    name="pilot"
+                    checked={r.id ? roles.includes(r.id as RoleId) : !pilot}
+                    onChange={() => choosePilot(r.id as RoleId | '')}
+                    className="h-6 w-6 shrink-0 border-2 border-skyLine text-navy focus:ring-sky"
+                  />
+                  {tone && <span aria-hidden="true" className={`h-4 w-4 shrink-0 rounded-full ${tone.dot}`} />}
+                  {r.label}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      </section>
+
       <section id="duties" aria-labelledby="duties-h" className="scroll-mt-6">
         <h2 id="duties-h" className="display text-2xl lg:text-3xl">
           The duties I do
@@ -146,7 +194,7 @@ export default function ProfileForm({
           CFI and the duty’s own lead decide that.
         </p>
         <div className="card grid gap-x-8 gap-y-5 p-5 sm:grid-cols-2">
-          {TEAMS.map((team) => (
+          {TEAMS.filter((team) => team !== 'Pilot').map((team) => (
             <fieldset key={team}>
               <legend className="mb-1 font-semibold text-navy">{TEAM_NAMES[team]}</legend>
               {ROLES.filter((r) => r.team === team).map((r) => (
@@ -252,7 +300,8 @@ export default function ProfileForm({
         </h2>
         <ul className="mt-2 max-w-prose2 list-disc space-y-1.5 pl-5 text-ink">
           <li>
-            <strong>Your duties</strong> are seen by the portal’s controllers, beside your name on their members list.
+            <strong>Your card and your duties</strong> are seen by the portal’s controllers, beside your name on
+            their members list.
           </li>
           <li>
             <strong>Your emergency details</strong> are seen by you, and by a portal controller who opens them for you

@@ -19,7 +19,7 @@ import {
 } from '@/app/(portal)/admin/members/actions';
 import { Badge } from '@/components/ui';
 import ClubList from '@/components/ClubList';
-import { ROLES, TEAMS, type RoleId } from '@/lib/roles';
+import { PILOT_TONE, ROLES, TEAMS, withRole, type RoleId } from '@/lib/roles';
 import { ROLES_CHANGED } from '@/lib/my-roles';
 
 /**
@@ -28,8 +28,9 @@ import { ROLES_CHANGED } from '@/lib/my-roles';
  * people still to invite (src/components/ClubList.tsx), and everyone who has a
  * sign-in.
  *
- * ROLES. Under each member's name are the club's duties, in their teams
- * (src/lib/roles.ts). A controller clicks one to give it and clicks again to take it off;
+ * ROLES. Under each member's name are the club's roles, in their groups
+ * (src/lib/roles.ts). The first group, Pilot, is one choice: student pilot or
+ * one flying card, each card in its own colour. Giving one takes the other off. A controller clicks one to give it and clicks again to take it off;
  * it is saved at once and that member's required reading follows. A role that
  * is held is filled in AND carries a tick, so it is not told by colour alone.
  * Members can tick their own on My profile, and the two are the same list.
@@ -84,7 +85,8 @@ export default function MemberAdmin({
   function toggleRole(m: Member, role: RoleId) {
     const held = rolesOf(m);
     const on = !held.includes(role);
-    setRoleNow((r) => ({ ...r, [m.id]: on ? [...held, role] : held.filter((x) => x !== role) }));
+    // withRole also takes off any other flying card when one is given.
+    setRoleNow((r) => ({ ...r, [m.id]: withRole(held, role, on) }));
     setRoleSaid((r) => ({ ...r, [m.id]: '' }));
     startQuiet(async () => {
       let outcome;
@@ -327,8 +329,10 @@ export default function MemberAdmin({
         </h2>
         <p className="mb-3 mt-1 max-w-prose2 text-inkMuted">
           Everyone who can sign in to the portal today. Click a role to give it to a member, and again to take it
-          off: it is saved at once and that duty’s manuals are added to their required reading. Members can tick
-          their own on My profile. A role is not a record that somebody is cleared for the duty.
+          off: it is saved at once and any reading that goes with it is added to their required reading. Under
+          Pilot a member is a student or holds one flying card, so choosing one replaces another. Members can
+          set their own on My profile. A role or card shown here is a note, not the club’s record of who is
+          cleared for what.
         </p>
         {!rolesReady && (
           <p className="card mb-3 border-l-4 border-warn px-5 py-4 text-sm text-ink">
@@ -399,6 +403,8 @@ export default function MemberAdmin({
                       </span>
                       {ROLES.filter((r) => r.team === team).map((r) => {
                         const on = held.includes(r.id);
+                        // A flying card is shown in its own colour — and always by name.
+                        const tone = PILOT_TONE[r.id];
                         return (
                           <button
                             key={r.id}
@@ -408,10 +414,11 @@ export default function MemberAdmin({
                             onClick={() => toggleRole(m, r.id)}
                             className={`tap-sm min-w-[44px] justify-center gap-1 rounded-full border px-2.5 text-[0.8rem] font-semibold transition-colors disabled:opacity-50 ${
                               on
-                                ? 'border-navy bg-navy text-white hover:bg-skyDark'
+                                ? (tone?.on ?? 'border-navy bg-navy text-white hover:bg-skyDark')
                                 : 'border-skyLine bg-white text-navy hover:border-sky'
                             }`}
                           >
+                            {!on && tone && <span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-full ${tone.dot}`} />}
                             {on && (
                               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                                 <path d="M3 8.5l3.2 3.2L13 4.8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />

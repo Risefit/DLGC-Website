@@ -284,7 +284,7 @@ function PortalAccount({
         </Link>
         <Link href="/account/profile" onClick={onNavigate} className={`${button} flex-col !gap-0 text-center`}>
           My profile
-          <span className="text-sm font-normal text-white/80">my duties and emergency contact</span>
+          <span className="text-sm font-normal text-white/80">my roles and emergency contact</span>
         </Link>
         <Link href="/account/password" onClick={onNavigate} className={button}>
           Change my portal password
@@ -397,7 +397,7 @@ function PortalAccount({
                 className="tap w-full rounded-lg px-3 py-2.5 font-medium text-navy transition-colors hover:bg-sky50"
               >
                 My profile
-                <span className="ml-2 text-xs font-normal text-slate2">my duties and emergency contact</span>
+                <span className="ml-2 text-xs font-normal text-slate2">my roles and emergency contact</span>
               </Link>
             </li>
             <li>

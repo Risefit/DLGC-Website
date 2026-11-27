@@ -572,11 +572,26 @@ table `reading_confirmations` (`supabase/migrations/004_reading_confirmations.sq
   migration 004 has been run).
 
 ### Roles, and My profile
-Added November 2026 at Phil's request. The fourteen roles are his list, in four teams:
-winch master, winch trainer, winch driver, winch trainee · launch master, launch
-marshal · head clerk, clerk, trainee clerk · Basic Instructor (BI), Flight Instructor
-(FI), Chief Flying Instructor (CFI), Introductory Flight Pilot (IFP), mutual flyer.
-They are defined once, in `src/lib/roles.ts`.
+Added November 2026 at Phil's request. The twenty roles are his list, in five groups:
+**pilot** — student pilot, or the White, Red, Yellow, Green or Blue card · winch master,
+winch trainer, winch driver, winch trainee · launch master, launch marshal · head clerk,
+clerk, trainee clerk · Basic Instructor (BI), Flight Instructor (FI), Chief Flying
+Instructor (CFI), Introductory Flight Pilot (IFP), mutual flyer. They are defined once,
+in `src/lib/roles.ts`.
+
+- **The pilot group is one choice.** A member is a student pilot or holds one card;
+  giving one takes any other off (`withRole` and `cleanRoles` in `roles.ts` — the server
+  applies it, so a doctored form cannot leave somebody with two cards). On the Members
+  page each card's chip is in the card's colour, with its name and a tick when held
+  (rule 4: never colour alone); on My profile it is a set of radio buttons. The colours
+  are the ones the Flying Cards page uses, plus one token, `cardYellow`, because `warn`
+  is a dark amber and a button called Yellow has to look yellow — dark text on it only.
+- **A card shown here is a note, not the record.** The CFI issues cards and the card a
+  pilot carries is what counts; both pages say so. A member can set their own. Do not
+  let a card decide what anybody may see or do on the site, and do not show a member's
+  card to other members without the club deciding that first.
+- A card adds no reading (what each allows is in the Flying Cards summary, which
+  everybody is asked to confirm). **Student pilot adds the Student Pilots Guide.**
 
 - **Who sets a role.** The member, on **My sign-in → My profile** (`/account/profile`),
   by ticking it; or a controller, on the Members page, by clicking it in the member's
@@ -590,6 +605,8 @@ They are defined once, in `src/lib/roles.ts`.
 
   | Role | Added to that member's required reading |
   |---|---|
+  | Student pilot | Student Pilots Guide |
+  | A flying card | nothing more |
   | Any winch role | Winch Operating Manual, Launch Speeds |
   | Launch master, launch marshal | Launch Marshals Manual, Launch Speeds |
   | Any clerk role | Duty Clerk Manual |
@@ -600,8 +617,9 @@ They are defined once, in `src/lib/roles.ts`.
 
   The instructing documents were chosen by reading what each says it is for. The BGA's
   own instructor manuals are not on the list — they are not the club's to issue. The
-  Student Pilots Guide stays, uncounted, in "If you are learning to fly" for everybody
-  else; a group marked `duties: true` is one that offers the way to My profile.
+  Student Pilots Guide stays, uncounted, in "If you are learning to fly" for anybody who
+  is neither a student pilot nor an instructor; a group marked `duties: true` is one that
+  offers the way to My profile.
 - **The number is the same everywhere on a page.** The menu, the dashboard line and the
   list all get the member's roles from one shared place (`src/lib/my-roles.ts`), which
   asks again whenever the member moves to another page, comes back to the tab, or a role
@@ -1032,9 +1050,8 @@ Supabase dashboard) but a club-owned account removes the conflict entirely.
 - [x] `supabase/migrations/008_portal_news.sql`, `009_submission_decisions.sql` and
       `010_news_attachments.sql` — applied 25 November 2026
 - [x] `supabase/migrations/011_roles_and_profiles.sql` — run by Phil, 25 November 2026
-- [ ] **Run `supabase/migrations/012_more_roles.sql`** in the Supabase SQL editor. Until
-      then the five flying roles (BI, FI, CFI, IFP, mutual flyer) cannot be saved — the
-      page says so — and the first nine work as before
+- [x] `supabase/migrations/012_more_roles.sql` — run by Phil; seen in place 27 November
+      2026. A new role now needs no SQL
 - [ ] **CFI and duty leads to check which manuals go with which role**
       (`src/content/required-reading.ts`) — a first draft by the website editor
 - [ ] **Committee to check the profile's emergency details against the Data Protection

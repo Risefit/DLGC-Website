@@ -5,7 +5,7 @@ import { adminClient, banned, everyUser, logSupabaseProblem, temporaryPassword }
 import { isController, isMember, TEMP_PASSWORD_DAYS } from '@/lib/auth';
 import { invitation, mailReady, sendMail } from '@/lib/mail';
 import { requireController, refusal } from '@/lib/controller';
-import { cleanRoles, isRole, roleLabel, type RoleId } from '@/lib/roles';
+import { cleanRoles, isRole, roleLabel, withRole, type RoleId } from '@/lib/roles';
 import { readProfile, readRoles, ROLE_NOT_ALLOWED_YET, writeRoles, type Profile } from '@/lib/profile';
 
 /**
@@ -359,7 +359,8 @@ export async function setMemberRole(userId: string, role: string, on: boolean): 
     }
     try {
       const held = await readRoles(admin, userId);
-      const next = cleanRoles(on ? [...held, role] : held.filter((r) => r !== role));
+      // Giving a flying card takes any other card off: withRole knows which groups are one-only.
+      const next = withRole(held, role, on);
       if (next.join('|') !== held.join('|')) await writeRoles(admin, userId, next, me.id);
       return { ok: true, roles: next };
     } catch (e) {

@@ -87,7 +87,8 @@ it and ticks it; the manual is not attached and nothing is confirmed by the emai
 25 November 2026).
 
 **Roles, and My profile.** Each member has a profile (**My sign-in → My profile**) where
-they tick the duties they do — winch master, winch trainer, winch driver, winch trainee,
+they say where they have got to as a pilot (student pilot, or their White, Red, Yellow,
+Green or Blue card) and tick the duties they do — winch master, winch trainer, winch driver, winch trainee,
 launch master, launch marshal, head clerk, clerk, trainee clerk, Basic Instructor, Flight
 Instructor, Chief Flying Instructor, Introductory Flight Pilot, mutual flyer — and can give
 an emergency
@@ -98,8 +99,7 @@ their list, their tally, and the controllers' reading record. A role opens nothi
 not a record of qualification. Emergency details are seen by the member, and by a
 controller who opens them for one named member (each time is noted). All of it is in
 `supabase/migrations/011_roles_and_profiles.sql` (run on 25 November 2026) and
-`012_more_roles.sql`, which has to be run once in the Supabase SQL editor before the five
-flying roles can be saved. After that a new role is one line in `src/lib/roles.ts`.
+`012_more_roles.sql` (both run). A new role is now one line in `src/lib/roles.ts`.
 None of it comes from or goes to Free Flight.
 
 **What controllers can do without touching the code** (all from the site, signed in):

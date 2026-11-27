@@ -249,7 +249,7 @@ export default function ReadingRecord({
                     )}
                     {forSome.length > 0 && (
                       <div>
-                        <p className="font-semibold text-navy">For students, and duties they have no role for</p>
+                        <p className="font-semibold text-navy">For roles they do not hold</p>
                         <p className="text-xs text-slate2">
                           Not counted as outstanding. If one applies, give them the role on the Members page, or send
                           it from here.

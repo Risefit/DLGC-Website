@@ -54,7 +54,7 @@ export default async function ProfilePage() {
             My <em>profile</em>
           </>
         }
-        lead="The duties you do at the club, and who to ring if something happens to you. Your required reading follows the duties you tick."
+        lead="Where you have got to as a pilot, the duties you do at the club, and who to ring if something happens to you. Your required reading follows what you choose."
       />
       {ready ? (
         <ProfileForm name={name} email={user?.email ?? ''} roles={roles} profile={profile} />

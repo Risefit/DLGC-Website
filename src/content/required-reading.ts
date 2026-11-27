@@ -12,9 +12,10 @@
  *   page(…)    a page of this portal
  *
  * READING THAT GOES WITH A DUTY. An item can carry `roles`: the duties
- * (src/lib/roles.ts) whose members are asked to confirm it. The last two
- * groups are made of these, and the Student Pilots Guide carries the
- * instructing roles because an instructor needs to know what a student is told. A member who
+ * (src/lib/roles.ts) whose members are asked to confirm it. The last three
+ * groups are made of these: the Student Pilots Guide for a student pilot (and
+ * for instructors, who need to know what a student is told), then the flying
+ * roles, then the duties. A member who
  * holds one of those roles — ticked on My profile, or set by a controller on
  * the Members page — has the item added to their own list and their count.
  * Everybody else still sees it, as reading for a duty they do not do. WHICH
@@ -58,7 +59,7 @@ export type ReadingGroup = {
   group: string;
   blurb: string;
   items: ReadingItem[];
-  /** true for a group of duty reading: the page offers the way to My profile under it */
+  /** true for a group of reading that goes with a role: the page offers the way to My profile under it */
   duties?: boolean;
 };
 
@@ -81,6 +82,10 @@ const CLERKS: RoleId[] = ['head-clerk', 'clerk', 'trainee-clerk'];
 // Instructing. "Instructors" are the three grades; introductory flights are
 // flown by them and by Introductory Flight Pilots.
 const INSTRUCTORS: RoleId[] = ['basic-instructor', 'flight-instructor', 'cfi'];
+// Learning to fly. The flying cards (White to Blue) add no reading of their
+// own: what each allows is in "Flying Cards — all colours explained", which
+// every member is already asked to confirm.
+const STUDENTS: RoleId[] = ['student-pilot'];
 const INTRO_FLIGHTS: RoleId[] = [...INSTRUCTORS, 'ifp'];
 const TEACHING: RoleId[] = ['flight-instructor', 'cfi'];
 // Two approved pilots sharing a club two-seater, with no instruction given.
@@ -132,8 +137,12 @@ export const requiredReading: ReadingGroup[] = [
   {
     group: 'If you are learning to fly',
     blurb: 'For students working towards solo and the Sailplane Pilot Licence.',
+    duties: true,
     items: [
-      slot('student-pilots-guide', 'How training works at Camphill, from first flight to licence.', 'Students and instructors', INSTRUCTORS),
+      slot('student-pilots-guide', 'How training works at Camphill, from first flight to licence.', 'Student pilots and instructors', [
+        ...STUDENTS,
+        ...INSTRUCTORS,
+      ]),
     ],
   },
   {

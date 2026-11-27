@@ -24,7 +24,7 @@ import { useMyRoles } from '@/lib/my-roles';
  *     entitled to know who can see the record.
  *
  * THE LIST FOLLOWS THE MEMBER'S ROLES. A manual that goes with a duty (an item
- * with `roles`) is moved up into "For the duties on your profile" for a member
+ * with `roles`) is moved up into "For the roles on your profile" for a member
  * who holds one of those roles, and is counted with everybody's. The roles are
  * the member's own, read by src/lib/my-roles.ts; they are ticked on My profile
  * or set by a controller. Everybody else still sees the manual lower down, as
@@ -38,7 +38,7 @@ type State = 'loading' | 'signed-out' | 'ready' | 'unavailable';
 
 const TABLE = 'reading_confirmations';
 /** The group a member's own duty reading is lifted into. */
-const OWN = 'For the duties on your profile';
+const OWN = 'For the roles on your profile';
 
 const when = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -134,7 +134,11 @@ export default function RequiredReading({
     if (lifted.length === 0) return rest;
     const everyone = new Set(rule.everyone);
     const at = rest.findIndex((g) => !g.items.some((i) => everyone.has(i.key)));
-    const because = [...held].map(roleLabel).join(', ');
+    // Only the roles that bring reading with them: a flying card brings none.
+    const because = [...held]
+      .filter((r) => (rule.byRole[r as keyof typeof rule.byRole]?.length ?? 0) > 0)
+      .map(roleLabel)
+      .join(', ');
     const own = {
       group: OWN,
       blurb: `Your profile says: ${because}. These count towards your required reading.`,
@@ -162,7 +166,7 @@ export default function RequiredReading({
           {forDuties > 0 && (
             <>
               {' '}
-              That is the {rule.everyone.length} for every member and {forDuties} for the duties on your profile.
+              That is the {rule.everyone.length} for every member and {forDuties} for the roles on your profile.
             </>
           )}
         </p>
@@ -192,12 +196,10 @@ export default function RequiredReading({
               {g.duties && state !== 'signed-out' && (
                 <>
                   {' '}
-                  <Link href="/account/profile#duties" className="link">
-                    {g.group === OWN
-                      ? 'Change the duties on my profile'
-                      : 'Tick the duties you do on My profile'}
+                  <Link href="/account/profile#roles" className="link">
+                    {g.group === OWN ? 'Change what is on my profile' : 'Tick what applies to you on My profile'}
                   </Link>
-                  {g.group === OWN ? '.' : ' and their manuals join your list.'}
+                  {g.group === OWN ? '.' : ' and its reading joins your list.'}
                 </>
               )}
             </p>

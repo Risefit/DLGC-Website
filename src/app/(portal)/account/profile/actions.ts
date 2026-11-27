@@ -66,6 +66,6 @@ export async function saveMyProfile(input: { roles?: unknown; profile?: unknown 
   return {
     ok: true,
     roles,
-    message: 'Saved. Your required reading now follows the duties you ticked.',
+    message: 'Saved. Your required reading now follows what you chose.',
   };
 }

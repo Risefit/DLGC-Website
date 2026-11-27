@@ -70,6 +70,10 @@ const config: Config = {
         warnTint: '#FDF6E9',
         badTint: '#FCF0EF',
         goodTint: '#EDF6F1',
+        /* The Yellow flying card, and nothing else. `warn` is a dark amber made
+         * for text on white; a button labelled "Yellow" has to look yellow.
+         * Dark text on it only (ink is 13.6:1) — never white. */
+        cardYellow: '#F2C230',
       },
       fontFamily: {
         // Set in src/app/layout.tsx via next/font/local, self-hosted.
